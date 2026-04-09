@@ -17,7 +17,7 @@ const info = [
   { label: "Careers", href: "#" },
 ];
 
-const WHATSAPP_NUMBER = "33600000000";
+const WHATSAPP_NUMBER = "8618508036618";
 
 export default function Footer() {
   return (

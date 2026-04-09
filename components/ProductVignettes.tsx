@@ -47,7 +47,7 @@ const products: Product[] = [
   },
 ];
 
-const WHATSAPP_NUMBER = "33600000000"; // Replace with real number
+const WHATSAPP_NUMBER = "8618508036618"; // NOREVA WhatsApp
 
 function ProductCard({ product, index }: { product: Product; index: number }) {
   const ref = useRef<HTMLDivElement>(null);

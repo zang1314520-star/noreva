@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 
-const WHATSAPP_NUMBER = "33600000000"; // Replace with real number
+const WHATSAPP_NUMBER = "8618508036618"; // NOREVA WhatsApp
 const WHATSAPP_MESSAGE = "Hello, I would like to speak with a personal shopper at NOREVA.";
 
 export default function PersonalShopper() {
