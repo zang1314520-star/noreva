@@ -28,6 +28,8 @@ export const metadata: Metadata = {
   },
 };
 
+import WhatsAppButton from "@/components/WhatsAppButton";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -37,6 +39,7 @@ export default function RootLayout({
     <html lang="en" className={`${cormorant.variable} ${dmSans.variable}`}>
       <body className="min-h-screen bg-white text-[#1A1A1A] antialiased">
         {children}
+        <WhatsAppButton phoneNumber="8618508036618" />
       </body>
     </html>
   );
