@@ -30,10 +30,6 @@ function FeaturedProduct({ product, index }: { product: ProductVignette; index: 
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-5%" });
 
-  const waUrl = "https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(
-    "I am interested in " + product.name + " by NOREVA."
-  );
-
   return (
     <motion.div
       ref={ref}
@@ -44,11 +40,9 @@ function FeaturedProduct({ product, index }: { product: ProductVignette; index: 
         delay: index * 0.1,
         ease: [0.25, 0.46, 0.45, 0.94],
       }}
-      className="flex-shrink-0 w-[80vw] sm:w-[55vw] md:w-[30vw] lg:w-[22vw] max-w-[320px]"
     >
       <Link href={"/products/" + product.id} className="block group">
-        {/* Image — square, with real product image */}
-        <div className="img-zoom overflow-hidden mb-7 aspect-square bg-[#F0EFED]">
+        <div className="img-zoom overflow-hidden mb-5 aspect-square bg-[#F0EFED]">
           {product.image ? (
             <img 
               src={product.image} 
@@ -62,25 +56,17 @@ function FeaturedProduct({ product, index }: { product: ProductVignette; index: 
             />
           )}
         </div>
-
-        {/* Text */}
-        <div className="pr-4">
-          <span className="label text-[#A8A4A0] block mb-3">{product.category}</span>
-
-          <h3
-            className="font-display display-tight font-light text-[#1A1A1A] mb-2 leading-tight"
-            style={{ fontSize: "24px" }}
-          >
+        <div>
+          <span className="label text-[#A8A4A0] block mb-2">{product.category}</span>
+          <h3 className="font-display font-light text-[#1A1A1A] mb-1 leading-tight" style={{ fontSize: "18px" }}>
             {product.name}
           </h3>
-
-          <p className="font-body text-[13px] text-[#8A8A8A] mb-7 leading-relaxed">
+          <p className="font-body text-[12px] text-[#8A8A8A] mb-4 leading-relaxed line-clamp-2">
             {product.tagline}
           </p>
-
-          <span className="cta-link">
+          <span className="cta-link text-xs">
             View Details
-            <svg width="20" height="1" viewBox="0 0 20 1" fill="none" aria-hidden="true">
+            <svg width="16" height="1" viewBox="0 0 20 1" fill="none" aria-hidden="true">
               <line x1="0" y1="0.5" x2="20" y2="0.5" stroke="#C9A96E" />
             </svg>
           </span>
@@ -101,7 +87,6 @@ export default function ProductVignettes() {
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data) && data.length > 0) {
-          // Take up to 4 products
           const featured = data.slice(0, 4).map((p: Product) => ({
             id: p.id,
             name: p.name,
@@ -119,7 +104,6 @@ export default function ProductVignettes() {
       });
   }, []);
 
-  // Default placeholders if no products
   const defaultProducts: ProductVignette[] = [
     { id: "1", name: "Le Sac Nerveux", tagline: "The everyday carry.", category: "Bags", bg: "linear-gradient(135deg, #D8D0C4 0%, #C8BFB1 100%)" },
     { id: "2", name: "Calibre 01", tagline: "Time, reconsidered.", category: "Watches", bg: "linear-gradient(135deg, #C8C4BC 0%, #B8B4AC 100%)" },
@@ -130,58 +114,38 @@ export default function ProductVignettes() {
   const displayProducts = loading ? defaultProducts : (products.length > 0 ? products : defaultProducts);
 
   return (
-    <section
-      ref={ref}
-      className="py-[clamp(5rem,10vw,9rem)] overflow-hidden bg-[#FAFAF8]"
-    >
-      {/* Section header */}
+    <section ref={ref} className="py-[clamp(5rem,10vw,9rem)] overflow-hidden bg-[#FAFAF8]">
       <motion.div
         initial={{ opacity: 0, y: 18 }}
         animate={inView ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
         className="px-8 md:px-16 mb-14 md:mb-18 relative"
       >
-        {/* Background editorial numeral */}
-        <div
-          className="absolute -top-8 left-8 md:left-16 font-display font-light text-[#1A1A1A]/[0.04] leading-none select-none pointer-events-none"
-          style={{ fontSize: "clamp(7rem, 14vw, 13rem)" }}
-          aria-hidden="true"
-        >
+        <div className="absolute -top-8 left-8 md:left-16 font-display font-light text-[#1A1A1A]/[0.04] leading-none select-none pointer-events-none" style={{ fontSize: "clamp(7rem, 14vw, 13rem)" }} aria-hidden="true">
           02
         </div>
-
         <div className="relative flex items-end justify-between">
           <div>
             <span className="label text-[#8A8A8A] block mb-5">The Objects</span>
             <span className="gold-rule" />
           </div>
-          <Link 
-            href="/products" 
-            className="hidden md:block font-body text-[13px] text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors tracking-wider uppercase pb-1"
-          >
-            View All →
+          <Link href="/products" className="hidden md:block font-body text-[13px] text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors tracking-wider uppercase pb-1">
+            View All
           </Link>
         </div>
       </motion.div>
 
-      {/* Horizontal scroll - fixed layout */}
-      <div className="pl-8 md:pl-16 pr-8 md:pr-16">
-        <div className="flex gap-8 md:gap-12 overflow-x-auto pb-4">
+      <div className="px-8 md:px-16">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 lg:gap-10">
           {displayProducts.map((p, i) => (
             <FeaturedProduct key={p.id} product={p} index={i} />
           ))}
-          {/* Trailing breathe space */}
-          <div className="flex-shrink-0 w-0 md:w-8" />
         </div>
       </div>
 
-      {/* Mobile View All link */}
       <div className="md:hidden px-8 mt-8 text-center">
-        <Link 
-          href="/products" 
-          className="font-body text-[13px] text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors tracking-wider uppercase"
-        >
-          View All Products →
+        <Link href="/products" className="font-body text-[13px] text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors tracking-wider uppercase">
+          View All Products
         </Link>
       </div>
     </section>
