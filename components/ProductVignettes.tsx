@@ -11,6 +11,7 @@ interface Product {
   category: string;
   categoryName: string;
   price: number;
+  description: string;
   mainImage: string;
 }
 
@@ -20,45 +21,18 @@ interface ProductVignette {
   tagline: string;
   category: string;
   bg: string;
-  productId?: string;
+  image?: string;
 }
-
-const vignetteCategories: ProductVignette[] = [
-  {
-    id: "01",
-    name: "Le Sac Nerveux",
-    tagline: "The everyday carry.",
-    category: "Bags",
-    bg: "linear-gradient(135deg, #D8D0C4 0%, #C8BFB1 100%)",
-  },
-  {
-    id: "02",
-    name: "Calibre 01",
-    tagline: "Time, reconsidered.",
-    category: "Watches",
-    bg: "linear-gradient(135deg, #C8C4BC 0%, #B8B4AC 100%)",
-  },
-  {
-    id: "03",
-    name: "La Marche",
-    tagline: "Crafted in Florence.",
-    category: "Shoes",
-    bg: "linear-gradient(135deg, #D0C8BC 0%, #C0B8AC 100%)",
-  },
-  {
-    id: "04",
-    name: "L'Anneau",
-    tagline: "A single, quiet statement.",
-    category: "Accessories",
-    bg: "linear-gradient(135deg, #D4CEC8 0%, #C4BEB8 100%)",
-  },
-];
 
 const WHATSAPP_NUMBER = "8618508036618";
 
-function ProductCard({ product, index, onImageLoad }: { product: ProductVignette; index: number; onImageLoad?: (img: string | null) => void }) {
+function FeaturedProduct({ product, index }: { product: ProductVignette; index: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: "-5%" });
+
+  const waUrl = "https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(
+    "I am interested in " + product.name + " by NOREVA."
+  );
 
   return (
     <motion.div
@@ -70,15 +44,23 @@ function ProductCard({ product, index, onImageLoad }: { product: ProductVignette
         delay: index * 0.1,
         ease: [0.25, 0.46, 0.45, 0.94],
       }}
-      className="flex-shrink-0 w-[80vw] sm:w-[55vw] md:w-[30vw] lg:w-[22vw]"
+      className="flex-shrink-0 w-[80vw] sm:w-[55vw] md:w-[30vw] lg:w-[22vw] max-w-[320px]"
     >
-      <Link href="/products" className="block">
-        {/* Image — square, studio light feeling */}
-        <div className="img-zoom overflow-hidden mb-7 aspect-square">
-          <div
-            className="w-full h-full transition-transform duration-700 ease-out group-hover:scale-[1.03]"
-            style={{ background: product.bg }}
-          />
+      <Link href={"/products/" + product.id} className="block group">
+        {/* Image — square, with real product image */}
+        <div className="img-zoom overflow-hidden mb-7 aspect-square bg-[#F0EFED]">
+          {product.image ? (
+            <img 
+              src={product.image} 
+              alt={product.name}
+              className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]" 
+            />
+          ) : (
+            <div 
+              className="w-full h-full transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+              style={{ background: product.bg }}
+            />
+          )}
         </div>
 
         {/* Text */}
@@ -97,7 +79,7 @@ function ProductCard({ product, index, onImageLoad }: { product: ProductVignette
           </p>
 
           <span className="cta-link">
-            View Collection
+            View Details
             <svg width="20" height="1" viewBox="0 0 20 1" fill="none" aria-hidden="true">
               <line x1="0" y1="0.5" x2="20" y2="0.5" stroke="#C9A96E" />
             </svg>
@@ -111,6 +93,41 @@ function ProductCard({ product, index, onImageLoad }: { product: ProductVignette
 export default function ProductVignettes() {
   const ref = useRef<HTMLElement>(null);
   const inView = useInView(ref, { once: true, margin: "-10%" });
+  const [products, setProducts] = useState<ProductVignette[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/products")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data) && data.length > 0) {
+          // Take up to 4 products
+          const featured = data.slice(0, 4).map((p: Product) => ({
+            id: p.id,
+            name: p.name,
+            tagline: p.description || "",
+            category: p.categoryName || p.category,
+            bg: "linear-gradient(135deg, #E8E6E2 0%, #D8D6D2 100%)",
+            image: p.mainImage,
+          }));
+          setProducts(featured);
+        }
+        setLoading(false);
+      })
+      .catch(() => {
+        setLoading(false);
+      });
+  }, []);
+
+  // Default placeholders if no products
+  const defaultProducts: ProductVignette[] = [
+    { id: "1", name: "Le Sac Nerveux", tagline: "The everyday carry.", category: "Bags", bg: "linear-gradient(135deg, #D8D0C4 0%, #C8BFB1 100%)" },
+    { id: "2", name: "Calibre 01", tagline: "Time, reconsidered.", category: "Watches", bg: "linear-gradient(135deg, #C8C4BC 0%, #B8B4AC 100%)" },
+    { id: "3", name: "La Marche", tagline: "Crafted in Florence.", category: "Shoes", bg: "linear-gradient(135deg, #D0C8BC 0%, #C0B8AC 100%)" },
+    { id: "4", name: "L'Anneau", tagline: "A single, quiet statement.", category: "Accessories", bg: "linear-gradient(135deg, #D4CEC8 0%, #C4BEB8 100%)" },
+  ];
+
+  const displayProducts = loading ? defaultProducts : (products.length > 0 ? products : defaultProducts);
 
   return (
     <section
@@ -147,17 +164,14 @@ export default function ProductVignettes() {
         </div>
       </motion.div>
 
-      {/* Horizontal scroll */}
-      <div className="pl-8 md:pl-16">
-        <div
-          className="flex gap-10 md:gap-16 overflow-x-auto pb-4"
-          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-        >
-          {vignetteCategories.map((p, i) => (
-            <ProductCard key={p.id} product={p} index={i} />
+      {/* Horizontal scroll - fixed layout */}
+      <div className="pl-8 md:pl-16 pr-8 md:pr-16">
+        <div className="flex gap-8 md:gap-12 overflow-x-auto pb-4">
+          {displayProducts.map((p, i) => (
+            <FeaturedProduct key={p.id} product={p} index={i} />
           ))}
           {/* Trailing breathe space */}
-          <div className="flex-shrink-0 w-8 md:w-16" />
+          <div className="flex-shrink-0 w-0 md:w-8" />
         </div>
       </div>
 
