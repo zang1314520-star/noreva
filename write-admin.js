@@ -1,7 +1,6 @@
-# -*- coding: utf-8 -*-
-import os
+const fs = require('fs');
 
-content = '''"use client";
+let content = `"use client";
 
 import { useState, useEffect, useCallback } from "react";
 
@@ -145,4 +144,5 @@ export default function AdminPage() {
         
         {tab === "config" && (
           <div className="bg-white rounded-xl p-6 shadow-sm">
-            <h2 className="text-lg font-medium mb-4">Whats
+            <h2 className="text-lg font-medium mb-4">WhatsApp</h2>
+            <input value={

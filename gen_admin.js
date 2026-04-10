@@ -1,7 +1,6 @@
-# -*- coding: utf-8 -*-
-import os
+const fs = require('fs');
 
-content = '''"use client";
+const content = `"use client";
 
 import { useState, useEffect, useCallback } from "react";
 
@@ -16,7 +15,6 @@ interface ProductSpec {
 interface Product {
   id: string;
   name: string;
-  nameCn?: string;
   category: string;
   categoryName: string;
   price: number;
@@ -27,6 +25,9 @@ interface Product {
   detailImages: string[];
 }
 
+const COLORS = ["White", "Black", "Beige", "Brown", "Navy", "Red", "Pink", "Green", "Blue", "Yellow", "Gray", "Gold", "Silver"];
+const SIZES = ["XS", "S", "M", "L", "XL", "XXL"];
+
 export default function AdminPage() {
   const [tab, setTab] = useState("products");
   const [config, setConfig] = useState<any>({});
@@ -34,23 +35,13 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true);
   const [msg, setMsg] = useState("");
   const [uploading, setUploading] = useState(false);
-
-  const [newP, setNewP] = useState<Partial<Product>>({
-    name: "", category: "clothing", price: 0, mainImage: "", specs: [], detailImages: [], description: "",
-  });
-
+  const [newP, setNewP] = useState<Partial<Product>>({ name: "", category: "clothing", price: 0, mainImage: "", specs: [], detailImages: [], description: "" });
   const [newSpec, setNewSpec] = useState<ProductSpec>({ id: "", color: "", size: "", image: "", stock: 99 });
-
-  const COLORS = ["White", "Black", "Beige", "Brown", "Navy", "Red", "Pink", "Green", "Blue", "Yellow", "Orange", "Purple", "Gray", "Gold", "Silver"];
-  const SIZES = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"];
 
   useEffect(() => { loadData(); }, []);
 
   async function loadData() {
-    const [c, p] = await Promise.all([
-      fetch("/api/config").then((r) => r.json()),
-      fetch("/api/products").then((r) => r.json()),
-    ]);
+    const [c, p] = await Promise.all([fetch("/api/config").then((r) => r.json()), fetch("/api/products").then((r) => r.json())]);
     setConfig(c); setProducts(p || []); setLoading(false);
   }
 
@@ -121,8 +112,8 @@ export default function AdminPage() {
     else setMsg("Error"); setTimeout(() => setMsg(""), 3000);
   }
 
-  function editProduct(p: Product) { setNewP(p); setMsg("Editing product"); setTimeout(() => setMsg(""), 3000); }
-  async function deleteProduct(id: string) { if (!confirm("Delete?")) return; await fetch("/api/products", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) }); setMsg("Deleted"); loadData(); setTimeout(() => setMsg(""), 3000); }
+  function editProduct(p: Product) { setNewP(p); }
+  async function deleteProduct(id: string) { if (!confirm("Delete?")) return; await fetch("/api/products", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) }); loadData(); }
   function resetForm() { setNewP({ name: "", category: "clothing", price: 0, mainImage: "", specs: [], detailImages: [], description: "" }); setNewSpec({ id: "", color: "", size: "", image: "", stock: 99 }); }
 
   if (loading) return <div className="min-h-screen bg-gray-100 p-8">Loading...</div>;
@@ -133,9 +124,9 @@ export default function AdminPage() {
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <h1 className="text-xl font-light">NOREVA Admin</h1>
           <div className="flex gap-6 text-sm">
-            <button onClick={() => setTab("config")} className={tab === "config" ? "text-white" : "text-gray-400"}>Site Config</button>
+            <button onClick={() => setTab("config")} className={tab === "config" ? "text-white" : "text-gray-400"}>Site</button>
             <button onClick={() => setTab("products")} className={tab === "products" ? "text-white" : "text-gray-400"}>Products ({products.length})</button>
-            <a href="/" target="_blank" className="text-gray-400">View Site</a>
+            <a href="/" target="_blank" className="text-gray-400">View</a>
           </div>
         </div>
       </header>
@@ -145,4 +136,6 @@ export default function AdminPage() {
         
         {tab === "config" && (
           <div className="bg-white rounded-xl p-6 shadow-sm">
-            <h2 className="text-lg font-medium mb-4">Whats
+            <h2 className="text-lg font-medium mb-4">WhatsApp</h2>
+            <input value={config.whatsapp?.number || ""} onChange={(e) => setConfig({ ...config, whatsapp: { ...config.whatsapp, number: e.target.value } })} className="w-full p-3 border rounded-lg" />
+            <button onClick={save
