@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Navigation from "@/components/Navigation";
+import Footer from "@/components/Footer";
 
 interface Product {
   id: string;
@@ -12,16 +14,16 @@ interface Product {
   price: number;
   currency: string;
   description: string;
-  image: string;
+  mainImage: string;
 }
 
 const CATEGORIES = [
-  { key: "all", name: "All", nameCn: "全部" },
-  { key: "clothing", name: "Clothing", nameCn: "衣服" },
-  { key: "pants", name: "Pants", nameCn: "裤子" },
-  { key: "bags", name: "Bags", nameCn: "包包" },
-  { key: "watches", name: "Watches", nameCn: "手表" },
-  { key: "jewelry", name: "Jewelry", nameCn: "首饰" },
+  { key: "all", name: "Shop All" },
+  { key: "bags", name: "Bags" },
+  { key: "clothing", name: "Clothing" },
+  { key: "watches", name: "Watches" },
+  { key: "pants", name: "Pants" },
+  { key: "jewelry", name: "Jewelry" },
 ];
 
 export default function ProductsPage() {
@@ -42,46 +44,39 @@ export default function ProductsPage() {
     ? products
     : products.filter((p) => p.category === activeCategory);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-500">Loading...</p>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-white">
-      {/* Header */}
-      <header className="bg-[#1A1A1A] text-white py-6 px-8">
-        <div className="max-w-6xl mx-auto">
-          <Link href="/" className="font-display text-2xl tracking-wider">
-            NOREVA
-          </Link>
-        </div>
-      </header>
+    <main className="relative bg-[#FAFAFA] min-h-screen">
+      {/* Navigation */}
+      <Navigation />
 
-      {/* Hero */}
-      <section className="py-16 px-8 text-center">
-        <h1 className="font-display text-4xl md:text-5xl font-light mb-4">The Objects</h1>
-        <p className="text-gray-600 font-body">Carefully crafted. Made to last.</p>
+      {/* Hero Section */}
+      <section className="pt-32 pb-16 px-8 md:px-16 text-center">
+        <div className="max-w-3xl mx-auto">
+          <span className="label text-[#8A8A8A] block mb-4">Collection</span>
+          <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-light mb-6">
+            The Objects
+          </h1>
+          <p className="font-body text-[#8A8A8A] text-base md:text-lg leading-relaxed">
+            Carefully chosen. Made to last.
+          </p>
+        </div>
       </section>
 
-      {/* Categories */}
-      <section className="px-8 mb-12">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex flex-wrap gap-4 justify-center">
+      {/* Categories Filter */}
+      <section className="px-8 md:px-16 mb-16">
+        <div className="max-w-5xl mx-auto">
+          <div className="flex flex-wrap gap-2 md:gap-4 justify-center">
             {CATEGORIES.map((cat) => (
               <button
                 key={cat.key}
                 onClick={() => setActiveCategory(cat.key)}
-                className={`px-6 py-2 text-sm tracking-wider transition-colors ${
+                className={`font-body text-xs md:text-sm tracking-[0.2em] uppercase px-4 md:px-6 py-2 transition-all duration-300 ${
                   activeCategory === cat.key
                     ? "bg-[#1A1A1A] text-white"
-                    : "bg-transparent text-gray-600 hover:text-gray-900"
+                    : "bg-transparent text-[#8A8A8A] hover:text-[#1A1A1A] border border-[#E8E6E2]"
                 }`}
               >
-                {cat.nameCn} / {cat.name}
+                {cat.name}
               </button>
             ))}
           </div>
@@ -89,40 +84,53 @@ export default function ProductsPage() {
       </section>
 
       {/* Products Grid */}
-      <section className="px-8 pb-20">
-        <div className="max-w-6xl mx-auto">
-          {filteredProducts.length === 0 ? (
-            <div className="text-center py-20">
-              <p className="text-gray-500">No products yet.</p>
+      <section className="px-8 md:px-16 pb-24">
+        <div className="max-w-7xl mx-auto">
+          {loading ? (
+            <div className="text-center py-32">
+              <p className="font-body text-[#8A8A8A]">Loading...</p>
+            </div>
+          ) : filteredProducts.length === 0 ? (
+            <div className="text-center py-32">
+              <p className="font-body text-[#8A8A8A]">No products in this collection yet.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
               {filteredProducts.map((product) => (
                 <Link
                   key={product.id}
                   href={`/products/${product.id}`}
                   className="group block"
                 >
-                  <div className="aspect-square overflow-hidden bg-gray-100 mb-4">
-                    {product.image ? (
+                  {/* Image */}
+                  <div className="aspect-[4/5] overflow-hidden bg-[#F0EFED] mb-6 relative">
+                    {product.mainImage ? (
                       <img
-                        src={product.image}
+                        src={product.mainImage}
                         alt={product.name}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                       />
                     ) : (
-                      <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                        <span className="text-gray-400">No Image</span>
-                      </div>
+                      <div className="w-full h-full bg-[#E8E6E2]" />
                     )}
+                    {/* Hover overlay */}
+                    <div className="absolute inset-0 bg-[#1A1A1A]/0 group-hover:bg-[#1A1A1A]/10 transition-colors duration-500" />
                   </div>
+                  
+                  {/* Info */}
                   <div className="text-center">
-                    <span className="label text-[#A8A4A0] block mb-2">{product.categoryName}</span>
-                    <h3 className="font-display text-xl mb-1">{product.name}</h3>
+                    <span className="label text-[#A8A4A0] block mb-2 text-xs">
+                      {product.categoryName}
+                    </span>
+                    <h2 className="font-display text-xl md:text-2xl font-light mb-1 text-[#1A1A1A]">
+                      {product.name}
+                    </h2>
                     {product.nameCn && (
-                      <p className="text-gray-500 text-sm mb-2">{product.nameCn}</p>
+                      <p className="font-body text-sm text-[#8A8A8A] mb-3">
+                        {product.nameCn}
+                      </p>
                     )}
-                    <p className="text-[#C9A96E]">
+                    <p className="font-body text-sm text-[#C9A96E] tracking-wide">
                       €{product.price.toLocaleString()}
                     </p>
                   </div>
@@ -133,15 +141,20 @@ export default function ProductsPage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-[#1A1A1A] text-white py-8 px-8">
-        <div className="max-w-6xl mx-auto text-center">
-          <Link href="/" className="font-display text-xl tracking-wider">
-            NOREVA
-          </Link>
-          <p className="text-gray-500 text-sm mt-2">Quiet refinement. Timeless objects.</p>
+      {/* Quote Section */}
+      <section className="px-8 md:px-16 py-20 bg-[#1A1A1A]">
+        <div className="max-w-2xl mx-auto text-center">
+          <p className="font-display text-2xl md:text-3xl text-white italic leading-relaxed">
+            "Each piece begins with a conversation."
+          </p>
+          <p className="font-body text-[#8A8A8A] text-sm mt-6 tracking-widest uppercase">
+            — Maison NOREVA
+          </p>
         </div>
-      </footer>
-    </div>
+      </section>
+
+      {/* Footer */}
+      <Footer />
+    </main>
   );
 }
