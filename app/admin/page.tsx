@@ -6,8 +6,9 @@ interface Spec { id: string; color: string; size: string; image: string; stock: 
 interface Product { id: string; name: string; nameCn?: string; category: string; categoryName: string; price: number; currency: string; description: string; descriptionCn?: string; mainImage: string; specs: Spec[]; detailImages: string[]; }
 
 const COLORS_CN = ["白色","黑色","米色","棕色","藏蓝","红色","粉色","绿色","蓝色","黄色","灰色","金色","银色"];
-const COLORS = ["White","Black","Beige","Brown","Navy","Red","Pink","Green","Blue","Yellow","Gray","Gold","Silver"];
-const SIZES = ["XS","S","M","L","XL","XXL"];
+const COLORS_EN = ["White","Black","Beige","Brown","Navy","Red","Pink","Green","Blue","Yellow","Gray","Gold","Silver"];
+const SIZES_CN = ["XS","S","M","L","XL","XXL"];
+const SIZES_EN = ["XS","S","M","L","XL","XXL"];
 
 // Translations
 const T = {
@@ -33,7 +34,9 @@ const T = {
     specImages: "规格图片",
     specImagesTip: "颜色+尺码组合的图片",
     color: "颜色",
+    colorTip: "选择颜色",
     size: "尺码",
+    sizeTip: "选择尺码",
     stock: "库存",
     image: "图片",
     add: "添加",
@@ -79,7 +82,9 @@ const T = {
     specImages: "Spec Images",
     specImagesTip: "Color + Size variant images",
     color: "Color",
+    colorTip: "Select color",
     size: "Size",
+    sizeTip: "Select size",
     stock: "Stock",
     image: "Image",
     add: "Add",
@@ -117,12 +122,13 @@ export default function AdminPage() {
   const [msg, setMsg] = useState("");
   const [uploading, setUploading] = useState(false);
   const [newP, setNewP] = useState<Partial<Product>>({ name: "", nameCn: "", category: "clothing", price: 0, mainImage: "", specs: [], detailImages: [], description: "", descriptionCn: "" });
-  const [newSpec, setNewSpec] = useState<Spec>({ id: "", color: COLORS[0], size: SIZES[0], image: "", stock: 99 });
+  const [newSpec, setNewSpec] = useState<Spec>({ id: "", color: "白色", size: "S", image: "", stock: 99 });
   const [translating, setTranslating] = useState(false);
 
   const t = T[lang];
   const categories = lang === "cn" ? CATEGORIES_CN : CATEGORIES_EN;
-  const colorOptions = lang === "cn" ? COLORS_CN : COLORS;
+  const colorOptions = lang === "cn" ? COLORS_CN : COLORS_EN;
+  const sizeOptions = lang === "cn" ? SIZES_CN : SIZES_EN;
 
   useEffect(() => { loadData(); }, []);
 
@@ -236,7 +242,7 @@ export default function AdminPage() {
 
   function edit(p: Product) { setNewP(p); }
   async function del(id: string) { if (!confirm("Delete?")) return; await fetch("/api/products", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) }); loadData(); }
-  function reset() { setNewP({ name: "", nameCn: "", category: "clothing", price: 0, mainImage: "", specs: [], detailImages: [], description: "", descriptionCn: "" }); setNewSpec({ id: "", color: COLORS[0], size: SIZES[0], image: "", stock: 99 }); }
+  function reset() { setNewP({ name: "", nameCn: "", category: "clothing", price: 0, mainImage: "", specs: [], detailImages: [], description: "", descriptionCn: "" }); setNewSpec({ id: "", color: lang === "cn" ? "白色" : "White", size: "S", image: "", stock: 99 }); }
 
   if (loading) return <div className="min-h-screen bg-gray-100 p-8">Loading...</div>;
 
@@ -305,28 +311,11 @@ export default function AdminPage() {
                   <h3 className="font-medium mb-4">{t.specImages}</h3>
                   <p className="text-sm text-gray-500 mb-2">{t.specImagesTip}</p>
                   <div className="grid grid-cols-4 gap-4 mb-4">
-                    <div><label className="text-sm text-gray-600">{t.color}</label><select value={newSpec.color} onChange={e=>setNewSpec({...newSpec,color:e.target.value})} className="w-full p-2 border rounded"><option value="">Select</option>
-<option value="White">White</option>
-<option value="Black">Black</option>
-<option value="Beige">Beige</option>
-<option value="Brown">Brown</option>
-<option value="Navy">Navy</option>
-<option value="Red">Red</option>
-<option value="Pink">Pink</option>
-<option value="Green">Green</option>
-<option value="Blue">Blue</option>
-<option value="Yellow">Yellow</option>
-<option value="Gray">Gray</option>
-<option value="Gold">Gold</option>
-<option value="Silver">Silver</option>
+                    <div><label className="text-sm text-gray-600">{t.colorTip || t.color}</label><select value={newSpec.color} onChange={e=>setNewSpec({...newSpec,color:e.target.value})} className="w-full p-2 border rounded"><option value="">Select</option>
+{colorOptions.map((c,i)=><option key={c} value={lang==="cn"?COLORS_CN[i]:COLORS_EN[i]}>{c}</option>)}
 </select></div>
-                    <div><label className="text-sm text-gray-600">{t.size}</label><select value={newSpec.size} onChange={e=>setNewSpec({...newSpec,size:e.target.value})} className="w-full p-2 border rounded"><option value="">Select</option>
-<option value="XS">XS</option>
-<option value="S">S</option>
-<option value="M">M</option>
-<option value="L">L</option>
-<option value="XL">XL</option>
-<option value="XXL">XXL</option>
+                    <div><label className="text-sm text-gray-600">{t.sizeTip || t.size}</label><select value={newSpec.size} onChange={e=>setNewSpec({...newSpec,size:e.target.value})} className="w-full p-2 border rounded"><option value="">Select</option>
+{sizeOptions.map(s=><option key={s} value={s}>{s}</option>)}
 </select></div>
                     <div><label className="text-sm text-gray-600">{t.stock}</label><input type="number" value={newSpec.stock} onChange={e=>setNewSpec({...newSpec,stock:Number(e.target.value)})} className="w-full p-2 border rounded" /></div>
                     <div><label className="text-sm text-gray-600">{t.image}</label><div onClick={()=>document.getElementById("specInput")?.click()} className="p-2 border rounded cursor-pointer truncate">{newSpec.image ? t.selected : t.select}</div><input id="specInput" type="file" accept="image/*" onChange={e=>handleUpload(e,"spec")} className="hidden" /></div>
