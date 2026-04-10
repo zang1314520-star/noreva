@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 export default function AdminPage() {
   const [tab, setTab] = useState("products");
@@ -8,6 +8,7 @@ export default function AdminPage() {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [msg, setMsg] = useState("");
+  const [uploading, setUploading] = useState(false);
   const [newP, setNewP] = useState({
     name: "",
     category: "clothing",
@@ -37,6 +38,60 @@ export default function AdminPage() {
       body: JSON.stringify(config),
     });
     setMsg(r.ok ? "Saved!" : "Error");
+    setTimeout(() => setMsg(""), 2000);
+  }
+
+  const uploadImage = useCallback(async (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = async () => {
+        setUploading(true);
+        try {
+          const res = await fetch("/api/upload", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ image: reader.result }),
+          });
+          const data = await res.json();
+          if (data.success) resolve(data.url);
+          else reject(new Error("Failed"));
+        } catch { reject(new Error("Failed")); }
+        setUploading(false);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }, []);
+
+  async function handleDrop(e: React.DragEvent) {
+    e.preventDefault();
+    setUploading(false);
+    const file = e.dataTransfer.files[0];
+    if (!file?.type.startsWith("image/")) {
+      setMsg("Please upload image file");
+      setTimeout(() => setMsg(""), 2000);
+      return;
+    }
+    try {
+      const url = await uploadImage(file);
+      setNewP((p) => ({ ...p, image: url }));
+      setMsg("Image uploaded!");
+    } catch {
+      setMsg("Upload failed");
+    }
+    setTimeout(() => setMsg(""), 2000);
+  }
+
+  async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const url = await uploadImage(file);
+      setNewP((p) => ({ ...p, image: url }));
+      setMsg("Image uploaded!");
+    } catch {
+      setMsg("Upload failed");
+    }
     setTimeout(() => setMsg(""), 2000);
   }
 
@@ -110,6 +165,9 @@ export default function AdminPage() {
         {msg && (
           <div className="mb-4 p-3 bg-green-100 rounded-lg text-center">{msg}</div>
         )}
+        {uploading && (
+          <div className="mb-4 p-3 bg-yellow-100 rounded-lg text-center">Uploading image...</div>
+        )}
 
         {tab === "config" && (
           <div className="space-y-6">
@@ -174,30 +232,36 @@ export default function AdminPage() {
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                <div>
-                  <label className="text-sm text-gray-600">Image URL</label>
-                  <input
-                    type="text"
-                    value={newP.image}
-                    onChange={(e) => setNewP({ ...newP, image: e.target.value })}
-                    className="w-full p-2 border rounded-lg"
-                    placeholder="https://..."
-                  />
+              <div className="mb-4">
+                <label className="text-sm text-gray-600">Image - Drag & drop or click to upload (auto WebP)</label>
+                <div
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={handleDrop}
+                  onClick={() => document.getElementById("fileInput")?.click()}
+                  className="w-full h-32 border-2 border-dashed rounded-lg flex items-center justify-center cursor-pointer hover:border-[#C9A96E] transition-colors"
+                >
+                  {newP.image ? (
+                    <img src={newP.image} alt="" className="h-28 object-contain" />
+                  ) : (
+                    <span className="text-gray-400">Drop image here or click to upload</span>
+                  )}
                 </div>
-                <div>
-                  <label className="text-sm text-gray-600">Description</label>
-                  <input
-                    type="text"
-                    value={newP.description}
-                    onChange={(e) => setNewP({ ...newP, description: e.target.value })}
-                    className="w-full p-2 border rounded-lg"
-                  />
-                </div>
+                <input
+                  id="fileInput"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFile}
+                  className="hidden"
+                />
               </div>
-              {newP.image && (
-                <img src={newP.image} alt="Preview" className="w-24 h-24 object-cover mb-4 rounded" />
-              )}
+              <div>
+                <label className="text-sm text-gray-600">Description</label>
+                <textarea
+                  value={newP.description}
+                  onChange={(e) => setNewP({ ...newP, description: e.target.value })}
+                  className="w-full p-2 border rounded-lg h-20 resize-none"
+                />
+              </div>
               <button
                 onClick={addPro}
                 className="bg-[#1A1A1A] text-white px-6 py-3 rounded-lg hover:bg-[#C9A96E] transition"
