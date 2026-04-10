@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 
 const navLeft = [
+  { label: "Shop", href: "/products" },
   { label: "Collections", href: "#collections" },
   { label: "World", href: "#world" },
 ];

@@ -4,10 +4,11 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 
 const collections = [
-  { label: "Womenswear", href: "#" },
-  { label: "Menswear", href: "#" },
-  { label: "Objects", href: "#" },
-  { label: "Accessories", href: "#" },
+  { label: "Shop All", href: "/products" },
+  { label: "Bags", href: "/products?category=bags" },
+  { label: "Clothing", href: "/products?category=clothing" },
+  { label: "Watches", href: "/products?category=watches" },
+  { label: "Pants", href: "/products?category=pants" },
 ];
 
 const info = [
