@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a1a"/>
+      <stop offset="100%" style="stop-color:#252525"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#c9a96e"/>
+      <stop offset="100%" style="stop-color:#8b7355"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="1000" fill="url(#bg)"/>
+  <!-- Elegant dress silhouette -->
+  <g transform="translate(250, 180)" opacity="0.9">
+    <!-- Dress body -->
+    <path d="M150 0 L150 100 Q120 150 100 200 L50 400 Q40 500 60 600 L60 700 Q100 750 200 750 Q300 750 340 700 L340 600 Q360 500 350 400 L300 200 Q280 150 250 100 L250 0 Z" fill="none" stroke="url(#gold)" stroke-width="2"/>
+    <!-- Neckline -->
+    <ellipse cx="200" cy="30" rx="60" ry="25" fill="none" stroke="url(#gold)" stroke-width="2"/>
+    <!-- Waist detail -->
+    <line x1="120" y1="180" x2="280" y2="180" stroke="url(#gold)" stroke-width="1" opacity="0.7"/>
+    <!-- Belt suggestion -->
+    <ellipse cx="200" cy="185" rx="90" ry="15" fill="none" stroke="url(#gold)" stroke-width="1.5"/>
+  </g>
+  <!-- Decorative elements -->
+  <line x1="100" y1="850" x2="700" y2="850" stroke="url(#gold)" stroke-width="0.5" opacity="0.5"/>
+  <text x="400" y="900" font-family="Georgia, serif" font-size="24" fill="#c9a96e" text-anchor="middle" letter-spacing="8">NOREVA</text>
+  <text x="400" y="940" font-family="Georgia, serif" font-size="12" fill="#666" text-anchor="middle" letter-spacing="4">SS 2026</text>
+</svg>

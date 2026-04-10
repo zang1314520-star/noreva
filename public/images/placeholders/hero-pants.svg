@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a1a"/>
+      <stop offset="100%" style="stop-color:#232323"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#c9a96e"/>
+      <stop offset="100%" style="stop-color:#8b7355"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="1000" fill="url(#bg)"/>
+  <!-- Pants silhouette -->
+  <g transform="translate(200, 150)" opacity="0.9">
+    <!-- Waistband -->
+    <rect x="50" y="0" width="300" height="40" rx="3" fill="none" stroke="url(#gold)" stroke-width="2"/>
+    <!-- Left leg -->
+    <path d="M60 40 L60 600 Q60 650 100 680 L100 750 Q100 780 130 780 L180 780 Q200 780 200 750 L200 700 L200 40 Z" fill="none" stroke="url(#gold)" stroke-width="2"/>
+    <!-- Right leg -->
+    <path d="M340 40 L340 600 Q340 650 300 680 L300 750 Q300 780 270 780 L220 780 Q200 780 200 750 L200 700 L200 40 Z" fill="none" stroke="url(#gold)" stroke-width="2"/>
+    <!-- Center seam -->
+    <line x1="200" y1="40" x2="200" y2="700" stroke="url(#gold)" stroke-width="1" opacity="0.5"/>
+    <!-- Belt loops -->
+    <rect x="80" y="0" width="8" height="35" fill="none" stroke="url(#gold)" stroke-width="1"/>
+    <rect x="160" y="0" width="8" height="35" fill="none" stroke="url(#gold)" stroke-width="1"/>
+    <rect x="232" y="0" width="8" height="35" fill="none" stroke="url(#gold)" stroke-width="1"/>
+    <rect x="312" y="0" width="8" height="35" fill="none" stroke="url(#gold)" stroke-width="1"/>
+    <!-- Pocket hints -->
+    <path d="M70 60 Q100 80 130 60" fill="none" stroke="url(#gold)" stroke-width="1" opacity="0.6"/>
+    <path d="M270 60 Q300 80 330 60" fill="none" stroke="url(#gold)" stroke-width="1" opacity="0.6"/>
+  </g>
+  <!-- Decorative -->
+  <line x1="100" y1="820" x2="700" y2="820" stroke="url(#gold)" stroke-width="0.5" opacity="0.5"/>
+  <text x="400" y="880" font-family="Georgia, serif" font-size="20" fill="#c9a96e" text-anchor="middle" letter-spacing="6">NOREVA</text>
+  <text x="400" y="920" font-family="Georgia, serif" font-size="12" fill="#666" text-anchor="middle" letter-spacing="4">TAILORED</text>
+</svg>

@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a1a"/>
+      <stop offset="100%" style="stop-color:#222222"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#c9a96e"/>
+      <stop offset="100%" style="stop-color:#8b7355"/>
+    </linearGradient>
+    <linearGradient id="silver" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#d4d4d4"/>
+      <stop offset="100%" style="stop-color:#a0a0a0"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="1000" fill="url(#bg)"/>
+  <!-- Watch face -->
+  <g transform="translate(250, 250)">
+    <!-- Watch case -->
+    <circle cx="150" cy="200" r="180" fill="none" stroke="url(#gold)" stroke-width="8"/>
+    <circle cx="150" cy="200" r="165" fill="none" stroke="url(#silver)" stroke-width="2"/>
+    <!-- Watch face -->
+    <circle cx="150" cy="200" r="155" fill="#0a0a0a"/>
+    <!-- Hour markers -->
+    <g stroke="url(#gold)" stroke-width="2">
+      <line x1="150" y1="55" x2="150" y2="70"/>
+      <line x1="150" y1="330" x2="150" y2="345"/>
+      <line x1="5" y1="200" x2="20" y2="200"/>
+      <line x1="280" y1="200" x2="295" y2="200"/>
+    </g>
+    <!-- Small markers -->
+    <g stroke="url(#gold)" stroke-width="1" opacity="0.5">
+      <line x1="195" y1="70" x2="190" y2="82"/>
+      <line x1="255" y1="120" x2="243" y2="128"/>
+      <line x1="280" y1="200" x2="268" y2="200"/>
+      <line x1="255" y1="280" x2="243" y2="272"/>
+      <line x1="105" y1="70" x2="110" y2="82"/>
+      <line x1="45" y1="120" x2="57" y2="128"/>
+      <line x1="20" y1="200" x2="32" y2="200"/>
+      <line x1="45" y1="280" x2="57" y2="272"/>
+    </g>
+    <!-- Hour hand -->
+    <line x1="150" y1="200" x2="150" y2="100" stroke="url(#gold)" stroke-width="4" stroke-linecap="round"/>
+    <!-- Minute hand -->
+    <line x1="150" y1="200" x2="220" y2="150" stroke="url(#gold)" stroke-width="2" stroke-linecap="round"/>
+    <!-- Center -->
+    <circle cx="150" cy="200" r="8" fill="url(#gold)"/>
+    <!-- Brand -->
+    <text x="150" y="270" font-family="Georgia, serif" font-size="10" fill="#c9a96e" text-anchor="middle" letter-spacing="3">NOREVA</text>
+    <!-- Strap top -->
+    <rect x="100" y="-80" width="100" height="80" rx="5" fill="none" stroke="url(#gold)" stroke-width="3"/>
+    <!-- Strap bottom -->
+    <rect x="100" y="400" width="100" height="80" rx="5" fill="none" stroke="url(#gold)" stroke-width="3"/>
+  </g>
+  <!-- Text -->
+  <text x="400" y="880" font-family="Georgia, serif" font-size="18" fill="#c9a96e" text-anchor="middle" letter-spacing="6">CALIBRE 01</text>
+</svg>
