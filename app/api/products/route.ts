@@ -6,6 +6,14 @@ const redis = new Redis({
   token: process.env.UPSTASH_REDIS_REST_TOKEN!,
 });
 
+export interface ProductSpec {
+  id: string;
+  color: string;
+  size: string;
+  image: string;
+  stock: number;
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -16,8 +24,9 @@ export interface Product {
   currency: string;
   description: string;
   descriptionCn?: string;
-  image: string;
-  images: string[];
+  mainImage: string;  // 主图
+  specs: ProductSpec[];  // 规格图
+  detailImages: string[];  // 详情图
   featured?: boolean;
   createdAt: string;
 }
@@ -40,6 +49,10 @@ export async function POST(request: Request) {
   try {
     const product = await request.json();
     const products: Product[] = await redis.get("products") || [];
+    
+    // Ensure specs array exists
+    if (!product.specs) product.specs = [];
+    if (!product.detailImages) product.detailImages = [];
     
     // Update or add product
     const index = products.findIndex(p => p.id === product.id);
