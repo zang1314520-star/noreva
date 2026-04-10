@@ -1,4 +1,7 @@
-"use client";
+const fs = require('fs');
+const path = require('path');
+
+const content = `"use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -109,6 +112,7 @@ export default function ProductDetailPage() {
   return (
     <main className="relative bg-[#FAFAFA] min-h-screen">
       <Navigation />
+
       <section className="pt-24 pb-6 px-8 md:px-16">
         <div className="max-w-7xl mx-auto">
           <Link href="/products" className="font-body text-xs text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors tracking-wider uppercase">
@@ -116,6 +120,7 @@ export default function ProductDetailPage() {
           </Link>
         </div>
       </section>
+
       <section className="px-8 md:px-16 pb-24">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
@@ -129,6 +134,7 @@ export default function ProductDetailPage() {
                   </div>
                 )}
               </div>
+
               {product.specs && product.specs.length > 0 && (
                 <div className="mb-4">
                   <span className="label text-[#8A8A8A] block mb-3">Specifications</span>
@@ -159,52 +165,44 @@ export default function ProductDetailPage() {
                   </div>
                 </div>
               )}
+
+              {product.detailImages && product.detailImages.length > 0 && (
+                <div>
+                  <span className="label text-[#8A8A8A] block mb-3">Details</span>
+                  <div className="flex gap-3 flex-wrap">
+                    {product.detailImages.map((img, idx) => (
+                      <div key={idx} className="w-24 h-24 overflow-hidden border border-[#E8E6E2]">
+                        <img src={img} alt="" className="w-full h-full object-cover" />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
+
             <div className="lg:py-8">
               <span className="label text-[#A8A4A0] block mb-4">{product.categoryName}</span>
-              <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-light text-[#1A1A1A] mb-2">{product.name}</h1>
-              {product.nameCn && <p className="font-body text-lg text-[#8A8A8A] mb-6">{product.nameCn}</p>}
-              <p className="font-display text-2xl text-[#C9A96E] mb-8 tracking-wide">EUR{product.price.toLocaleString()}</p>
+              <h1 className="font-display text-3xl md:text-4xl lg:text-5xl font-light text-[#1A1A1A] mb-2">
+                {product.name}
+              </h1>
+              {product.nameCn && (
+                <p className="font-body text-lg text-[#8A8A8A] mb-6">{product.nameCn}</p>
+              )}
+              <p className="font-display text-2xl text-[#C9A96E] mb-8 tracking-wide">
+                EUR{product.price.toLocaleString()}
+              </p>
+
               <p className="font-body text-[#8A8A8A] leading-relaxed mb-10">
                 {product.description}
-                {product.descriptionCn && <><br /><span className="text-[#A8A4A0]">{product.descriptionCn}</span></>}
+                {product.descriptionCn && (
+                  <><br /><span className="text-[#A8A4A0]">{product.descriptionCn}</span></>
+                )}
               </p>
+
               {colors.length > 0 && (
                 <div className="mb-6">
-                  <span className="label text-[#8A8A8A] block mb-3">Color {selectedColor && <span className="text-[#1A1A1A] normal-case tracking-normal"> - {selectedColor}</span>}</span>
+                  <span className="label text-[#8A8A8A] block mb-3">
+                    Color {selectedColor && <span className="text-[#1A1A1A] normal-case tracking-normal"> — {selectedColor}</span>}
+                  </span>
                   <div className="flex gap-3">
-                    {colors.map(color => (
-                      <button key={color} onClick={() => setSelectedColor(color)} className={"px-4 py-2 border " + (selectedColor === color ? "border-[#C9A96E] bg-[#C9A96E]/5" : "border-[#E8E6E2] hover:border-[#C9A96E]")}>{color}</button>
-                    ))}
-                  </div>
-                </div>
-              )}
-              {sizes.length > 0 && (
-                <div className="mb-10">
-                  <span className="label text-[#8A8A8A] block mb-3">Size {selectedSize && <span className="text-[#1A1A1A] normal-case tracking-normal"> - {selectedSize}</span>}</span>
-                  <div className="flex gap-3">
-                    {sizes.map(size => (
-                      <button key={size} onClick={() => setSelectedSize(size)} className={"px-4 py-2 border " + (selectedSize === size ? "border-[#C9A96E] bg-[#C9A96E]/5" : "border-[#E8E6E2] hover:border-[#C9A96E]")}>{size}</button>
-                    ))}
-                  </div>
-                </div>
-              )}
-              <button onClick={handleInquire} className="w-full py-4 bg-[#1A1A1A] text-white font-body text-sm tracking-[0.2em] uppercase hover:bg-[#C9A96E] transition-colors duration-300">INQUIRE VIA WHATSAPP</button>
-              <div className="mt-12 border-t border-[#E8E6E2] pt-8">
-                <h3 className="font-display text-lg text-[#1A1A1A] mb-4">Details</h3>
-                <p className="font-body text-sm text-[#8A8A8A] leading-relaxed">{product.description}{product.descriptionCn && <span className="block mt-1 text-[#A8A4A0]">{product.descriptionCn}</span>}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      <section className="px-8 md:px-16 py-20 bg-[#1A1A1A]">
-        <div className="max-w-2xl mx-auto text-center">
-          <p className="font-display text-2xl md:text-3xl text-white italic leading-relaxed">"Each piece begins with a conversation."</p>
-          <p className="font-body text-[#8A8A8A] text-sm mt-6 tracking-widest uppercase">- Maison NOREVA</p>
-        </div>
-      </section>
-      <Footer />
-    </main>
-  );
-}
+                   
