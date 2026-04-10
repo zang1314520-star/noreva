@@ -118,6 +118,7 @@ export default function AdminPage() {
   const [uploading, setUploading] = useState(false);
   const [newP, setNewP] = useState<Partial<Product>>({ name: "", nameCn: "", category: "clothing", price: 0, mainImage: "", specs: [], detailImages: [], description: "", descriptionCn: "" });
   const [newSpec, setNewSpec] = useState<Spec>({ id: "", color: COLORS[0], size: SIZES[0], image: "", stock: 99 });
+  const [translating, setTranslating] = useState(false);
 
   const t = T[lang];
   const categories = lang === "cn" ? CATEGORIES_CN : CATEGORIES_EN;
@@ -133,6 +134,43 @@ export default function AdminPage() {
   async function saveCfg() {
     const r = await fetch("/api/config", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(config) });
     setMsg(r.ok ? t.saved : t.error); setTimeout(() => setMsg(""), 3000);
+  }
+
+  // Auto translate CN to EN
+  async function translateToEn() {
+    if (!newP.nameCn && !newP.descriptionCn) {
+      setMsg(lang === "cn" ? "请先输入中文名称或描述" : "Please enter Chinese name or description first");
+      setTimeout(() => setMsg(""), 2000);
+      return;
+    }
+    setTranslating(true);
+    try {
+      let name = newP.name || "";
+      let desc = newP.description || "";
+      
+      if (newP.nameCn) {
+        const nameRes = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(newP.nameCn)}&langpair=zh-CN|en`);
+        const nameData = await nameRes.json();
+        if (nameData.responseStatus === 200) {
+          name = nameData.responseData.translatedText;
+        }
+      }
+      
+      if (newP.descriptionCn) {
+        const descRes = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(newP.descriptionCn)}&langpair=zh-CN|en`);
+        const descData = await descRes.json();
+        if (descData.responseStatus === 200) {
+          desc = descData.responseData.translatedText;
+        }
+      }
+      
+      setNewP({ ...newP, name, description: desc });
+      setMsg(lang === "cn" ? "翻译成功！" : "Translated!");
+    } catch {
+      setMsg(lang === "cn" ? "翻译失败" : "Translation failed");
+    }
+    setTranslating(false);
+    setTimeout(() => setMsg(""), 2000);
   }
 
   const uploadImage = useCallback(async (file: File): Promise<string> => {
@@ -240,15 +278,20 @@ export default function AdminPage() {
             <div className="grid lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2 space-y-6">
                 <div className="bg-white rounded-xl p-6 shadow-sm">
-                  <h3 className="font-medium mb-4">{t.basicInfo}</h3>
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="font-medium">{t.basicInfo}</h3>
+                    <button onClick={translateToEn} disabled={translating} className="px-4 py-2 bg-[#C9A96E] text-white rounded-lg text-sm hover:bg-[#B8985F] disabled:opacity-50">
+                      {translating ? (lang === "cn" ? "翻译中..." : "Translating...") : (lang === "cn" ? "中→英 自动翻译" : "CN→EN Auto")}
+                    </button>
+                  </div>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
-                    <div><label className="text-sm text-gray-600">{t.name}</label><input value={newP.name||""} onChange={e=>setNewP({...newP,name:e.target.value})} className="w-full p-2 border rounded" /></div>
-                    <div><label className="text-sm text-gray-600">{t.nameCn}</label><input value={newP.nameCn||""} onChange={e=>setNewP({...newP,nameCn:e.target.value})} className="w-full p-2 border rounded" /></div>
+                    <div><label className="text-sm text-gray-600">{t.nameCn}</label><input value={newP.nameCn||""} onChange={e=>setNewP({...newP,nameCn:e.target.value})} className="w-full p-2 border rounded" placeholder={lang==="cn"?"中文名称":"Chinese name"} /></div>
+                    <div><label className="text-sm text-gray-600">{t.name} (EN)</label><input value={newP.name||""} onChange={e=>setNewP({...newP,name:e.target.value})} className="w-full p-2 border rounded" placeholder="English name" /></div>
                     <div><label className="text-sm text-gray-600">{t.category}</label><select value={newP.category||"clothing"} onChange={e=>setNewP({...newP,category:e.target.value})} className="w-full p-2 border rounded"><option value="clothing">{categories.clothing}</option><option value="pants">{categories.pants}</option><option value="bags">{categories.bags}</option><option value="watches">{categories.watches}</option><option value="jewelry">{categories.jewelry}</option></select></div>
                     <div><label className="text-sm text-gray-600">{t.priceUnit}</label><input type="number" value={newP.price||""} onChange={e=>setNewP({...newP,price:Number(e.target.value)})} className="w-full p-2 border rounded" /></div>
                   </div>
-                  <div className="mb-4"><label className="text-sm text-gray-600">{t.description}</label><textarea value={newP.description||""} onChange={e=>setNewP({...newP,description:e.target.value})} className="w-full p-2 border rounded h-20" /></div>
-                  <div><label className="text-sm text-gray-600">{t.descriptionCn}</label><textarea value={newP.descriptionCn||""} onChange={e=>setNewP({...newP,descriptionCn:e.target.value})} className="w-full p-2 border rounded h-20" /></div>
+                  <div className="mb-4"><label className="text-sm text-gray-600">{t.descriptionCn}</label><textarea value={newP.descriptionCn||""} onChange={e=>setNewP({...newP,descriptionCn:e.target.value})} className="w-full p-2 border rounded h-20" placeholder={lang==="cn"?"中文描述":"Chinese description"} /></div>
+                  <div><label className="text-sm text-gray-600">{t.description} (EN)</label><textarea value={newP.description||""} onChange={e=>setNewP({...newP,description:e.target.value})} className="w-full p-2 border rounded h-20" placeholder="English description" /></div>
                 </div>
                 <div className="bg-white rounded-xl p-6 shadow-sm">
                   <h3 className="font-medium mb-4">{t.mainImage}</h3>
