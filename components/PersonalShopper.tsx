@@ -2,16 +2,76 @@
 
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
+import { useLanguage } from "./LanguageContext";
 
-const WHATSAPP_NUMBER = "8618508036618"; // NOREVA WhatsApp
-const WHATSAPP_MESSAGE = "Hello, I would like to speak with a personal shopper at NOREVA.";
+const WHATSAPP_NUMBER = "8618508036618";
+
+const content = {
+  en: {
+    title: "Personal Service",
+    subtitle: "Your personal stylist",
+    subtitle2: "is a message away.",
+    text1: "We don't believe in shopping carts.",
+    text2: "We believe in conversations.",
+    text3: "Tell us what you're looking for — a wardrobe,",
+    text4: "a gift, a single piece — and we will guide you.",
+    btn: "Begin Conversation",
+    note: "We respond within 24 hours",
+  },
+  fr: {
+    title: "Service Personnel",
+    subtitle: "Votre styliste personnel",
+    subtitle2: "est à un message de distance.",
+    text1: "Nous ne croyons pas aux paniers d'achat.",
+    text2: "Nous croyons aux conversations.",
+    text3: "Dites-nous ce que vous cherchez — une garde-robe,",
+    text4: "un cadeau, une pièce unique — et nous vous guiderons.",
+    btn: "Commencer la Conversation",
+    note: "Nous répondons sous 24 heures",
+  },
+  it: {
+    title: "Servizio Personale",
+    subtitle: "Il tuo stilista personale",
+    subtitle2: "è a un messaggio di distanza.",
+    text1: "Non crediamo nei carrelli.",
+    text2: "Crediamo nelle conversazioni.",
+    text3: "Dicci cosa stai cercando — una garderoba,",
+    text4: "un regalo, una peça unica — e ti guideremo.",
+    btn: "Inizia la Conversazione",
+    note: "Rispondiamo entro 24 ore",
+  },
+  de: {
+    title: "Persönlicher Service",
+    subtitle: "Ihr persönlicher Stylist",
+    subtitle2: "ist nur eine Nachricht entfernt.",
+    text1: "Wir glauben nicht an Einkaufswagen.",
+    text2: "Wir glauben an Gespräche.",
+    text3: "Sagen Sie uns, was Sie suchen — eine Garderobe,",
+    text4: "ein Geschenk, ein einzelnes Stück — und wir führen Sie.",
+    btn: "Gespräch Beginnen",
+    note: "Wir antworten innerhalb von 24 Stunden",
+  },
+  es: {
+    title: "Servicio Personal",
+    subtitle: "Tu estilista personal",
+    subtitle2: "está a un mensaje de distancia.",
+    text1: "No creemos en carros de compra.",
+    text2: "Creemos en conversaciones.",
+    text3: "Dinos qué buscas — un guardarropa,",
+    text4: "un regalo, una pieza única — y te guiaremos.",
+    btn: "Iniciar Conversación",
+    note: "Respondemos en 24 horas",
+  },
+};
 
 export default function PersonalShopper() {
   const ref = useRef<HTMLElement>(null);
   const inView = useInView(ref, { once: true, margin: "-10%" });
+  const { lang } = useLanguage();
+  const c = content[lang] || content.en;
 
   const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-    WHATSAPP_MESSAGE
+    "Hello, I would like to speak with a personal shopper at NOREVA."
   )}`;
 
   return (
@@ -21,36 +81,35 @@ export default function PersonalShopper() {
       className="bg-white py-[clamp(6rem,12vw,10rem)] px-8 md:px-16"
     >
       <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 md:gap-24 items-center">
-        {/* Left — text */}
         <motion.div
           initial={{ opacity: 0, x: -30 }}
           animate={inView ? { opacity: 1, x: 0 } : {}}
           transition={{ duration: 0.9, ease: [0.25, 0.46, 0.45, 0.94] }}
         >
           <span className="label text-[#8A8A8A] block mb-8">
-            Personal Service
+            {c.title}
           </span>
 
           <h2 className="font-display text-[clamp(2.4rem,4.5vw,3.8rem)] font-light leading-[1.15] text-[#1A1A1A] mb-8">
-            Your personal stylist<br />
-            <span className="italic">is a message away.</span>
+            {c.subtitle}<br />
+            <span className="italic">{c.subtitle2}</span>
           </h2>
 
           <span className="gold-rule mb-8 block" />
 
           <div className="space-y-4 mb-12">
             <p className="font-body text-[15px] text-[#8A8A8A] leading-[1.9]">
-              We don&apos;t believe in shopping carts.
+              {c.text1}
               <br />
-              We believe in conversations.
+              {c.text2}
             </p>
             <p className="font-body text-[15px] text-[#8A8A8A] leading-[1.9]">
-              Tell us what you&apos;re looking for — a wardrobe,
-              a gift, a single piece — and we will guide you.
+              {c.text3}
+              <br />
+              {c.text4}
             </p>
           </div>
 
-          {/* WhatsApp CTA — styled to brand, not platform */}
           <motion.a
             href={waUrl}
             target="_blank"
@@ -58,9 +117,9 @@ export default function PersonalShopper() {
             whileHover={{ scale: 1.01 }}
             whileTap={{ scale: 0.99 }}
             transition={{ duration: 0.2 }}
-            className="inline-flex items-center gap-4 bg-[#1A1A1A] text-white px-10 py-4 font-body text-[11px] tracking-[0.22em] uppercase hover:bg-[#C9A96E] transition-colors duration-400"
+            className="inline-flex items-center gap-4 bg-[#1A1A1A] text-white px-10 py-4 font-body text-[11px] tracking-[0.22em] uppercase hover:bg-[#C9A96E] transition-colors duration-300"
           >
-            <span>Begin Conversation</span>
+            <span>{c.btn}</span>
             <svg
               width="20"
               height="20"
@@ -76,53 +135,8 @@ export default function PersonalShopper() {
           </motion.a>
 
           <p className="font-body text-[11px] text-[#C9A96E] tracking-wider mt-5">
-            We respond within 24 hours — Paris time
+            {c.note}
           </p>
-        </motion.div>
-
-        {/* Right — texture/fabric visual */}
-        <motion.div
-          initial={{ opacity: 0, x: 30 }}
-          animate={inView ? { opacity: 1, x: 0 } : {}}
-          transition={{ duration: 0.9, delay: 0.15, ease: [0.25, 0.46, 0.45, 0.94] }}
-          className="relative hidden md:block"
-        >
-          {/* Abstract fabric texture composition */}
-          <div className="relative aspect-[3/4] overflow-hidden">
-            <div
-              className="absolute inset-0"
-              style={{
-                background: "linear-gradient(160deg, #E0DCD4 0%, #CCC8C0 40%, #B8B4AC 100%)",
-              }}
-            />
-            {/* Subtle grid texture overlay */}
-            <div
-              className="absolute inset-0 opacity-10"
-              style={{
-                backgroundImage: `repeating-linear-gradient(
-                  0deg,
-                  transparent,
-                  transparent 19px,
-                  #8A8A8A 19px,
-                  #8A8A8A 20px
-                ), repeating-linear-gradient(
-                  90deg,
-                  transparent,
-                  transparent 19px,
-                  #8A8A8A 19px,
-                  #8A8A8A 20px
-                )`,
-              }}
-            />
-            {/* Gold accent line */}
-            <div className="absolute top-12 right-12 w-px h-24 bg-[#C9A96E] opacity-60" />
-            <div className="absolute bottom-16 left-12 right-12">
-              <div className="w-8 h-px bg-[#C9A96E] mb-4" />
-              <p className="font-display italic text-white/40 text-lg leading-relaxed">
-                &ldquo;Each piece begins<br />with a conversation.&rdquo;
-              </p>
-            </div>
-          </div>
         </motion.div>
       </div>
     </section>

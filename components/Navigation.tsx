@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { languages } from "@/lib/i18n";
 import type { Language } from "@/lib/i18n";
+import { useLanguage } from "./LanguageContext";
 
 const navLeft = [
   { label: "Shop", labelFr: "Boutique", labelIt: "Negozio", labelDe: "Shop", labelEs: "Tienda", href: "/products" },
@@ -17,7 +18,7 @@ const navRight = [
   { label: "Contact", href: "#contact" },
 ];
 
-const getLabel = (item: typeof navLeft[0], lang: Language) => {
+const getNavLabel = (item: typeof navLeft[0], lang: Language) => {
   switch (lang) {
     case "fr": return item.labelFr;
     case "it": return item.labelIt;
@@ -31,24 +32,18 @@ export default function Navigation() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [langMenuOpen, setLangMenuOpen] = useState(false);
-  const [currentLang, setCurrentLang] = useState<Language>("en");
+  const { lang: currentLang, setLang, currentLangName } = useLanguage();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 60);
     window.addEventListener("scroll", handleScroll, { passive: true });
-    
-    const saved = localStorage.getItem("noreva-lang") as Language;
-    if (saved && ["en", "fr", "it", "de", "es"].includes(saved)) {
-      setCurrentLang(saved);
-    }
-    
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const handleLangChange = (lang: Language) => {
-    setCurrentLang(lang);
-    localStorage.setItem("noreva-lang", lang);
+    setLang(lang);
     setLangMenuOpen(false);
+    window.location.reload(); // Force reload to apply new language
   };
 
   return (
@@ -66,7 +61,7 @@ export default function Navigation() {
           <div className="hidden md:flex items-center gap-10">
             {navLeft.map((item) => (
               <Link key={item.label} href={item.href} className="nav-link">
-                {getLabel(item, currentLang)}
+                {getNavLabel(item, currentLang)}
               </Link>
             ))}
           </div>
@@ -87,38 +82,41 @@ export default function Navigation() {
                 onClick={() => setLangMenuOpen(!langMenuOpen)}
                 className="flex items-center gap-1 font-body text-[11px] tracking-[0.2em] text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors"
               >
-                {currentLang.toUpperCase()}
+                {currentLangName}
                 <svg width="8" height="5" viewBox="0 0 8 5" fill="none" className={langMenuOpen ? "rotate-180" : ""}>
                   <path d="M1 1L4 4L7 1" stroke="currentColor" strokeWidth="1.5"/>
                 </svg>
               </button>
               
-              {langMenuOpen && (
-                <>
-                  <div 
-                    className="fixed inset-0 z-40" 
-                    onClick={() => setLangMenuOpen(false)}
-                  />
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="absolute top-full right-0 mt-2 bg-white border border-[#E8E6E2] shadow-lg py-2 min-w-[140px] z-50"
-                  >
-                    {languages.map((lang) => (
-                      <button
-                        key={lang.code}
-                        onClick={() => handleLangChange(lang.code)}
-                        className={`w-full text-left px-4 py-2 flex items-center justify-between hover:bg-[#FAFAFA] transition-colors ${
-                          currentLang === lang.code ? "text-[#C9A96E]" : "text-[#8A8A8A]"
-                        }`}
-                      >
-                        <span className="font-body text-[12px]">{lang.name}</span>
-                        <span className="font-body text-[10px] text-[#A8A4A0]">{lang.native}</span>
-                      </button>
-                    ))}
-                  </motion.div>
-                </>
-              )}
+              <AnimatePresence>
+                {langMenuOpen && (
+                  <>
+                    <div 
+                      className="fixed inset-0 z-40" 
+                      onClick={() => setLangMenuOpen(false)}
+                    />
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="absolute top-full right-0 mt-2 bg-white border border-[#E8E6E2] shadow-lg py-2 min-w-[140px] z-50"
+                    >
+                      {languages.map((lang) => (
+                        <button
+                          key={lang.code}
+                          onClick={() => handleLangChange(lang.code)}
+                          className={`w-full text-left px-4 py-2 flex items-center justify-between hover:bg-[#FAFAFA] transition-colors ${
+                            currentLang === lang.code ? "text-[#C9A96E]" : "text-[#8A8A8A]"
+                          }`}
+                        >
+                          <span className="font-body text-[12px]">{lang.name}</span>
+                          <span className="font-body text-[10px] text-[#A8A4A0]">{lang.native}</span>
+                        </button>
+                      ))}
+                    </motion.div>
+                  </>
+                )}
+              </AnimatePresence>
             </div>
 
             {/* Right nav links */}
@@ -135,7 +133,7 @@ export default function Navigation() {
               onClick={() => setLangMenuOpen(!langMenuOpen)}
               className="font-body text-[11px] tracking-[0.2em] text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors"
             >
-              {currentLang.toUpperCase()}
+              {currentLangName}
             </button>
             
             <button
@@ -158,7 +156,7 @@ export default function Navigation() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="fixed top-16 right-8 z-50 bg-white border border-[#E8E6E2] shadow-lg py-2 min-w-[140px]"
+            className="fixed top-16 right-8 z-50 bg-white border border-[#E8E6E2] shadow-lg py-2 min-w-[140px] md:hidden"
           >
             {languages.map((lang) => (
               <button
@@ -186,7 +184,17 @@ export default function Navigation() {
             transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="fixed inset-0 z-40 bg-white flex flex-col items-center justify-center gap-10"
           >
-            {[...navLeft, ...navRight].map((item) => (
+            {navLeft.map((item) => (
+              <Link
+                key={item.label}
+                href={item.href}
+                className="font-display text-4xl text-[#1A1A1A] hover:text-[#C9A96E] transition-colors duration-300 italic"
+                onClick={() => setMenuOpen(false)}
+              >
+                {getNavLabel(item, currentLang)}
+              </Link>
+            ))}
+            {navRight.map((item) => (
               <Link
                 key={item.label}
                 href={item.href}

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, DM_Sans } from "next/font/google";
 import "./globals.css";
+import { LanguageProvider } from "@/components/LanguageContext";
+import WhatsAppButton from "@/components/WhatsAppButton";
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
@@ -28,8 +30,6 @@ export const metadata: Metadata = {
   },
 };
 
-import WhatsAppButton from "@/components/WhatsAppButton";
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -38,8 +38,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${cormorant.variable} ${dmSans.variable}`}>
       <body className="min-h-screen bg-white text-[#1A1A1A] antialiased">
-        {children}
-        <WhatsAppButton phoneNumber="8618508036618" />
+        <LanguageProvider>
+          {children}
+          <WhatsAppButton phoneNumber="8618508036618" />
+        </LanguageProvider>
       </body>
     </html>
   );

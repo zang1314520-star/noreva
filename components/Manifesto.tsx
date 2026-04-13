@@ -2,20 +2,53 @@
 
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
+import { useLanguage } from "./LanguageContext";
+
+const manifestoContent = {
+  en: {
+    title: "We make things that last.",
+    text1: "Clothing is not a trend. It is a decision.",
+    text2: "NOREVA is built for people who choose carefully",
+    text3: "and wear with intention.",
+  },
+  fr: {
+    title: "Nous créons des choses qui durent.",
+    text1: "Le vêtement n'est pas une tendance. C'est une décision.",
+    text2: "NOREVA est conçu pour ceux qui choisissent avec soin",
+    text3: "et portent avec intention.",
+  },
+  it: {
+    title: "Creiamo cose che durano.",
+    text1: "Il vestito non è una tendenza. È una decisione.",
+    text2: "NOREVA è costruito per chi sceglie con cura",
+    text3: "e indossa con intenzione.",
+  },
+  de: {
+    title: "Wir machen Dinge, die halten.",
+    text1: "Kleidung ist kein Trend. Es ist eine Entscheidung.",
+    text2: "NOREVA ist für Menschen, die sorgfältig wählen",
+    text3: "und mit Absicht tragen.",
+  },
+  es: {
+    title: "Hacemos cosas que duran.",
+    text1: "La ropa no es una tendencia. Es una decisión.",
+    text2: "NOREVA está hecho para quienes eligen con cuidado",
+    text3: "y visten con intención.",
+  },
+};
 
 export default function Manifesto() {
   const ref = useRef<HTMLElement>(null);
   const inView = useInView(ref, { once: true, margin: "-12%" });
+  const { lang } = useLanguage();
+  const content = manifestoContent[lang] || manifestoContent.en;
 
   return (
     <section
       ref={ref}
       className="bg-white py-[clamp(8rem,16vw,14rem)] px-8 md:px-16"
     >
-      {/* max-w-2xl — more intimate than 3xl, forces tighter line measure */}
       <div className="max-w-2xl mx-auto text-center">
-
-        {/* Headline — the emotional hook */}
         <motion.h2
           initial={{ opacity: 0, y: 22 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -23,10 +56,9 @@ export default function Manifesto() {
           className="font-display display-tight font-light italic leading-[1.18] text-[#1A1A1A] mb-12"
           style={{ fontSize: "clamp(2.6rem, 5vw, 4rem)" }}
         >
-          We make things that last.
+          {content.title}
         </motion.h2>
 
-        {/* Gold rule — visual pause, gives the headline space to breathe */}
         <motion.div
           initial={{ opacity: 0, scaleX: 0 }}
           animate={inView ? { opacity: 1, scaleX: 1 } : {}}
@@ -41,7 +73,6 @@ export default function Manifesto() {
           <span className="gold-rule" />
         </motion.div>
 
-        {/* Body — one breath, not three separate paragraphs */}
         <motion.p
           initial={{ opacity: 0, y: 14 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -52,13 +83,12 @@ export default function Manifesto() {
           }}
           className="font-body text-[15px] text-[#8A8A8A] leading-[2.1]"
         >
-          Clothing is not a trend. It is a decision.
+          {content.text1}
           <br />
-          NOREVA is built for people who choose carefully
+          {content.text2}
           <br />
-          and wear with intention.
+          {content.text3}
         </motion.p>
-
       </div>
     </section>
   );
