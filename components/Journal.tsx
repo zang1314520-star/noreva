@@ -11,6 +11,7 @@ interface JournalPost {
   excerpt: string;
   date: string;
   bg: string;
+  image?: string;
   tall?: boolean;
 }
 
@@ -23,6 +24,7 @@ const posts: JournalPost[] = [
       "Why we return to the same fabric every season, and why that is not weakness but certainty.",
     date: "March 2026",
     bg: "linear-gradient(145deg, #DDD8CE 0%, #CCCAC0 100%)",
+    image: "https://images.unsplash.com/photo-1558171813-4c088753af8f?w=600&q=80",
     tall: false,
   },
   {
@@ -33,6 +35,7 @@ const posts: JournalPost[] = [
       "Behind the scenes of SS 2026 — before the light changes, before the world wakes.",
     date: "February 2026",
     bg: "linear-gradient(145deg, #D0CBB8 0%, #C0BBA8 100%)",
+    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80",
     tall: true,
   },
   {
@@ -43,6 +46,7 @@ const posts: JournalPost[] = [
       "Our first presentation in seven years. What it meant, and what we chose not to say.",
     date: "January 2026",
     bg: "linear-gradient(145deg, #D8D4CC 0%, #C8C4BC 100%)",
+    image: "https://images.unsplash.com/photo-1445205170230-053b83016050?w=600&q=80",
     tall: false,
   },
 ];
@@ -65,12 +69,22 @@ function JournalCard({ post, index }: { post: JournalPost; index: number }) {
     >
       {/* Image */}
       <div className="img-zoom overflow-hidden mb-5">
-        <div
-          className={`w-full ${
-            post.tall ? "aspect-[3/4]" : "aspect-[4/3]"
-          } transition-transform duration-700 ease-out group-hover:scale-[1.03]`}
-          style={{ background: post.bg }}
-        />
+        {post.image ? (
+          <img
+            src={post.image}
+            alt={post.title}
+            className={`w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03] ${
+              post.tall ? "aspect-[3/4]" : "aspect-[4/3]"
+            }`}
+          />
+        ) : (
+          <div
+            className={`w-full ${
+              post.tall ? "aspect-[3/4]" : "aspect-[4/3]"
+            } transition-transform duration-700 ease-out group-hover:scale-[1.03]`}
+            style={{ background: post.bg }}
+          />
+        )}
       </div>
 
       {/* Meta */}
