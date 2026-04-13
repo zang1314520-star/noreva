@@ -33,7 +33,7 @@ export default function Hero() {
       className="relative h-screen flex overflow-hidden bg-white"
       style={{ minHeight: "100svh" }}
     >
-      {/* Right column: elegant gradient placeholder */}
+      {/* Right column: brand style product image */}
       <motion.div
         style={{ y: imageY }}
         className="absolute right-0 top-0 w-full md:w-[63%] h-full"
@@ -44,13 +44,11 @@ export default function Hero() {
           transition={{ duration: 1.6, ease: [0.16, 1, 0.3, 1] }}
           className="w-full h-full relative"
         >
-          {/* Elegant neutral gradient - subtle, sophisticated */}
-          <div
-            className="w-full h-full"
-            style={{
-              background:
-                "linear-gradient(160deg, #F5F3EF 0%, #E8E5E0 25%, #D8D4CD 50%, #C8C4BD 75%, #B8B4AD 100%)",
-            }}
+          {/* Brand style image - minimalist product display */}
+          <img
+            src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1920&q=80"
+            alt="NOREVA Collection"
+            className="w-full h-full object-cover"
           />
 
           {/* Large ghost-letter */}
