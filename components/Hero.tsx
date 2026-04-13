@@ -17,11 +17,7 @@ const itemVariants = {
   }),
 };
 
-interface HeroProps {
-  backgroundImage?: string;
-}
-
-export default function Hero({ backgroundImage }: HeroProps) {
+export default function Hero() {
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -31,16 +27,13 @@ export default function Hero({ backgroundImage }: HeroProps) {
   const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "14%"]);
   const textY = useTransform(scrollYProgress, [0, 1], ["0%", "22%"]);
 
-  // Default luxury fashion image from Unsplash
-  const heroImage = backgroundImage || "https://images.unsplash.com/photo-1509631179647-0177331693ae?w=1920&q=80";
-
   return (
     <section
       ref={ref}
       className="relative h-screen flex overflow-hidden bg-white"
       style={{ minHeight: "100svh" }}
     >
-      {/* Right column: editorial image */}
+      {/* Right column: elegant gradient placeholder */}
       <motion.div
         style={{ y: imageY }}
         className="absolute right-0 top-0 w-full md:w-[63%] h-full"
@@ -51,16 +44,18 @@ export default function Hero({ backgroundImage }: HeroProps) {
           transition={{ duration: 1.6, ease: [0.16, 1, 0.3, 1] }}
           className="w-full h-full relative"
         >
-          {/* Hero image */}
-          <img
-            src={heroImage}
-            alt="NOREVA Collection"
-            className="w-full h-full object-cover"
+          {/* Elegant neutral gradient - subtle, sophisticated */}
+          <div
+            className="w-full h-full"
+            style={{
+              background:
+                "linear-gradient(160deg, #F5F3EF 0%, #E8E5E0 25%, #D8D4CD 50%, #C8C4BD 75%, #B8B4AD 100%)",
+            }}
           />
 
           {/* Large ghost-letter */}
           <div
-            className="absolute bottom-0 left-0 leading-none select-none pointer-events-none font-display font-light text-white/[0.07]"
+            className="absolute bottom-0 left-0 leading-none select-none pointer-events-none font-display font-light text-white/[0.08]"
             style={{ fontSize: "clamp(14rem, 28vw, 26rem)" }}
             aria-hidden="true"
           >

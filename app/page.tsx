@@ -9,7 +9,6 @@ import Footer from "@/components/Footer";
 import SectionDivider from "@/components/SectionDivider";
 
 // High-end fashion images from Unsplash
-const HERO_IMAGE = "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1920&q=80";
 const WOMEN_LEFT = "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=800&q=80";
 const WOMEN_RIGHT = "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=800&q=80";
 const MEN_LEFT = "https://images.unsplash.com/photo-1617137968427-85924c800a22?w=800&q=80";
@@ -22,7 +21,7 @@ export default function HomePage() {
       <Navigation />
 
       {/* 02 — Hero */}
-      <Hero backgroundImage={HERO_IMAGE} />
+      <Hero />
 
       <SectionDivider />
 
