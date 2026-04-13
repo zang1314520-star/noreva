@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 
 interface CollectionEntryProps {
   category: string;
@@ -53,10 +54,15 @@ export default function CollectionEntry({
           className="w-full md:w-[42%] img-zoom overflow-hidden"
         >
           {imageLeft ? (
-            <img
+            <Image
               src={imageLeft}
               alt={category}
+              width={800}
+              height={1067}
               className="w-full aspect-[3/4] md:aspect-auto md:h-full min-h-[460px] md:min-h-[620px] object-cover transition-transform duration-700 ease-out hover:scale-[1.025]"
+              sizes="(max-width: 768px) 100vw, 42vw"
+              placeholder="blur"
+              blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAUH/8QAIhAAAQMDAwUAAAAAAAAAAAAAAQACAwQFEQYSIQcTMUGB/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAH/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBEQCEAPEAXN3S4rY7hS0lLT0LHQx0bI2MZG0BrWta0I8qIq4u7nE4qIquf/2Q=="
             />
           ) : (
             <div
@@ -85,11 +91,16 @@ export default function CollectionEntry({
           {/* Secondary image — 3:2 ratio */}
           <div className="img-zoom overflow-hidden my-10 md:my-12">
             {imageRight ? (
-              <img
+              <Image
                 src={imageRight}
                 alt=""
+                width={800}
+                height={533}
                 className="w-full object-cover transition-transform duration-700 ease-out hover:scale-[1.025]"
                 style={{ aspectRatio: "3 / 2" }}
+                sizes="(max-width: 768px) 100vw, 58vw"
+                placeholder="blur"
+                blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAUH/8QAIhAAAQMDAwUAAAAAAAAAAAAAAQACAwQFEQYSIQcTMUGB/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAH/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBEQCEAPEAXN3S4rY7hS0lLT0LHQx0bI2MZG0BrWta0I8qIq4u7nE4qIquf/2Q=="
               />
             ) : (
               <div

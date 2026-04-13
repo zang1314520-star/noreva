@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 
@@ -25,6 +26,8 @@ const CATEGORIES = [
   { key: "pants", name: "Pants" },
   { key: "jewelry", name: "Jewelry" },
 ];
+
+const shimmer = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAUH/8QAIhAAAQMDAwUAAAAAAAAAAAAAAQACAwQFEQYSIQcTMUGB/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAH/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBEQCEAPEAXN3S4rY7hS0lLT0LHQx0bI2MZG0BrWta0I8qIq4u7nE4qIquf/2Q==";
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -102,13 +105,17 @@ export default function ProductsPage() {
                   href={`/products/${product.id}`}
                   className="group block"
                 >
-                  {/* Image */}
+                  {/* Image with placeholder */}
                   <div className="aspect-[4/5] overflow-hidden bg-[#F0EFED] mb-6 relative">
                     {product.mainImage ? (
-                      <img
+                      <Image
                         src={product.mainImage}
                         alt={product.name}
-                        className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                        fill
+                        className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        placeholder="blur"
+                        blurDataURL={shimmer}
                       />
                     ) : (
                       <div className="w-full h-full bg-[#E8E6E2]" />

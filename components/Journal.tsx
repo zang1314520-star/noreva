@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 
 interface JournalPost {
   id: string;
@@ -70,12 +71,17 @@ function JournalCard({ post, index }: { post: JournalPost; index: number }) {
       {/* Image */}
       <div className="img-zoom overflow-hidden mb-5">
         {post.image ? (
-          <img
+          <Image
             src={post.image}
             alt={post.title}
+            width={600}
+            height={post.tall ? 800 : 450}
             className={`w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03] ${
               post.tall ? "aspect-[3/4]" : "aspect-[4/3]"
             }`}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 25vw"
+            placeholder="blur"
+            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAUH/8QAIhAAAQMDAwUAAAAAAAAAAAAAAQACAwQFEQYSIQcTMUGB/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAH/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBEQCEAPEAXN3S4rY7hS0lLT0LHQx0bI2MZG0BrWta0I8qIq4u7nE4qIquf/2Q=="
           />
         ) : (
           <div

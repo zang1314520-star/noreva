@@ -1,8 +1,9 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 
 const itemVariants = {
   hidden: { opacity: 0, y: 18 },
@@ -27,6 +28,12 @@ export default function Hero() {
   const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "14%"]);
   const textY = useTransform(scrollYProgress, [0, 1], ["0%", "22%"]);
 
+  // Preload hero image
+  useEffect(() => {
+    const img = new window.Image();
+    img.src = "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1920&q=80";
+  }, []);
+
   return (
     <section
       ref={ref}
@@ -44,11 +51,15 @@ export default function Hero() {
           transition={{ duration: 1.6, ease: [0.16, 1, 0.3, 1] }}
           className="w-full h-full relative"
         >
-          {/* Brand style image - minimalist product display */}
-          <img
+          <Image
             src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1920&q=80"
             alt="NOREVA Collection"
-            className="w-full h-full object-cover"
+            fill
+            priority
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, 63vw"
+            placeholder="blur"
+            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAUH/8QAIhAAAQMDAwUAAAAAAAAAAAAAAQACAwQFEQYSIQcTMUGB/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAH/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBEQCEAPEAXN3S4rY7hS0lLT0LHQx0bI2MZG0BrWta0I8qIq4u7nE4qIquf/2Q=="
           />
 
           {/* Large ghost-letter */}
