@@ -114,7 +114,7 @@ export default function ProductVignettes() {
   const displayProducts = loading ? defaultProducts : (products.length > 0 ? products : defaultProducts);
 
   return (
-    <section ref={ref} className="py-[clamp(5rem,10vw,9rem)] overflow-hidden bg-[#FAFAF8]">
+    <section ref={ref} className="py-[clamp(5rem,10vw,9rem)] overflow-hidden bg-white">
       <motion.div
         initial={{ opacity: 0, y: 18 }}
         animate={inView ? { opacity: 1, y: 0 } : {}}
