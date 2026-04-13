@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 
 interface Spec { id: string; color: string; size: string; image: string; stock: number; }
 interface Product { id: string; name: string; nameCn?: string; category: string; categoryName: string; price: number; currency: string; description: string; descriptionCn?: string; mainImage: string; specs: Spec[]; detailImages: string[]; }
+interface SiteImages { hero: { image: string; title: string; }; womenswear: { main: string; secondary: string; }; menswear: { main: string; secondary: string; }; journal: { post1: string; post2: string; post3: string; }; }
 
 const COLORS_CN = ["白色","黑色","米色","棕色","藏蓝","红色","粉色","绿色","蓝色","黄色","灰色","金色","银色"];
 const COLORS_EN = ["White","Black","Beige","Brown","Navy","Red","Pink","Green","Blue","Yellow","Gray","Gold","Silver"];
@@ -14,8 +15,14 @@ const SIZES_EN = ["XS","S","M","L","XL","XXL"];
 const T = {
   cn: {
     siteConfig: "网站配置",
+    siteImages: "网站图片",
     products: "产品管理",
     viewSite: "查看网站",
+    heroImage: "首页大图",
+    heroImageTip: "首页右侧展示的大图",
+    womenswear: "女装区域",
+    menswear: "男装区域",
+    journal: "杂志区域",
     whatsapp: "WhatsApp号码",
     save: "保存",
     saved: "已保存！",
@@ -60,10 +67,16 @@ const T = {
     select: "选择",
     noImage: "无图片",
   },
-  en: {
+en: {
     siteConfig: "Site Config",
+    siteImages: "Site Images",
     products: "Products",
     viewSite: "View Site",
+    heroImage: "Hero Image",
+    heroImageTip: "Large image on homepage right",
+    womenswear: "Womenswear",
+    menswear: "Menswear",
+    journal: "Journal",
     whatsapp: "WhatsApp Number",
     save: "Save",
     saved: "Saved!",
@@ -117,6 +130,7 @@ export default function AdminPage() {
   const [lang, setLang] = useState<"cn" | "en">("cn");
   const [tab, setTab] = useState("products");
   const [config, setConfig] = useState<any>({});
+  const [siteImages, setSiteImages] = useState<SiteImages>({ hero: { image: "", title: "The New Collection" }, womenswear: { main: "", secondary: "" }, menswear: { main: "", secondary: "" }, journal: { post1: "", post2: "", post3: "" } });
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [msg, setMsg] = useState("");
@@ -133,12 +147,17 @@ export default function AdminPage() {
   useEffect(() => { loadData(); }, []);
 
   async function loadData() {
-    const [c, p] = await Promise.all([fetch("/api/config").then((r) => r.json()), fetch("/api/products").then((r) => r.json())]);
-    setConfig(c); setProducts(p || []); setLoading(false);
+    const [c, p, si] = await Promise.all([fetch("/api/config").then((r) => r.json()), fetch("/api/products").then((r) => r.json()), fetch("/api/site-images").then((r) => r.json())]);
+    setConfig(c); setProducts(p || []); setSiteImages(si); setLoading(false);
   }
 
   async function saveCfg() {
     const r = await fetch("/api/config", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(config) });
+    setMsg(r.ok ? t.saved : t.error); setTimeout(() => setMsg(""), 3000);
+  }
+
+  async function saveSiteImages() {
+    const r = await fetch("/api/site-images", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(siteImages) });
     setMsg(r.ok ? t.saved : t.error); setTimeout(() => setMsg(""), 3000);
   }
 
@@ -258,6 +277,7 @@ export default function AdminPage() {
               <button onClick={() => setLang("en")} className={`px-3 py-1 rounded ${lang === "en" ? "bg-[#C9A96E] text-white" : "text-gray-400"}`}>EN</button>
             </div>
             <button onClick={() => setTab("config")} className={tab === "config" ? "text-white" : "text-gray-400"}>{t.siteConfig}</button>
+            <button onClick={() => setTab("siteImages")} className={tab === "siteImages" ? "text-white" : "text-gray-400"}>{t.siteImages}</button>
             <button onClick={() => setTab("products")} className={tab === "products" ? "text-white" : "text-gray-400"}>{t.products} ({products.length})</button>
             <a href="/" target="_blank" className="text-gray-400">{t.viewSite}</a>
           </div>
@@ -272,6 +292,73 @@ export default function AdminPage() {
             <h2 className="text-lg font-medium mb-4">{t.whatsapp}</h2>
             <input value={config.whatsapp?.number || ""} onChange={(e) => setConfig({ ...config, whatsapp: { ...config.whatsapp, number: e.target.value } })} className="w-full p-3 border rounded-lg" />
             <button onClick={saveCfg} className="mt-4 bg-[#C9A96E] text-white px-6 py-3 rounded-lg">{t.save}</button>
+          </div>
+        )}
+
+        {tab === "siteImages" && (
+          <div className="space-y-6">
+            <div className="bg-white rounded-xl p-6 shadow-sm">
+              <h2 className="text-lg font-medium mb-4">{t.heroImage}</h2>
+              <p className="text-xs text-gray-500 mb-4">{t.heroImageTip}</p>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Image URL</label>
+                  <input type="text" value={siteImages.hero.image} onChange={(e) => setSiteImages({...siteImages, hero: {...siteImages.hero, image: e.target.value}})} className="w-full p-3 border rounded-lg" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                  <input type="text" value={siteImages.hero.title} onChange={(e) => setSiteImages({...siteImages, hero: {...siteImages.hero, title: e.target.value}})} className="w-full p-3 border rounded-lg" />
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl p-6 shadow-sm">
+              <h2 className="text-lg font-medium mb-4">{t.womenswear}</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Main Image URL</label>
+                  <input type="text" value={siteImages.womenswear.main} onChange={(e) => setSiteImages({...siteImages, womenswear: {...siteImages.womenswear, main: e.target.value}})} className="w-full p-3 border rounded-lg" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Secondary Image URL</label>
+                  <input type="text" value={siteImages.womenswear.secondary} onChange={(e) => setSiteImages({...siteImages, womenswear: {...siteImages.womenswear, secondary: e.target.value}})} className="w-full p-3 border rounded-lg" />
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl p-6 shadow-sm">
+              <h2 className="text-lg font-medium mb-4">{t.menswear}</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Main Image URL</label>
+                  <input type="text" value={siteImages.menswear.main} onChange={(e) => setSiteImages({...siteImages, menswear: {...siteImages.menswear, main: e.target.value}})} className="w-full p-3 border rounded-lg" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Secondary Image URL</label>
+                  <input type="text" value={siteImages.menswear.secondary} onChange={(e) => setSiteImages({...siteImages, menswear: {...siteImages.menswear, secondary: e.target.value}})} className="w-full p-3 border rounded-lg" />
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl p-6 shadow-sm">
+              <h2 className="text-lg font-medium mb-4">{t.journal}</h2>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Post 1 Image URL</label>
+                  <input type="text" value={siteImages.journal.post1} onChange={(e) => setSiteImages({...siteImages, journal: {...siteImages.journal, post1: e.target.value}})} className="w-full p-3 border rounded-lg" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Post 2 Image URL</label>
+                  <input type="text" value={siteImages.journal.post2} onChange={(e) => setSiteImages({...siteImages, journal: {...siteImages.journal, post2: e.target.value}})} className="w-full p-3 border rounded-lg" />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Post 3 Image URL</label>
+                  <input type="text" value={siteImages.journal.post3} onChange={(e) => setSiteImages({...siteImages, journal: {...siteImages.journal, post3: e.target.value}})} className="w-full p-3 border rounded-lg" />
+                </div>
+              </div>
+            </div>
+
+            <button onClick={saveSiteImages} className="bg-[#C9A96E] text-white px-6 py-3 rounded-lg">{t.save}</button>
           </div>
         )}
 
