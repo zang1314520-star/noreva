@@ -18,7 +18,7 @@ export default function PersonalShopper() {
     <section
       ref={ref}
       id="contact"
-      className="bg-[#F7F5F1] py-[clamp(6rem,12vw,10rem)] px-8 md:px-16"
+      className="bg-white py-[clamp(6rem,12vw,10rem)] px-8 md:px-16"
     >
       <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 md:gap-24 items-center">
         {/* Left — text */}
