@@ -8,6 +8,13 @@ import Journal from "@/components/Journal";
 import Footer from "@/components/Footer";
 import SectionDivider from "@/components/SectionDivider";
 
+// High-end fashion images from Unsplash
+const HERO_IMAGE = "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1920&q=80";
+const WOMEN_LEFT = "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=800&q=80";
+const WOMEN_RIGHT = "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=800&q=80";
+const MEN_LEFT = "https://images.unsplash.com/photo-1617137968427-85924c800a22?w=800&q=80";
+const MEN_RIGHT = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80";
+
 export default function HomePage() {
   return (
     <main className="relative">
@@ -15,7 +22,7 @@ export default function HomePage() {
       <Navigation />
 
       {/* 02 — Hero */}
-      <Hero />
+      <Hero backgroundImage={HERO_IMAGE} />
 
       <SectionDivider />
 
@@ -33,8 +40,8 @@ export default function HomePage() {
         description="Twelve pieces. No more."
         href="#"
         reverse={false}
-        bgLeft="linear-gradient(150deg, #D8D4CC 0%, #C8C4BC 50%, #B8B4AC 100%)"
-        bgRight="linear-gradient(135deg, #E4E0D8 0%, #D4D0C8 100%)"
+        imageLeft={WOMEN_LEFT}
+        imageRight={WOMEN_RIGHT}
       />
 
       <SectionDivider />
@@ -48,8 +55,8 @@ export default function HomePage() {
         description="Eight silhouettes. Uncompromised."
         href="#"
         reverse={true}
-        bgLeft="linear-gradient(150deg, #C8C4B8 0%, #B8B4A8 50%, #A8A49C 100%)"
-        bgRight="linear-gradient(135deg, #D8D4CC 0%, #C8C4BC 100%)"
+        imageLeft={MEN_LEFT}
+        imageRight={MEN_RIGHT}
       />
 
       <SectionDivider />

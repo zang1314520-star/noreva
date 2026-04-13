@@ -14,6 +14,8 @@ interface CollectionEntryProps {
   reverse?: boolean;
   bgLeft?: string;
   bgRight?: string;
+  imageLeft?: string;
+  imageRight?: string;
 }
 
 export default function CollectionEntry({
@@ -26,6 +28,8 @@ export default function CollectionEntry({
   reverse = false,
   bgLeft = "linear-gradient(135deg, #D4CFC5 0%, #BDB8AE 100%)",
   bgRight = "linear-gradient(135deg, #E2DDD5 0%, #CCC8BF 100%)",
+  imageLeft,
+  imageRight,
 }: CollectionEntryProps) {
   const ref = useRef<HTMLElement>(null);
   const inView = useInView(ref, { once: true, margin: "-10%" });
@@ -48,10 +52,18 @@ export default function CollectionEntry({
           transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
           className="w-full md:w-[42%] img-zoom overflow-hidden"
         >
-          <div
-            className="w-full aspect-[3/4] md:aspect-auto md:h-full min-h-[460px] md:min-h-[620px] transition-transform duration-700 ease-out hover:scale-[1.025]"
-            style={{ background: bgLeft }}
-          />
+          {imageLeft ? (
+            <img
+              src={imageLeft}
+              alt={category}
+              className="w-full aspect-[3/4] md:aspect-auto md:h-full min-h-[460px] md:min-h-[620px] object-cover transition-transform duration-700 ease-out hover:scale-[1.025]"
+            />
+          ) : (
+            <div
+              className="w-full aspect-[3/4] md:aspect-auto md:h-full min-h-[460px] md:min-h-[620px] transition-transform duration-700 ease-out hover:scale-[1.025]"
+              style={{ background: bgLeft }}
+            />
+          )}
         </motion.div>
 
         {/* Text + secondary image — 58%, pinned bottom */}
@@ -70,18 +82,27 @@ export default function CollectionEntry({
             </span>
           </div>
 
-          {/* Secondary image — 3:2 ratio (more editorial, less digital) */}
+          {/* Secondary image — 3:2 ratio */}
           <div className="img-zoom overflow-hidden my-10 md:my-12">
-            <div
-              className="w-full transition-transform duration-700 ease-out hover:scale-[1.025]"
-              style={{
-                background: bgRight,
-                aspectRatio: "3 / 2",
-              }}
-            />
+            {imageRight ? (
+              <img
+                src={imageRight}
+                alt=""
+                className="w-full object-cover transition-transform duration-700 ease-out hover:scale-[1.025]"
+                style={{ aspectRatio: "3 / 2" }}
+              />
+            ) : (
+              <div
+                className="w-full transition-transform duration-700 ease-out hover:scale-[1.025]"
+                style={{
+                  background: bgRight,
+                  aspectRatio: "3 / 2",
+                }}
+              />
+            )}
           </div>
 
-          {/* Text block — pinned to natural flow after secondary image */}
+          {/* Text block */}
           <div className="mt-auto">
             <span className="gold-rule mb-10 block" />
 
@@ -92,22 +113,18 @@ export default function CollectionEntry({
               {name}
             </h2>
 
-            {/* Tagline — 19px italic, clearly distinct from description */}
-            <p className="font-display italic text-[#8A8A8A] leading-relaxed mb-4"
-               style={{ fontSize: "19px" }}>
+            <p className="font-body text-[#8A8A8A] text-[15px] leading-relaxed mb-8 max-w-[340px]">
               {tagline}
             </p>
 
-            {/* Description — 12px, clearly subordinate */}
-            <p className="font-body text-[#A8A4A0] mb-10 tracking-wide"
-               style={{ fontSize: "12px" }}>
+            <p className="font-body text-[13px] text-[#A8A4A0] leading-[1.8] mb-10 max-w-[280px]">
               {description}
             </p>
 
             <Link href={href} className="cta-link">
               View Collection
-              <svg width="28" height="1" viewBox="0 0 28 1" fill="none" aria-hidden="true">
-                <line x1="0" y1="0.5" x2="28" y2="0.5" stroke="#C9A96E" />
+              <svg width="20" height="1" viewBox="0 0 20 1" fill="none" aria-hidden="true">
+                <line x1="0" y1="0.5" x2="20" y2="0.5" stroke="#C9A96E" />
               </svg>
             </Link>
           </div>
