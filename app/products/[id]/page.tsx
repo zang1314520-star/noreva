@@ -198,9 +198,9 @@ export default function ProductDetailPage() {
           </div>
         </div>
       </section>
-      <section className="px-8 md:px-16 py-20 bg-[#1A1A1A]">
+      <section className="px-8 md:px-16 py-20 bg-white">
         <div className="max-w-2xl mx-auto text-center">
-          <p className="font-display text-2xl md:text-3xl text-white italic leading-relaxed">"Each piece begins with a conversation."</p>
+          <p className="font-display text-2xl md:text-3xl text-[#1A1A1A] italic leading-relaxed">"Each piece begins with a conversation."</p>
           <p className="font-body text-[#8A8A8A] text-sm mt-6 tracking-widest uppercase">- Maison NOREVA</p>
         </div>
       </section>
