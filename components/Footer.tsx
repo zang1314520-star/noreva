@@ -129,20 +129,9 @@ export default function Footer() {
             © 2026 NOREVA. All rights reserved.
           </p>
 
-          {/* Language toggle */}
-          <div className="flex items-center gap-4">
-            {["EN", "FR", "IT"].map((lang, i) => (
-              <button
-                key={lang}
-                className={`font-body text-[11px] tracking-widest transition-colors duration-200 ${
-                  i === 0
-                    ? "text-[#C9A96E]"
-                    : "text-[#C0BCBA] hover:text-[#8A8A8A]"
-                }`}
-              >
-                {lang}
-              </button>
-            ))}
+          {/* Language indicator */}
+          <div className="flex items-center gap-2">
+            <span className="font-body text-[11px] tracking-widest text-[#C9A96E]">EN</span>
           </div>
 
           <p className="font-body text-[11px] text-[#C0BCBA] tracking-wider hidden md:block">
