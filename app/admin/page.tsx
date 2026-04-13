@@ -1,6 +1,80 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
+
+// 图片上传组件 - 支持拖拽 + 预览 + URL输入
+function ImageUploader({ value, onChange, label }: { value: string; onChange: (url: string) => void; label: string }) {
+  const [uploading, setUploading] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  async function uploadFile(file: File) {
+    setUploading(true);
+    const fd = new FormData();
+    fd.append("file", file);
+    try {
+      const res = await fetch("/api/upload", { method: "POST", body: fd });
+      const data = await res.json();
+      if (data.url) {
+        onChange(data.url);
+      }
+    } catch (e) {
+      console.error("Upload failed", e);
+    }
+    setUploading(false);
+  }
+
+  function handleDrop(e: React.DragEvent) {
+    e.preventDefault();
+    setDragOver(false);
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith("image/")) {
+      uploadFile(file);
+    }
+  }
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (file) uploadFile(file);
+  }
+
+  return (
+    <div className="space-y-2">
+      <label className="block text-sm font-medium text-gray-700">{label}</label>
+      <div
+        className={`relative border-2 border-dashed rounded-lg p-4 transition-colors cursor-pointer ${dragOver ? "border-[#C9A96E] bg-amber-50" : "border-gray-300 hover:border-[#C9A96E]"}`}
+        onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+        onDragLeave={() => setDragOver(false)}
+        onDrop={handleDrop}
+        onClick={() => inputRef.current?.click()}
+      >
+        {uploading ? (
+          <div className="py-8 text-center">
+            <div className="animate-spin h-8 w-8 border-2 border-[#C9A96E] border-t-transparent rounded-full mx-auto mb-2" />
+            <p className="text-sm text-gray-500">上传中...</p>
+          </div>
+        ) : value ? (
+          <div className="relative">
+            <img src={value} alt="" className="max-h-48 mx-auto object-contain rounded" />
+            <div className="absolute top-2 right-2 flex gap-2">
+              <button onClick={(e) => { e.stopPropagation(); inputRef.current?.click(); }} className="bg-white/90 text-xs px-2 py-1 rounded shadow hover:bg-white">更换</button>
+              <button onClick={(e) => { e.stopPropagation(); onChange(""); }} className="bg-red-500 text-white text-xs px-2 py-1 rounded shadow hover:bg-red-600">删除</button>
+            </div>
+          </div>
+        ) : (
+          <div className="py-8 text-center">
+            <div className="text-4xl mb-2">📁</div>
+            <p className="text-sm text-gray-500">拖拽图片到这里，或点击选择文件</p>
+            <p className="text-xs text-gray-400 mt-1">支持 JPG, PNG, WebP 自动转为 WebP 格式</p>
+          </div>
+        )}
+        <input ref={inputRef} type="file" accept="image/*" className="hidden" onChange={handleFileChange} />
+      </div>
+      {/* URL输入框 */}
+      <input type="text" value={value} onChange={(e) => onChange(e.target.value)} placeholder="或直接粘贴图片URL" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#C9A96E] focus:border-transparent" />
+    </div>
+  );
+}
 
 interface Spec { id: string; color: string; size: string; image: string; stock: number; }
 interface Product { id: string; name: string; nameCn?: string; category: string; categoryName: string; price: number; currency: string; description: string; descriptionCn?: string; mainImage: string; specs: Spec[]; detailImages: string[]; }
@@ -298,63 +372,37 @@ export default function AdminPage() {
         {tab === "siteImages" && (
           <div className="space-y-6">
             <div className="bg-white rounded-xl p-6 shadow-sm">
-              <h2 className="text-lg font-medium mb-4">{t.heroImage}</h2>
+              <h2 className="text-lg font-medium mb-2">{t.heroImage}</h2>
               <p className="text-xs text-gray-500 mb-4">{t.heroImageTip}</p>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Image URL</label>
-                  <input type="text" value={siteImages.hero.image} onChange={(e) => setSiteImages({...siteImages, hero: {...siteImages.hero, image: e.target.value}})} className="w-full p-3 border rounded-lg" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
-                  <input type="text" value={siteImages.hero.title} onChange={(e) => setSiteImages({...siteImages, hero: {...siteImages.hero, title: e.target.value}})} className="w-full p-3 border rounded-lg" />
-                </div>
+              <ImageUploader value={siteImages.hero.image} onChange={(v) => setSiteImages({...siteImages, hero: {...siteImages.hero, image: v}})} label="Hero 图片" />
+              <div className="mt-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">标题</label>
+                <input type="text" value={siteImages.hero.title} onChange={(e) => setSiteImages({...siteImages, hero: {...siteImages.hero, title: e.target.value}})} className="w-full p-3 border rounded-lg" />
               </div>
             </div>
 
             <div className="bg-white rounded-xl p-6 shadow-sm">
               <h2 className="text-lg font-medium mb-4">{t.womenswear}</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Main Image URL</label>
-                  <input type="text" value={siteImages.womenswear.main} onChange={(e) => setSiteImages({...siteImages, womenswear: {...siteImages.womenswear, main: e.target.value}})} className="w-full p-3 border rounded-lg" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Secondary Image URL</label>
-                  <input type="text" value={siteImages.womenswear.secondary} onChange={(e) => setSiteImages({...siteImages, womenswear: {...siteImages.womenswear, secondary: e.target.value}})} className="w-full p-3 border rounded-lg" />
-                </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <ImageUploader value={siteImages.womenswear.main} onChange={(v) => setSiteImages({...siteImages, womenswear: {...siteImages.womenswear, main: v}})} label="女装主图" />
+                <ImageUploader value={siteImages.womenswear.secondary} onChange={(v) => setSiteImages({...siteImages, womenswear: {...siteImages.womenswear, secondary: v}})} label="女装副图" />
               </div>
             </div>
 
             <div className="bg-white rounded-xl p-6 shadow-sm">
               <h2 className="text-lg font-medium mb-4">{t.menswear}</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Main Image URL</label>
-                  <input type="text" value={siteImages.menswear.main} onChange={(e) => setSiteImages({...siteImages, menswear: {...siteImages.menswear, main: e.target.value}})} className="w-full p-3 border rounded-lg" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Secondary Image URL</label>
-                  <input type="text" value={siteImages.menswear.secondary} onChange={(e) => setSiteImages({...siteImages, menswear: {...siteImages.menswear, secondary: e.target.value}})} className="w-full p-3 border rounded-lg" />
-                </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <ImageUploader value={siteImages.menswear.main} onChange={(v) => setSiteImages({...siteImages, menswear: {...siteImages.menswear, main: v}})} label="男装主图" />
+                <ImageUploader value={siteImages.menswear.secondary} onChange={(v) => setSiteImages({...siteImages, menswear: {...siteImages.menswear, secondary: v}})} label="男装副图" />
               </div>
             </div>
 
             <div className="bg-white rounded-xl p-6 shadow-sm">
               <h2 className="text-lg font-medium mb-4">{t.journal}</h2>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Post 1 Image URL</label>
-                  <input type="text" value={siteImages.journal.post1} onChange={(e) => setSiteImages({...siteImages, journal: {...siteImages.journal, post1: e.target.value}})} className="w-full p-3 border rounded-lg" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Post 2 Image URL</label>
-                  <input type="text" value={siteImages.journal.post2} onChange={(e) => setSiteImages({...siteImages, journal: {...siteImages.journal, post2: e.target.value}})} className="w-full p-3 border rounded-lg" />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Post 3 Image URL</label>
-                  <input type="text" value={siteImages.journal.post3} onChange={(e) => setSiteImages({...siteImages, journal: {...siteImages.journal, post3: e.target.value}})} className="w-full p-3 border rounded-lg" />
-                </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <ImageUploader value={siteImages.journal.post1} onChange={(v) => setSiteImages({...siteImages, journal: {...siteImages.journal, post1: v}})} label="文章1图片" />
+                <ImageUploader value={siteImages.journal.post2} onChange={(v) => setSiteImages({...siteImages, journal: {...siteImages.journal, post2: v}})} label="文章2图片" />
+                <ImageUploader value={siteImages.journal.post3} onChange={(v) => setSiteImages({...siteImages, journal: {...siteImages.journal, post3: v}})} label="文章3图片" />
               </div>
             </div>
 
