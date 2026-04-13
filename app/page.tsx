@@ -30,7 +30,12 @@ export default function HomePage() {
 
       <SectionDivider />
 
-      {/* 04 — Collection Entry: Womenswear */}
+      {/* 04 — The Objects (moved up) */}
+      <ProductVignettes />
+
+      <SectionDivider />
+
+      {/* 05 — Collection Entry: Womenswear */}
       <CollectionEntry
         season="SS 2026"
         category="Womenswear"
@@ -45,7 +50,7 @@ export default function HomePage() {
 
       <SectionDivider />
 
-      {/* 04b — Collection Entry: Menswear (reversed) */}
+      {/* 05b — Collection Entry: Menswear (reversed) */}
       <CollectionEntry
         season="SS 2026"
         category="Menswear"
@@ -57,11 +62,6 @@ export default function HomePage() {
         imageLeft={MEN_LEFT}
         imageRight={MEN_RIGHT}
       />
-
-      <SectionDivider />
-
-      {/* 05 — The Objects */}
-      <ProductVignettes />
 
       <SectionDivider />
 
