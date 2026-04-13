@@ -38,10 +38,10 @@ export default function Footer() {
               NOREVA
             </span>
             <p className="font-body text-[13px] text-[#8A8A8A] leading-[1.9] mb-4">
-              Paris — Milan
+              Shanghai — Milan
             </p>
             <p className="font-body text-[13px] text-[#8A8A8A] leading-[1.9]">
-              Est. 2024
+              Est. 2026
             </p>
           </motion.div>
 
