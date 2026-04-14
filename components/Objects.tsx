@@ -20,18 +20,21 @@ interface ObjectsProps {
   maxVisible?: number;
 }
 
-// 细分类配置
+// 三大类细分类
 const SUBCATEGORIES = [
-  { name: "T恤", nameEn: "T-Shirts", slug: "tshirts", icon: "T" },
-  { name: "外套", nameEn: "Outerwear", slug: "outerwear", icon: "J" },
-  { name: "裤子", nameEn: "Pants", slug: "pants", icon: "P" },
-  { name: "卫衣", nameEn: "Hoodies", slug: "hoodies", icon: "H" },
-  { name: "衬衫", nameEn: "Shirts", slug: "shirts", icon: "S" },
-  { name: "裙子", nameEn: "Dresses", slug: "dresses", icon: "D" },
-  { name: "鞋子", nameEn: "Shoes", slug: "shoes", icon: "👟" },
-  { name: "包包", nameEn: "Bags", slug: "bags", icon: "👜" },
-  { name: "手表", nameEn: "Watches", slug: "watches", icon: "⌚" },
-  { name: "皮带", nameEn: "Belts", slug: "belts", icon: "皮带" },
+  // 服装
+  { name: "T恤", nameEn: "T-Shirts", slug: "tshirts", group: "clothing" },
+  { name: "外套", nameEn: "Outerwear", slug: "outerwear", group: "clothing" },
+  { name: "裤子", nameEn: "Pants", slug: "pants", group: "clothing" },
+  { name: "卫衣", nameEn: "Hoodies", slug: "hoodies", group: "clothing" },
+  { name: "衬衫", nameEn: "Shirts", slug: "shirts", group: "clothing" },
+  { name: "裙子", nameEn: "Dresses", slug: "dresses", group: "clothing" },
+  // 鞋包
+  { name: "鞋子", nameEn: "Shoes", slug: "shoes", group: "bagshoes" },
+  { name: "包包", nameEn: "Bags", slug: "bags", group: "bagshoes" },
+  // 配饰
+  { name: "手表", nameEn: "Watches", slug: "watches", group: "accessories" },
+  { name: "皮带", nameEn: "Belts", slug: "belts", group: "accessories" },
 ];
 
 const shimmer = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAUH/8QAIhAAAQMDAwUAAAAAAAAAAAAAAQACAwQFEQYSIQcTMUGB/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAH/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBEQCEAPEAXN3S4rY7hS0lLT0LHQx0bI2MZG0BrWta0I8qIq4u7nE4qIquf/2Q==";
@@ -42,6 +45,9 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
   const [isHovered, setIsHovered] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const { lang } = useLanguage();
+
+  // 显示6个细分类小按钮
+  const displaySubs = SUBCATEGORIES.slice(0, 6);
 
   return (
     <motion.div
@@ -56,7 +62,7 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
       className="group"
     >
       <Link href={`/products/${product.id}`}>
-        {/* Image container with overlay */}
+        {/* Image container */}
         <div 
           className="relative overflow-hidden mb-4"
           onMouseEnter={() => setIsHovered(true)}
@@ -73,7 +79,7 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
             alt={product.name}
             width={600}
             height={800}
-            className={`w-full aspect-[3/4] object-cover transition-all duration-500 ${
+            className={`w-full aspect-[3/4] object-cover transition-transform duration-500 ${
               imageLoaded ? "opacity-100" : "opacity-0"
             } ${isHovered ? "scale-105" : ""}`}
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
@@ -89,41 +95,41 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="absolute inset-0 bg-black/30 flex items-center justify-center"
+                transition={{ duration: 0.2 }}
+                className="absolute inset-0 bg-black/40 flex items-center justify-center"
               >
                 {/* Category Bubbles */}
-                <div className="relative w-full h-full flex items-center justify-center">
-                  {/* Center circle - Shop Now */}
+                <div className="relative flex items-center justify-center">
+                  {/* Center - View Now */}
                   <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
                     transition={{ delay: 0.05, type: "spring", stiffness: 200 }}
-                    className="absolute w-16 h-16 rounded-full bg-white/95 flex items-center justify-center shadow-lg cursor-pointer hover:bg-[#C9A96E] hover:text-white transition-colors z-10"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      window.location.href = `/products?category=${product.category.toLowerCase()}`;
-                    }}
+                    className="absolute w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-lg z-10"
                   >
-                    <span className="text-xs font-medium text-center leading-tight px-1">
+                    <span className="text-xs font-medium text-center leading-tight text-[#1A1A1A]">
                       View<br/>Now
                     </span>
                   </motion.div>
 
-                  {/* Surrounding category bubbles - show 4 at a time */}
-                  {[0, 1, 2, 3].map((i) => {
-                    const sub = SUBCATEGORIES[i % SUBCATEGORIES.length];
-                    const angle = (i * 90 - 45) * (Math.PI / 180);
-                    const radius = 80;
+                  {/* Surrounding bubbles */}
+                  {[0, 1, 2, 3, 4, 5].map((i) => {
+                    const sub = displaySubs[i];
+                    if (!sub) return null;
+                    // 环形排列
+                    const angle = (i * 60 - 30) * (Math.PI / 180);
+                    const radius = 70;
                     const x = Math.cos(angle) * radius;
                     const y = Math.sin(angle) * radius;
 
                     return (
                       <motion.div
                         key={sub.slug}
-                        initial={{ scale: 0, x: 0, y: 0 }}
-                        animate={{ scale: 1, x, y }}
-                        transition={{ delay: 0.1 + i * 0.05, type: "spring", stiffness: 200 }}
-                        className="absolute w-12 h-12 rounded-full bg-white/95 flex items-center justify-center shadow-lg cursor-pointer hover:bg-[#1A1A1A] hover:text-white transition-all text-lg"
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1, x, y }}
+                        exit={{ scale: 0, opacity: 0 }}
+                        transition={{ delay: 0.08 + i * 0.03, type: "spring", stiffness: 200 }}
+                        className="absolute w-11 h-11 rounded-full bg-white/95 flex items-center justify-center shadow-lg cursor-pointer hover:bg-[#C9A96E] hover:text-white transition-all text-[11px] font-medium"
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
@@ -131,7 +137,7 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
                         }}
                         title={lang === "zh" ? sub.name : sub.nameEn}
                       >
-                        {sub.icon}
+                        {lang === "zh" ? sub.name : sub.nameEn}
                       </motion.div>
                     );
                   })}
@@ -189,7 +195,6 @@ export default function Objects({ products = defaultProducts, maxVisible = 4 }: 
   const headerRef = useRef<HTMLDivElement>(null);
   const headerInView = useInView(headerRef, { once: true, margin: "-10%" });
   const displayProducts = products.slice(0, maxVisible);
-  const { lang } = useLanguage();
 
   return (
     <section className="bg-white py-[clamp(5rem,10vw,9rem)] px-8 md:px-16">
@@ -204,14 +209,14 @@ export default function Objects({ products = defaultProducts, maxVisible = 4 }: 
         <div>
           <span className="label text-[#8A8A8A] block mb-4">Curated Selection</span>
           <h2 className="font-display text-[clamp(2rem,3.5vw,2.8rem)] font-light text-[#1A1A1A] leading-tight">
-            {lang === "zh" ? "精选单品" : "The Objects"}
+            The Objects
           </h2>
         </div>
         <Link
           href="/products"
           className="cta-link"
         >
-          {lang === "zh" ? "查看全部" : "Shop All"}
+          Shop All
           <svg width="20" height="1" viewBox="0 0 20 1" fill="none" aria-hidden="true">
             <line x1="0" y1="0.5" x2="20" y2="0.5" stroke="#C9A96E" />
           </svg>
@@ -222,19 +227,6 @@ export default function Objects({ products = defaultProducts, maxVisible = 4 }: 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-10">
         {displayProducts.map((product, index) => (
           <ProductCard key={product.id} product={product} index={index} />
-        ))}
-      </div>
-
-      {/* Category quick links */}
-      <div className="mt-16 flex flex-wrap justify-center gap-4">
-        {SUBCATEGORIES.map((sub) => (
-          <Link
-            key={sub.slug}
-            href={`/products?category=${sub.slug}`}
-            className="px-6 py-3 border border-[#E8E6E2] rounded-full text-sm text-[#8A8A8A] hover:border-[#C9A96E] hover:text-[#C9A96E] transition-colors"
-          >
-            {lang === "zh" ? sub.name : sub.nameEn}
-          </Link>
         ))}
       </div>
     </section>
