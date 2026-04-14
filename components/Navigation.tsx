@@ -7,42 +7,13 @@ import { languages } from "@/lib/i18n";
 import type { Language } from "@/lib/i18n";
 import { useLanguage } from "./LanguageContext";
 
-// 三大分类
-const CATEGORIES = [
-  {
-    key: "clothing",
-    name: "服装",
-    nameEn: "Clothing",
-    subcategories: [
-      { name: "T恤", nameEn: "T-Shirts", slug: "tshirts" },
-      { name: "外套", nameEn: "Outerwear", slug: "outerwear" },
-      { name: "裤子", nameEn: "Pants", slug: "pants" },
-      { name: "卫衣", nameEn: "Hoodies", slug: "hoodies" },
-      { name: "衬衫", nameEn: "Shirts", slug: "shirts" },
-      { name: "连衣裙", nameEn: "Dresses", slug: "dresses" },
-    ]
-  },
-  {
-    key: "bagshoes",
-    name: "鞋包",
-    nameEn: "Shoes & Bags",
-    subcategories: [
-      { name: "鞋子", nameEn: "Shoes", slug: "shoes" },
-      { name: "包包", nameEn: "Bags", slug: "bags" },
-    ]
-  },
-  {
-    key: "accessories",
-    name: "配饰",
-    nameEn: "Accessories",
-    subcategories: [
-      { name: "手表", nameEn: "Watches", slug: "watches" },
-      { name: "皮带", nameEn: "Belts", slug: "belts" },
-    ]
-  }
+const navLeft = [
+  { label: "Shop", href: "/products" },
+  { label: "Collections", href: "#collections" },
+  { label: "World", href: "#world" },
 ];
 
-const NAV_RIGHT = [
+const navRight = [
   { label: "Journal", href: "#journal" },
   { label: "Contact", href: "#contact" },
 ];
@@ -51,7 +22,6 @@ export default function Navigation() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [langMenuOpen, setLangMenuOpen] = useState(false);
-  const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const { lang, setLang, currentLangName } = useLanguage();
 
   useEffect(() => {
@@ -77,46 +47,12 @@ export default function Navigation() {
         }`}
       >
         <nav className="px-8 md:px-16 h-16 flex items-center justify-between">
-          {/* Left: Categories with dropdown */}
+          {/* Left links */}
           <div className="hidden md:flex items-center gap-10">
-            {CATEGORIES.map((category) => (
-              <div
-                key={category.key}
-                className="relative"
-                onMouseEnter={() => setActiveCategory(category.key)}
-                onMouseLeave={() => setActiveCategory(null)}
-              >
-                <button className="nav-link flex items-center gap-1">
-                  {lang === "zh" ? category.name : category.nameEn}
-                  <svg width="8" height="5" viewBox="0 0 8 5" fill="none" className={`transition-transform ${activeCategory === category.key ? "rotate-180" : ""}`}>
-                    <path d="M1 1L4 4L7 1" stroke="currentColor" strokeWidth="1.5"/>
-                  </svg>
-                </button>
-
-                {/* Dropdown Menu */}
-                <AnimatePresence>
-                  {activeCategory === category.key && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 10 }}
-                      transition={{ duration: 0.2 }}
-                      className="absolute top-full left-0 mt-2 bg-white border border-[#E8E6E2] shadow-lg min-w-[180px] z-50"
-                    >
-                      {category.subcategories.map((sub) => (
-                        <Link
-                          key={sub.slug}
-                          href={`/products?category=${sub.slug}`}
-                          className="block px-5 py-3 text-sm text-[#8A8A8A] hover:text-[#1A1A1A] hover:bg-[#FAFAFA] transition-colors border-b border-[#F0EFED] last:border-0"
-                          onClick={() => setActiveCategory(null)}
-                        >
-                          {lang === "zh" ? sub.name : sub.nameEn}
-                        </Link>
-                      ))}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
+            {navLeft.map((item) => (
+              <Link key={item.label} href={item.href} className="nav-link">
+                {item.label}
+              </Link>
             ))}
           </div>
 
@@ -171,7 +107,7 @@ export default function Navigation() {
             </div>
 
             {/* Right nav links */}
-            {NAV_RIGHT.map((item) => (
+            {navRight.map((item) => (
               <Link key={item.label} href={item.href} className="nav-link">
                 {item.label}
               </Link>
@@ -233,32 +169,13 @@ export default function Navigation() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: "100%" }}
             transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="fixed inset-0 z-40 bg-white flex flex-col items-center justify-center gap-8"
+            className="fixed inset-0 z-40 bg-white flex flex-col items-center justify-center gap-10"
           >
-            {CATEGORIES.map((category) => (
-              <div key={category.key} className="text-center">
-                <h3 className="font-display text-2xl text-[#1A1A1A] mb-4">
-                  {lang === "zh" ? category.name : category.nameEn}
-                </h3>
-                <div className="space-y-2">
-                  {category.subcategories.map((sub) => (
-                    <Link
-                      key={sub.slug}
-                      href={`/products?category=${sub.slug}`}
-                      className="block font-body text-sm text-[#8A8A8A] hover:text-[#C9A96E] transition-colors"
-                      onClick={() => setMenuOpen(false)}
-                    >
-                      {lang === "zh" ? sub.name : sub.nameEn}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            ))}
-            {NAV_RIGHT.map((item) => (
+            {[...navLeft, ...navRight].map((item) => (
               <Link
                 key={item.label}
                 href={item.href}
-                className="font-display text-2xl text-[#1A1A1A] hover:text-[#C9A96E] transition-colors"
+                className="font-display text-4xl text-[#1A1A1A] hover:text-[#C9A96E] transition-colors duration-300 italic"
                 onClick={() => setMenuOpen(false)}
               >
                 {item.label}
