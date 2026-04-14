@@ -8,7 +8,6 @@ import type { Language } from "@/lib/i18n";
 import { useLanguage } from "./LanguageContext";
 
 const navLeft = [
-  { label: "Shop", href: "/products" },
   { label: "Collections", href: "#collections" },
   { label: "World", href: "#world" },
 ];
