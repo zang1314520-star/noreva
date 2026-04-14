@@ -3,19 +3,9 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { languages } from "@/lib/i18n";
+import { languages, t } from "@/lib/i18n";
 import type { Language } from "@/lib/i18n";
 import { useLanguage } from "./LanguageContext";
-
-const navLeft = [
-  { label: "Collections", href: "#collections" },
-  { label: "World", href: "#world" },
-];
-
-const navRight = [
-  { label: "Journal", href: "#journal" },
-  { label: "Contact", href: "#contact" },
-];
 
 export default function Navigation() {
   const [scrolled, setScrolled] = useState(false);
@@ -32,6 +22,7 @@ export default function Navigation() {
   const handleLangChange = (newLang: Language) => {
     setLang(newLang);
     setLangMenuOpen(false);
+    // 触发页面刷新以应用新语言
     window.location.reload();
   };
 
@@ -48,11 +39,12 @@ export default function Navigation() {
         <nav className="px-8 md:px-16 h-16 flex items-center justify-between">
           {/* Left links */}
           <div className="hidden md:flex items-center gap-10">
-            {navLeft.map((item) => (
-              <Link key={item.label} href={item.href} className="nav-link">
-                {item.label}
-              </Link>
-            ))}
+            <Link href="#collections" className="nav-link">
+              {t(lang, "navCollections")}
+            </Link>
+            <Link href="#world" className="nav-link">
+              {t(lang, "navWorld")}
+            </Link>
           </div>
 
           {/* Center logo */}
@@ -72,7 +64,7 @@ export default function Navigation() {
                 className="flex items-center gap-1 font-body text-[11px] tracking-[0.2em] text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors"
               >
                 {currentLangName}
-                <svg width="8" height="5" viewBox="0 0 8 5" fill="none" className={langMenuOpen ? "rotate-180" : ""}>
+                <svg width="8" height="5" viewBox="0 0 8 5" fill="none" className={`transition-transform ${langMenuOpen ? "rotate-180" : ""}`}>
                   <path d="M1 1L4 4L7 1" stroke="currentColor" strokeWidth="1.5"/>
                 </svg>
               </button>
@@ -80,109 +72,95 @@ export default function Navigation() {
               <AnimatePresence>
                 {langMenuOpen && (
                   <>
-                    <div className="fixed inset-0 z-40" onClick={() => setLangMenuOpen(false)} />
                     <motion.div
-                      initial={{ opacity: 0, y: -10 }}
+                      initial={{ opacity: 0, y: -4 }}
                       animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      className="absolute top-full right-0 mt-2 bg-white border border-[#E8E6E2] shadow-lg py-2 min-w-[140px] z-50"
+                      exit={{ opacity: 0, y: -4 }}
+                      transition={{ duration: 0.15 }}
+                      className="absolute top-full right-0 mt-2 bg-white border border-[#E8E6E2] shadow-lg min-w-[120px]"
                     >
-                      {languages.map((l) => (
+                      {languages.map((language) => (
                         <button
-                          key={l.code}
-                          onClick={() => handleLangChange(l.code)}
-                          className={`w-full text-left px-4 py-2 flex items-center justify-between hover:bg-[#FAFAFA] transition-colors ${
-                            lang === l.code ? "text-[#C9A96E]" : "text-[#8A8A8A]"
+                          key={language.code}
+                          onClick={() => handleLangChange(language.code)}
+                          className={`block w-full text-left px-4 py-2.5 font-body text-[11px] tracking-[0.15em] hover:bg-[#F7F5F1] transition-colors ${
+                            lang === language.code ? "text-[#C9A96E]" : "text-[#8A8A8A]"
                           }`}
                         >
-                          <span className="font-body text-[12px]">{l.name}</span>
-                          <span className="font-body text-[10px] text-[#A8A4A0]">{l.native}</span>
+                          {language.name} — {language.native}
                         </button>
                       ))}
                     </motion.div>
+                    {/* Overlay */}
+                    <div 
+                      className="fixed inset-0 z-[-1]" 
+                      onClick={() => setLangMenuOpen(false)}
+                    />
                   </>
                 )}
               </AnimatePresence>
             </div>
 
-            {/* Right nav links */}
-            {navRight.map((item) => (
-              <Link key={item.label} href={item.href} className="nav-link">
-                {item.label}
-              </Link>
-            ))}
+            {/* Right links */}
+            <Link href="#journal" className="nav-link">
+              {t(lang, "navJournal")}
+            </Link>
           </div>
 
-          {/* Mobile: Language + Menu button */}
-          <div className="flex items-center gap-4 md:hidden">
-            <button
-              onClick={() => setLangMenuOpen(!langMenuOpen)}
-              className="font-body text-[11px] tracking-[0.2em] text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors"
-            >
-              {currentLangName}
-            </button>
-            
-            <button
-              className="flex flex-col gap-[5px] p-2 group"
-              onClick={() => setMenuOpen(!menuOpen)}
-              aria-label="Toggle menu"
-            >
-              <span className={`block w-6 h-px bg-[#1A1A1A] transition-all duration-300 ${menuOpen ? "rotate-45 translate-y-[6px]" : ""}`} />
-              <span className={`block w-4 h-px bg-[#1A1A1A] transition-all duration-300 ${menuOpen ? "opacity-0" : ""}`} />
-              <span className={`block w-6 h-px bg-[#1A1A1A] transition-all duration-300 ${menuOpen ? "-rotate-45 -translate-y-[6px]" : ""}`} />
-            </button>
-          </div>
+          {/* Mobile menu button */}
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="md:hidden flex flex-col gap-1.5 p-2"
+          >
+            <span className={`w-5 h-px bg-[#1A1A1A] transition-transform ${menuOpen ? "rotate-45 translate-y-2" : ""}`} />
+            <span className={`w-5 h-px bg-[#1A1A1A] transition-opacity ${menuOpen ? "opacity-0" : ""}`} />
+            <span className={`w-5 h-px bg-[#1A1A1A] transition-transform ${menuOpen ? "-rotate-45 -translate-y-2" : ""}`} />
+          </button>
         </nav>
+
+        {/* Mobile menu */}
+        <AnimatePresence>
+          {menuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="md:hidden bg-white border-t border-[#E8E6E2]"
+            >
+              <div className="px-8 py-6 space-y-4">
+                <Link href="#collections" className="block font-body text-[13px] tracking-[0.15em] text-[#1A1A1A]" onClick={() => setMenuOpen(false)}>
+                  {t(lang, "navCollections")}
+                </Link>
+                <Link href="#world" className="block font-body text-[13px] tracking-[0.15em] text-[#1A1A1A]" onClick={() => setMenuOpen(false)}>
+                  {t(lang, "navWorld")}
+                </Link>
+                <Link href="#journal" className="block font-body text-[13px] tracking-[0.15em] text-[#1A1A1A]" onClick={() => setMenuOpen(false)}>
+                  {t(lang, "navJournal")}
+                </Link>
+                <div className="pt-4 border-t border-[#E8E6E2]">
+                  <p className="text-[11px] tracking-[0.2em] text-[#8A8A8A] mb-3">LANGUAGE</p>
+                  <div className="flex flex-wrap gap-4">
+                    {languages.map((language) => (
+                      <button
+                        key={language.code}
+                        onClick={() => {
+                          handleLangChange(language.code);
+                          setMenuOpen(false);
+                        }}
+                        className={`font-body text-[11px] tracking-[0.15em] ${
+                          lang === language.code ? "text-[#C9A96E]" : "text-[#8A8A8A]"
+                        }`}
+                      >
+                        {language.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.header>
-
-      {/* Mobile Language Menu */}
-      <AnimatePresence>
-        {langMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="fixed top-16 right-8 z-50 bg-white border border-[#E8E6E2] shadow-lg py-2 min-w-[140px] md:hidden"
-          >
-            {languages.map((l) => (
-              <button
-                key={l.code}
-                onClick={() => handleLangChange(l.code)}
-                className={`w-full text-left px-4 py-2 flex items-center justify-between hover:bg-[#FAFAFA] transition-colors ${
-                  lang === l.code ? "text-[#C9A96E]" : "text-[#8A8A8A]"
-                }`}
-              >
-                <span className="font-body text-[12px]">{l.name}</span>
-                <span className="font-body text-[10px] text-[#A8A4A0]">{l.native}</span>
-              </button>
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Mobile menu */}
-      <AnimatePresence>
-        {menuOpen && (
-          <motion.div
-            initial={{ opacity: 0, x: "100%" }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: "100%" }}
-            transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="fixed inset-0 z-40 bg-white flex flex-col items-center justify-center gap-10"
-          >
-            {[...navLeft, ...navRight].map((item) => (
-              <Link
-                key={item.label}
-                href={item.href}
-                className="font-display text-4xl text-[#1A1A1A] hover:text-[#C9A96E] transition-colors duration-300 italic"
-                onClick={() => setMenuOpen(false)}
-              >
-                {item.label}
-              </Link>
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
     </>
   );
 }

@@ -7,23 +7,27 @@ interface LanguageContextType {
   lang: Language;
   setLang: (lang: Language) => void;
   currentLangName: string;
+  allLanguages: typeof languages;
 }
 
 const LanguageContext = createContext<LanguageContextType>({
   lang: "en",
   setLang: () => {},
   currentLangName: "EN",
+  allLanguages: languages,
 });
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [lang, setLangState] = useState<Language>("zh");
+  const [lang, setLangState] = useState<Language>("en");
 
   useEffect(() => {
     const saved = localStorage.getItem("noreva-lang") as Language;
-    if (saved && ["en", "zh", "fr", "it", "de", "es"].includes(saved)) {
+    if (saved && ["en", "fr", "it", "de", "es"].includes(saved)) {
       setLangState(saved);
     } else {
-      setLangState("zh");
+      // 默认英文
+      setLangState("en");
+      localStorage.setItem("noreva-lang", "en");
     }
   }, []);
 
@@ -33,10 +37,10 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   };
 
   const langInfo = languages.find(l => l.code === lang);
-  const currentLangName = langInfo?.name || "中文";
+  const currentLangName = langInfo?.name || "EN";
 
   return (
-    <LanguageContext.Provider value={{ lang, setLang, currentLangName }}>
+    <LanguageContext.Provider value={{ lang, setLang, currentLangName, allLanguages: languages }}>
       {children}
     </LanguageContext.Provider>
   );

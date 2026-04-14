@@ -1,3 +1,5 @@
+"use client";
+
 import Navigation from "@/components/Navigation";
 import Hero from "@/components/Hero";
 import Manifesto from "@/components/Manifesto";
@@ -7,6 +9,7 @@ import PersonalShopper from "@/components/PersonalShopper";
 import Journal from "@/components/Journal";
 import Footer from "@/components/Footer";
 import SectionDivider from "@/components/SectionDivider";
+import { useTranslation } from "@/lib/useTranslation";
 
 // High-end fashion images from Unsplash
 const WOMEN_LEFT = "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=800&q=80";
@@ -15,6 +18,8 @@ const MEN_LEFT = "https://images.unsplash.com/photo-1617137968427-85924c800a22?w
 const MEN_RIGHT = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80";
 
 export default function HomePage() {
+  const { t } = useTranslation();
+
   return (
     <main className="relative">
       {/* 01 — Navigation */}
@@ -39,9 +44,9 @@ export default function HomePage() {
       <CollectionEntry
         season="SS 2026"
         category="Womenswear"
-        name="The Atelier Line"
-        tagline="Quiet refinement."
-        description="Twelve pieces. No more."
+        name={t("collectionsTheAtelier")}
+        tagline={t("collectionsAtelierTagline")}
+        description={t("collectionsAtelierDesc")}
         href="#"
         reverse={false}
         imageLeft={WOMEN_LEFT}
@@ -54,9 +59,9 @@ export default function HomePage() {
       <CollectionEntry
         season="SS 2026"
         category="Menswear"
-        name="Le Volume Sombre"
-        tagline="Structure without force."
-        description="Eight silhouettes. Uncompromised."
+        name={t("collectionsLeVolume")}
+        tagline={t("collectionsLeVolumeTagline")}
+        description={t("collectionsLeVolumeDesc")}
         href="#"
         reverse={true}
         imageLeft={MEN_LEFT}

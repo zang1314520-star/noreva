@@ -108,7 +108,7 @@ function CategoryCard({ category, index }: { category: typeof CATEGORIES[0]; ind
                   animate={{ y: 0 }}
                   className="font-display text-2xl text-white mb-4"
                 >
-                  {lang === "zh" ? category.name : category.nameEn}
+                  {category.nameEn}
                 </motion.h3>
 
                 {/* Subcategory bubbles */}
@@ -126,7 +126,7 @@ function CategoryCard({ category, index }: { category: typeof CATEGORIES[0]; ind
                       }}
                       className="px-3 py-1.5 bg-white/95 rounded-full text-xs text-[#1A1A1A] hover:bg-[#C9A96E] hover:text-white transition-colors"
                     >
-                      {lang === "zh" ? sub.name : sub.nameEn}
+                      {sub.nameEn}
                     </motion.button>
                   ))}
                 </div>
@@ -138,7 +138,7 @@ function CategoryCard({ category, index }: { category: typeof CATEGORIES[0]; ind
         {/* Category info */}
         <div className="text-center">
           <h3 className="font-display text-lg font-light text-[#1A1A1A] group-hover:text-[#C9A96E] transition-colors duration-300">
-            {lang === "zh" ? category.name : category.nameEn}
+            {category.nameEn}
           </h3>
         </div>
       </Link>
