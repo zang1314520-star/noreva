@@ -17,15 +17,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/admin`,
+      url: `${baseUrl}/privacy`,
       lastModified: new Date(),
       changeFrequency: "monthly" as const,
-      priority: 0.1,
+      priority: 0.5,
+    },
+    {
+      url: `${baseUrl}/returns`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.5,
+    },
+    {
+      url: `${baseUrl}/size-guide`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.5,
     },
   ];
 
-  // 语言变体
-  const languages = ["zh", "fr", "it", "de", "es"];
-  
   return routes;
 }

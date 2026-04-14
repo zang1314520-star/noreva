@@ -3,6 +3,7 @@ import { Cormorant_Garamond, DM_Sans } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "@/components/LanguageContext";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import CookieConsent from "@/components/CookieConsent";
 
 // 优化的字体加载（全球CDN）
 const cormorant = Cormorant_Garamond({
@@ -42,20 +43,11 @@ export const metadata: Metadata = {
     siteName: "NOREVA",
     title: "NOREVA — Premium Fashion House | Quiet Luxury",
     description: "NOREVA is a premium fashion house offering carefully chosen clothing, bags, watches, and accessories. Experience quiet luxury crafted in Shanghai and Milan.",
-    images: [
-      {
-        url: "/og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: "NOREVA",
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "NOREVA — Premium Fashion House",
     description: "Experience quiet luxury crafted in Shanghai and Milan.",
-    images: ["/og-image.jpg"],
   },
   robots: {
     index: true,
@@ -67,9 +59,6 @@ export const metadata: Metadata = {
       "max-image-preview": "large",
       "max-snippet": -1,
     },
-  },
-  verification: {
-    google: "your-google-verification-code", // 替换为你的 Google 验证码
   },
   alternates: {
     canonical: "https://www.noreva.cc",
@@ -101,6 +90,7 @@ export default function RootLayout({
       <body className="min-h-screen bg-white text-[#1A1A1A] antialiased">
         <LanguageProvider>
           {children}
+          <CookieConsent />
           <WhatsAppButton phoneNumber="8618508036618" />
         </LanguageProvider>
       </body>

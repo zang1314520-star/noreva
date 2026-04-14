@@ -11,6 +11,12 @@ const collections = [
   { label: "Pants", href: "/products?category=pants" },
 ];
 
+const legal = [
+  { label: "Privacy Policy", href: "/privacy" },
+  { label: "Shipping & Returns", href: "/returns" },
+  { label: "Size Guide", href: "/size-guide" },
+];
+
 const info = [
   { label: "Journal", href: "#journal" },
   { label: "The Atelier", href: "#" },
@@ -65,16 +71,16 @@ export default function Footer() {
             </nav>
           </motion.div>
 
-          {/* Info */}
+          {/* Legal */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.14 }}
+            transition={{ duration: 0.7, delay: 0.11 }}
           >
-            <span className="label text-[#8A8A8A] block mb-5">Maison</span>
+            <span className="label text-[#8A8A8A] block mb-5">Information</span>
             <nav className="space-y-3">
-              {info.map((item) => (
+              {legal.map((item) => (
                 <Link
                   key={item.label}
                   href={item.href}
@@ -91,7 +97,7 @@ export default function Footer() {
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.2 }}
+            transition={{ duration: 0.7, delay: 0.14 }}
           >
             <span className="label text-[#8A8A8A] block mb-5">Contact</span>
             <nav className="space-y-3">
@@ -126,9 +132,20 @@ export default function Footer() {
             © 2026 NOREVA. All rights reserved.
           </p>
 
-          <p className="font-body text-[11px] text-[#C0BCBA] tracking-wider">
-            Privacy Policy
-          </p>
+          <div className="flex gap-6">
+            <Link
+              href="/privacy"
+              className="font-body text-[11px] text-[#C0BCBA] tracking-wider hover:text-[#8A8A8A] transition-colors"
+            >
+              Privacy Policy
+            </Link>
+            <Link
+              href="/returns"
+              className="font-body text-[11px] text-[#C0BCBA] tracking-wider hover:text-[#8A8A8A] transition-colors"
+            >
+              Shipping & Returns
+            </Link>
+          </div>
         </div>
       </div>
     </footer>
