@@ -18,6 +18,17 @@ const content = {
     btn: "Begin Conversation",
     note: "We respond within 24 hours",
   },
+  zh: {
+    title: "私人服务",
+    subtitle: "您的专属造型师",
+    subtitle2: "随时恭候您的垂询。",
+    text1: "我们不相信购物车。",
+    text2: "我们相信对话。",
+    text3: "告诉我们您在寻找什么——一套衣服、",
+    text4: "一份礼物、一件单品——我们将为您提供指导。",
+    btn: "开始对话",
+    note: "我们会在24小时内回复",
+  },
   fr: {
     title: "Service Personnel",
     subtitle: "Votre styliste personnel",

@@ -18,13 +18,22 @@ interface Product {
   mainImage: string;
 }
 
+// 新的分类结构
 const CATEGORIES = [
-  { key: "all", name: "Shop All" },
-  { key: "bags", name: "Bags" },
-  { key: "clothing", name: "Clothing" },
-  { key: "watches", name: "Watches" },
-  { key: "pants", name: "Pants" },
-  { key: "jewelry", name: "Jewelry" },
+  { key: "all", name: "全部", nameEn: "All" },
+  // 服装
+  { key: "tshirts", name: "T恤", nameEn: "T-Shirts", group: "clothing" },
+  { key: "outerwear", name: "外套", nameEn: "Outerwear", group: "clothing" },
+  { key: "pants", name: "裤子", nameEn: "Pants", group: "clothing" },
+  { key: "hoodies", name: "卫衣", nameEn: "Hoodies", group: "clothing" },
+  { key: "shirts", name: "衬衫", nameEn: "Shirts", group: "clothing" },
+  { key: "dresses", name: "连衣裙", nameEn: "Dresses", group: "clothing" },
+  // 鞋包
+  { key: "shoes", name: "鞋子", nameEn: "Shoes", group: "bagshoes" },
+  { key: "bags", name: "包包", nameEn: "Bags", group: "bagshoes" },
+  // 配饰
+  { key: "watches", name: "手表", nameEn: "Watches", group: "accessories" },
+  { key: "belts", name: "皮带", nameEn: "Belts", group: "accessories" },
 ];
 
 const shimmer = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAUH/8QAIhAAAQMDAwUAAAAAAAAAAAAAAQACAwQFEQYSIQcTMUGB/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAH/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBEQCEAPEAXN3S4rY7hS0lLT0LHQx0bI2MZG0BrWta0I8qIq4u7nE4qIquf/2Q==";
@@ -68,8 +77,8 @@ export default function ProductsPage() {
       {/* Categories Filter */}
       <section className="px-8 md:px-16 mb-16">
         <div className="max-w-5xl mx-auto">
-          <div className="flex flex-wrap gap-2 md:gap-4 justify-center">
-            {CATEGORIES.map((cat) => (
+          <div className="flex flex-wrap gap-2 md:gap-4 justify-center items-center">
+            {CATEGORIES.map((cat, index) => (
               <button
                 key={cat.key}
                 onClick={() => setActiveCategory(cat.key)}

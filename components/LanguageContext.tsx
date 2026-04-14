@@ -16,12 +16,14 @@ const LanguageContext = createContext<LanguageContextType>({
 });
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [lang, setLangState] = useState<Language>("en");
+  const [lang, setLangState] = useState<Language>("zh");
 
   useEffect(() => {
     const saved = localStorage.getItem("noreva-lang") as Language;
-    if (saved && ["en", "fr", "it", "de", "es"].includes(saved)) {
+    if (saved && ["en", "zh", "fr", "it", "de", "es"].includes(saved)) {
       setLangState(saved);
+    } else {
+      setLangState("zh");
     }
   }, []);
 
@@ -31,7 +33,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   };
 
   const langInfo = languages.find(l => l.code === lang);
-  const currentLangName = langInfo?.name || "EN";
+  const currentLangName = langInfo?.name || "中文";
 
   return (
     <LanguageContext.Provider value={{ lang, setLang, currentLangName }}>

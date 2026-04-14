@@ -12,6 +12,7 @@ const shimmer = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYF
 
 const content = {
   en: { description: "Description", materials: "Materials & Care", inquiry: "Make an Inquiry" },
+  zh: { description: "描述", materials: "材质与保养", inquiry: "咨询" },
   fr: { description: "Description", materials: "Matières & Entretien", inquiry: "Faire une demande" },
   it: { description: "Descrizione", materials: "Materiali & Cura", inquiry: "Fai una richiesta" },
   de: { description: "Beschreibung", materials: "Materialien & Pflege", inquiry: "Anfrage stellen" },

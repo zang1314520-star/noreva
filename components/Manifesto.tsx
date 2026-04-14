@@ -11,6 +11,12 @@ const manifestoContent = {
     text2: "NOREVA is built for people who choose carefully",
     text3: "and wear with intention.",
   },
+  zh: {
+    title: "我们制作经久耐用的产品。",
+    text1: "服装不是潮流，而是一种选择。",
+    text2: "NOREVA专为那些精心挑选",
+    text3: "用心穿着的人士而打造。",
+  },
   fr: {
     title: "Nous créons des choses qui durent.",
     text1: "Le vêtement n'est pas une tendance. C'est une décision.",
