@@ -18,15 +18,6 @@ const itemVariants = {
   }),
 };
 
-// 预加载 Hero 图片
-useEffect(() => {
-  const link = document.createElement("link");
-  link.rel = "preload";
-  link.as = "image";
-  link.href = "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1920&q=80";
-  document.head.appendChild(link);
-}, []);
-
 export default function Hero() {
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
@@ -36,6 +27,15 @@ export default function Hero() {
 
   const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "14%"]);
   const textY = useTransform(scrollYProgress, [0, 1], ["0%", "22%"]);
+
+  // 预加载 Hero 图片
+  useEffect(() => {
+    const link = document.createElement("link");
+    link.rel = "preload";
+    link.as = "image";
+    link.href = "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1920&q=80";
+    document.head.appendChild(link);
+  }, []);
 
   return (
     <section
@@ -103,7 +103,7 @@ export default function Hero() {
             variants={itemVariants}
             initial="hidden"
             animate="visible"
-            className="label text-[#A8A4A0] uppercase tracking-[0.25em]"
+            className="label text-[#A8A8A8] uppercase tracking-[0.25em]"
           >
             SS 2026
           </motion.p>
@@ -145,7 +145,7 @@ export default function Hero() {
           className="flex items-center gap-4"
         >
           <div className="w-px h-12 bg-[#E0DDD8]" />
-          <span className="label text-[#A8A4A0] uppercase tracking-[0.25em]">
+          <span className="label text-[#A8A8A8] uppercase tracking-[0.25em]">
             Scroll
           </span>
         </motion.div>
