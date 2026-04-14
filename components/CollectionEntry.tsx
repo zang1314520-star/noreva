@@ -13,8 +13,6 @@ interface CollectionEntryProps {
   description: string;
   href: string;
   reverse?: boolean;
-  bgLeft?: string;
-  bgRight?: string;
   imageLeft?: string;
   imageRight?: string;
 }
@@ -27,8 +25,6 @@ export default function CollectionEntry({
   description,
   href,
   reverse = false,
-  bgLeft = "linear-gradient(135deg, #D4CFC5 0%, #BDB8AE 100%)",
-  bgRight = "linear-gradient(135deg, #E2DDD5 0%, #CCC8BF 100%)",
   imageLeft,
   imageRight,
 }: CollectionEntryProps) {
@@ -56,19 +52,15 @@ export default function CollectionEntry({
           {imageLeft ? (
             <Image
               src={imageLeft}
-              alt={category}
+              alt={`${category} collection`}
               width={800}
               height={1067}
               className="w-full aspect-[3/4] md:aspect-auto md:h-full min-h-[460px] md:min-h-[620px] object-cover transition-transform duration-700 ease-out hover:scale-[1.025]"
               sizes="(max-width: 768px) 100vw, 42vw"
-              placeholder="blur"
-              blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAUH/8QAIhAAAQMDAwUAAAAAAAAAAAAAAQACAwQFEQYSIQcTMUGB/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAH/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBEQCEAPEAXN3S4rY7hS0lLT0LHQx0bI2MZG0BrWta0I8qIq4u7nE4qIquf/2Q=="
+              loading="lazy"
             />
           ) : (
-            <div
-              className="w-full aspect-[3/4] md:aspect-auto md:h-full min-h-[460px] md:min-h-[620px] transition-transform duration-700 ease-out hover:scale-[1.025]"
-              style={{ background: bgLeft }}
-            />
+            <div className="w-full aspect-[3/4] md:aspect-auto md:h-full min-h-[460px] md:min-h-[620px] bg-[#E8E6E2]" />
           )}
         </motion.div>
 
@@ -99,16 +91,12 @@ export default function CollectionEntry({
                 className="w-full object-cover transition-transform duration-700 ease-out hover:scale-[1.025]"
                 style={{ aspectRatio: "3 / 2" }}
                 sizes="(max-width: 768px) 100vw, 58vw"
-                placeholder="blur"
-                blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAUH/8QAIhAAAQMDAwUAAAAAAAAAAAAAAQACAwQFEQYSIQcTMUGB/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAH/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBEQCEAPEAXN3S4rY7hS0lLT0LHQx0bI2MZG0BrWta0I8qIq4u7nE4qIquf/2Q=="
+                loading="lazy"
               />
             ) : (
               <div
-                className="w-full transition-transform duration-700 ease-out hover:scale-[1.025]"
-                style={{
-                  background: bgRight,
-                  aspectRatio: "3 / 2",
-                }}
+                className="w-full bg-[#E8E6E2]"
+                style={{ aspectRatio: "3 / 2" }}
               />
             )}
           </div>

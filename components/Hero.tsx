@@ -18,6 +18,15 @@ const itemVariants = {
   }),
 };
 
+// 预加载 Hero 图片
+useEffect(() => {
+  const link = document.createElement("link");
+  link.rel = "preload";
+  link.as = "image";
+  link.href = "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1920&q=80";
+  document.head.appendChild(link);
+}, []);
+
 export default function Hero() {
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
@@ -27,12 +36,6 @@ export default function Hero() {
 
   const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "14%"]);
   const textY = useTransform(scrollYProgress, [0, 1], ["0%", "22%"]);
-
-  // Preload hero image
-  useEffect(() => {
-    const img = new window.Image();
-    img.src = "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1920&q=80";
-  }, []);
 
   return (
     <section
@@ -53,13 +56,11 @@ export default function Hero() {
         >
           <Image
             src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1920&q=80"
-            alt="NOREVA Collection"
+            alt="NOREVA Collection SS 2026"
             fill
             priority
             className="object-cover"
             sizes="(max-width: 768px) 100vw, 63vw"
-            placeholder="blur"
-            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAUH/8QAIhAAAQMDAwUAAAAAAAAAAAAAAQACAwQFEQYSIQcTMUGB/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAH/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBEQCEAPEAXN3S4rY7hS0lLT0LHQx0bI2MZG0BrWta0I8qIq4u7nE4qIquf/2Q=="
           />
 
           {/* Large ghost-letter */}

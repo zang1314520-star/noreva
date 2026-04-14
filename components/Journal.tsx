@@ -11,7 +11,6 @@ interface JournalPost {
   title: string;
   excerpt: string;
   date: string;
-  bg: string;
   image?: string;
   tall?: boolean;
 }
@@ -24,7 +23,6 @@ const posts: JournalPost[] = [
     excerpt:
       "Why we return to the same fabric every season, and why that is not weakness but certainty.",
     date: "March 2026",
-    bg: "linear-gradient(145deg, #DDD8CE 0%, #CCCAC0 100%)",
     image: "https://images.unsplash.com/photo-1558171813-4c088753af8f?w=600&q=80",
     tall: false,
   },
@@ -35,7 +33,6 @@ const posts: JournalPost[] = [
     excerpt:
       "Behind the scenes of SS 2026 — before the light changes, before the world wakes.",
     date: "February 2026",
-    bg: "linear-gradient(145deg, #D0CBB8 0%, #C0BBA8 100%)",
     image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80",
     tall: true,
   },
@@ -46,7 +43,6 @@ const posts: JournalPost[] = [
     excerpt:
       "Our first presentation in seven years. What it meant, and what we chose not to say.",
     date: "January 2026",
-    bg: "linear-gradient(145deg, #D8D4CC 0%, #C8C4BC 100%)",
     image: "https://images.unsplash.com/photo-1445205170230-053b83016050?w=600&q=80",
     tall: false,
   },
@@ -68,7 +64,7 @@ function JournalCard({ post, index }: { post: JournalPost; index: number }) {
       }}
       className={`group cursor-pointer ${post.tall ? "md:mt-[-3rem]" : ""}`}
     >
-      {/* Image */}
+      {/* Image - 懒加载 */}
       <div className="img-zoom overflow-hidden mb-5">
         {post.image ? (
           <Image
@@ -80,21 +76,21 @@ function JournalCard({ post, index }: { post: JournalPost; index: number }) {
               post.tall ? "aspect-[3/4]" : "aspect-[4/3]"
             }`}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 25vw"
-            placeholder="blur"
-            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAUH/8QAIhAAAQMDAwUAAAAAAAAAAAAAAQACAwQFEQYSIQcTMUGB/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAH/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBEQCEAPEAXN3S4rY7hS0lLT0LHQx0bI2MZG0BrWta0I8qIq4u7nE4qIquf/2Q=="
+            loading="lazy"
           />
         ) : (
           <div
-            className={`w-full ${
+            className={`w-full bg-[#E8E6E2] ${
               post.tall ? "aspect-[3/4]" : "aspect-[4/3]"
-            } transition-transform duration-700 ease-out group-hover:scale-[1.03]`}
-            style={{ background: post.bg }}
+            }`}
           />
         )}
       </div>
 
       {/* Meta */}
-      <span className="label text-[#C9A96E] block mb-2">{post.category} — {post.date}</span>
+      <span className="label text-[#C9A96E] block mb-2">
+        {post.category} — {post.date}
+      </span>
 
       {/* Title */}
       <h3 className="font-display text-[clamp(1.1rem,2vw,1.4rem)] font-light text-[#1A1A1A] mb-3 leading-snug group-hover:text-[#C9A96E] transition-colors duration-300">
