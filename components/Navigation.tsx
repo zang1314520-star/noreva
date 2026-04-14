@@ -1,19 +1,18 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import Image from "next/image";
 import { languages } from "@/lib/i18n";
 import type { Language } from "@/lib/i18n";
 import { useLanguage } from "./LanguageContext";
 
-// 新的分类结构
-const CATEGORIES = {
-  clothing: {
+// 三大分类
+const CATEGORIES = [
+  {
+    key: "clothing",
     name: "服装",
     nameEn: "Clothing",
-    image: "https://images.unsplash.com/photo-1485462537746-965f33f7f6a7?w=400&q=80",
     subcategories: [
       { name: "T恤", nameEn: "T-Shirts", slug: "tshirts" },
       { name: "外套", nameEn: "Outerwear", slug: "outerwear" },
@@ -23,25 +22,25 @@ const CATEGORIES = {
       { name: "连衣裙", nameEn: "Dresses", slug: "dresses" },
     ]
   },
-  bagshoes: {
+  {
+    key: "bagshoes",
     name: "鞋包",
     nameEn: "Shoes & Bags",
-    image: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400&q=80",
     subcategories: [
       { name: "鞋子", nameEn: "Shoes", slug: "shoes" },
       { name: "包包", nameEn: "Bags", slug: "bags" },
     ]
   },
-  accessories: {
+  {
+    key: "accessories",
     name: "配饰",
     nameEn: "Accessories",
-    image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&q=80",
     subcategories: [
       { name: "手表", nameEn: "Watches", slug: "watches" },
       { name: "皮带", nameEn: "Belts", slug: "belts" },
     ]
   }
-};
+];
 
 const NAV_RIGHT = [
   { label: "Journal", href: "#journal" },
@@ -80,23 +79,23 @@ export default function Navigation() {
         <nav className="px-8 md:px-16 h-16 flex items-center justify-between">
           {/* Left: Categories with dropdown */}
           <div className="hidden md:flex items-center gap-10">
-            {Object.entries(CATEGORIES).map(([key, category]) => (
+            {CATEGORIES.map((category) => (
               <div
-                key={key}
+                key={category.key}
                 className="relative"
-                onMouseEnter={() => setActiveCategory(key)}
+                onMouseEnter={() => setActiveCategory(category.key)}
                 onMouseLeave={() => setActiveCategory(null)}
               >
                 <button className="nav-link flex items-center gap-1">
                   {lang === "zh" ? category.name : category.nameEn}
-                  <svg width="8" height="5" viewBox="0 0 8 5" fill="none" className={`transition-transform ${activeCategory === key ? "rotate-180" : ""}`}>
+                  <svg width="8" height="5" viewBox="0 0 8 5" fill="none" className={`transition-transform ${activeCategory === category.key ? "rotate-180" : ""}`}>
                     <path d="M1 1L4 4L7 1" stroke="currentColor" strokeWidth="1.5"/>
                   </svg>
                 </button>
 
                 {/* Dropdown Menu */}
                 <AnimatePresence>
-                  {activeCategory === key && (
+                  {activeCategory === category.key && (
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -236,8 +235,8 @@ export default function Navigation() {
             transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="fixed inset-0 z-40 bg-white flex flex-col items-center justify-center gap-8"
           >
-            {Object.entries(CATEGORIES).map(([key, category]) => (
-              <div key={key} className="text-center">
+            {CATEGORIES.map((category) => (
+              <div key={category.key} className="text-center">
                 <h3 className="font-display text-2xl text-[#1A1A1A] mb-4">
                   {lang === "zh" ? category.name : category.nameEn}
                 </h3>
