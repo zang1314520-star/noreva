@@ -11,40 +11,52 @@ interface ObjectsProps {
   maxVisible?: number;
 }
 
-// 三大类配置
+// 四大类配置
 const CATEGORIES = [
   {
     key: "clothing",
-    name: "服装",
     nameEn: "Clothing",
     image: "https://images.unsplash.com/photo-1485462537746-965f33f7f6a7?w=600&q=80",
     subcategories: [
-      { name: "T恤", nameEn: "T-Shirts", slug: "tshirts" },
-      { name: "外套", nameEn: "Outerwear", slug: "outerwear" },
-      { name: "裤子", nameEn: "Pants", slug: "pants" },
-      { name: "卫衣", nameEn: "Hoodies", slug: "hoodies" },
-      { name: "衬衫", nameEn: "Shirts", slug: "shirts" },
-      { name: "连衣裙", nameEn: "Dresses", slug: "dresses" },
+      { nameEn: "T-Shirts", slug: "tshirts" },
+      { nameEn: "Outerwear", slug: "outerwear" },
+      { nameEn: "Pants", slug: "pants" },
+      { nameEn: "Hoodies", slug: "hoodies" },
+      { nameEn: "Shirts", slug: "shirts" },
+      { nameEn: "Dresses", slug: "dresses" },
     ]
   },
   {
-    key: "bagshoes",
-    name: "鞋包",
-    nameEn: "Shoes & Bags",
+    key: "shoes",
+    nameEn: "Shoes",
+    image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&q=80",
+    subcategories: [
+      { nameEn: "Sneakers", slug: "sneakers" },
+      { nameEn: "Loafers", slug: "loafers" },
+      { nameEn: "Boots", slug: "boots" },
+      { nameEn: "Sandals", slug: "sandals" },
+    ]
+  },
+  {
+    key: "bags",
+    nameEn: "Bags",
     image: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=600&q=80",
     subcategories: [
-      { name: "鞋子", nameEn: "Shoes", slug: "shoes" },
-      { name: "包包", nameEn: "Bags", slug: "bags" },
+      { nameEn: "Handbags", slug: "handbags" },
+      { nameEn: "Backpacks", slug: "backpacks" },
+      { nameEn: "Clutches", slug: "clutches" },
+      { nameEn: "Wallets", slug: "wallets" },
     ]
   },
   {
     key: "accessories",
-    name: "配饰",
     nameEn: "Accessories",
     image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&q=80",
     subcategories: [
-      { name: "手表", nameEn: "Watches", slug: "watches" },
-      { name: "皮带", nameEn: "Belts", slug: "belts" },
+      { nameEn: "Watches", slug: "watches" },
+      { nameEn: "Belts", slug: "belts" },
+      { nameEn: "Sunglasses", slug: "sunglasses" },
+      { nameEn: "Jewelry", slug: "jewelry" },
     ]
   }
 ];
@@ -81,12 +93,12 @@ function CategoryCard({ category, index }: { category: typeof CATEGORIES[0]; ind
           
           <Image
             src={category.image}
-            alt={category.name}
+            alt={category.nameEn}
             fill
             className={`object-cover transition-transform duration-500 ${
               imageLoaded ? "opacity-100" : "opacity-0"
             } ${isHovered ? "scale-105" : ""}`}
-            sizes="(max-width: 768px) 33vw, 33vw"
+            sizes="(max-width: 768px) 33vw, 25vw"
             onLoad={() => setImageLoaded(true)}
             placeholder="blur"
             blurDataURL={shimmer}
@@ -146,44 +158,14 @@ function CategoryCard({ category, index }: { category: typeof CATEGORIES[0]; ind
   );
 }
 
-export default function Objects({ products = [], maxVisible = 3 }: ObjectsProps) {
-  const headerRef = useRef<HTMLDivElement>(null);
-  const headerInView = useInView(headerRef, { once: true, margin: "-10%" });
-  const { lang } = useLanguage();
-  const displayCategories = CATEGORIES.slice(0, maxVisible);
-
+export default function Objects({ maxVisible }: ObjectsProps) {
+  const displayCategories = maxVisible ? CATEGORIES.slice(0, maxVisible) : CATEGORIES;
+  
   return (
-    <section className="bg-white py-[clamp(5rem,10vw,9rem)] px-8 md:px-16">
-      {/* Header */}
-      <motion.div
-        ref={headerRef}
-        initial={{ opacity: 0, y: 18 }}
-        animate={headerInView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.7, ease: "easeOut" }}
-        className="mb-14 md:mb-20 text-center"
-      >
-        <span className="label text-[#8A8A8A] block mb-4">Curated Selection</span>
-        <h2 className="font-display text-[clamp(2rem,3.5vw,2.8rem)] font-light text-[#1A1A1A] leading-tight">
-          The Objects
-        </h2>
-      </motion.div>
-
-      {/* Category grid - 3 columns, evenly spaced */}
-      <div className="grid grid-cols-3 gap-4 md:gap-8 max-w-5xl mx-auto">
-        {displayCategories.map((category, index) => (
-          <CategoryCard key={category.key} category={category} index={index} />
-        ))}
-      </div>
-
-      {/* Bottom link */}
-      <div className="mt-12 text-center">
-        <Link href="/products" className="cta-link">
-          Shop All
-          <svg width="20" height="1" viewBox="0 0 20 1" fill="none" aria-hidden="true">
-            <line x1="0" y1="0.5" x2="20" y2="0.5" stroke="#C9A96E" />
-          </svg>
-        </Link>
-      </div>
-    </section>
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-12 max-w-7xl mx-auto">
+      {displayCategories.map((category, index) => (
+        <CategoryCard key={category.key} category={category} index={index} />
+      ))}
+    </div>
   );
 }
