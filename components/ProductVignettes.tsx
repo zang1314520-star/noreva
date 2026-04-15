@@ -21,25 +21,16 @@ const CATEGORIES = [
     ]
   },
   {
-    key: "shoes",
-    nameEn: "Shoes",
-    image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&q=80",
+    key: "shoesbags",
+    nameEn: "Shoes & Bags",
+    image: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=600&q=80",
     subcategories: [
       { nameEn: "Sneakers", slug: "sneakers" },
       { nameEn: "Loafers", slug: "loafers" },
-      { nameEn: "Boots", slug: "boots" },
-      { nameEn: "Sandals", slug: "sandals" },
-    ]
-  },
-  {
-    key: "bags",
-    nameEn: "Bags",
-    image: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=600&q=80",
-    subcategories: [
       { nameEn: "Handbags", slug: "handbags" },
       { nameEn: "Backpacks", slug: "backpacks" },
+      { nameEn: "Boots", slug: "boots" },
       { nameEn: "Clutches", slug: "clutches" },
-      { nameEn: "Wallets", slug: "wallets" },
     ]
   },
   {
@@ -88,7 +79,7 @@ function CategoryCard({ category, index }: { category: typeof CATEGORIES[0]; ind
             alt={category.nameEn}
             fill
             className={`object-cover transition-transform duration-500 ${imageLoaded ? "opacity-100" : "opacity-0"} ${isHovered ? "scale-105" : ""}`}
-            sizes="(max-width: 768px) 50vw, 25vw"
+            sizes="(max-width: 768px) 50vw, 33vw"
             onLoad={() => setImageLoaded(true)}
             placeholder="blur"
             blurDataURL={shimmer}
@@ -111,7 +102,7 @@ function CategoryCard({ category, index }: { category: typeof CATEGORIES[0]; ind
                   {category.nameEn}
                 </motion.h3>
 
-                <div className="flex flex-wrap justify-center gap-2 max-w-[200px]">
+                <div className="flex flex-wrap justify-center gap-2 max-w-[240px]">
                   {category.subcategories.map((sub, i) => (
                     <motion.button
                       key={sub.slug}
@@ -164,7 +155,7 @@ export default function ProductVignettes() {
           </h2>
         </motion.div>
 
-        <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-12">
+        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-12">
           {CATEGORIES.map((category, index) => (
             <CategoryCard key={category.key} category={category} index={index} />
           ))}
