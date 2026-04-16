@@ -13,6 +13,7 @@ const cormorant = Cormorant_Garamond({
   style: ["normal", "italic"],
   display: "swap",
   preload: true,
+  fallback: ["Georgia", "serif"],
 });
 
 const dmSans = DM_Sans({
@@ -21,6 +22,7 @@ const dmSans = DM_Sans({
   weight: ["300", "400", "500"],
   display: "swap",
   preload: true,
+  fallback: ["system-ui", "sans-serif"],
 });
 
 // 多语言 SEO Metadata
@@ -38,11 +40,11 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    alternateLocale: ["zh_CN", "fr_FR", "it_IT", "de_DE", "es_ES"],
+    alternateLocale: ["fr_FR", "it_IT", "de_DE", "es_ES"],
     url: "https://www.noreva.cc",
     siteName: "NOREVA",
     title: "NOREVA — Premium Fashion House | Quiet Luxury",
-    description: "NOREVA is a premium fashion house offering carefully chosen clothing, bags, watches, and accessories. Experience quiet luxury crafted in Shanghai and Milan.",
+    description: "NOREVA is a premium fashion house offering carefully chosen clothing, bags, watches, and accessories.",
   },
   twitter: {
     card: "summary_large_image",
@@ -64,7 +66,6 @@ export const metadata: Metadata = {
     canonical: "https://www.noreva.cc",
     languages: {
       "en-US": "https://www.noreva.cc",
-      "zh-CN": "https://www.noreva.cc?lang=zh",
       "fr-FR": "https://www.noreva.cc?lang=fr",
       "it-IT": "https://www.noreva.cc?lang=it",
       "de-DE": "https://www.noreva.cc?lang=de",
@@ -81,11 +82,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* 预连接关键域名 - 加速欧洲访问 */}
-        <link rel="preconnect" href="https://images.unsplash.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#ffffff" />
+        <link rel="preconnect" href="https://images.unsplash.com" />
       </head>
       <body className="min-h-screen bg-white text-[#1A1A1A] antialiased">
         <LanguageProvider>

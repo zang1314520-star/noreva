@@ -15,12 +15,12 @@ const nextConfig: NextConfig = {
       },
     ],
     formats: ["image/avif", "image/webp"],
-    // 图片优化配置
-    minimumCacheTTL: 60 * 60 * 24 * 30, // 缓存30天
+    minimumCacheTTL: 60 * 60 * 24 * 30,
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
-  // 生产环境优化
   compress: true,
-  // 预连接关键域名
+  poweredByHeader: false,
   async headers() {
     return [
       {
@@ -39,18 +39,26 @@ const nextConfig: NextConfig = {
             value: "nosniff",
           },
           {
+            key: "Referrer-Policy",
+            value: "origin-when-cross-origin",
+          },
+        ],
+      },
+      {
+        source: "/_next/static/(.*)",
+        headers: [
+          {
             key: "Cache-Control",
             value: "public, max-age=31536000, immutable",
           },
         ],
       },
       {
-        // 静态资源长期缓存
-        source: "/_next/static/(.*)",
+        source: "/images/(.*)",
         headers: [
           {
             key: "Cache-Control",
-            value: "public, max-age=31536000, immutable",
+            value: "public, max-age=86400, stale-while-revalidate=604800",
           },
         ],
       },
