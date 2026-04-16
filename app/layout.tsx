@@ -25,32 +25,32 @@ const dmSans = DM_Sans({
   fallback: ["system-ui", "sans-serif"],
 });
 
-// 多语言 SEO Metadata
+// 完整的 SEO Metadata
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.noreva.cc"),
   title: {
     default: "NOREVA — Premium Fashion House | Quiet Luxury",
     template: "%s | NOREVA",
   },
-  description: "NOREVA is a premium fashion house offering carefully chosen clothing, bags, watches, and accessories. Experience quiet luxury crafted in Shanghai and Milan.",
-  keywords: ["luxury fashion", "premium clothing", "designer bags", "watches", "accessories", "quiet luxury", "Shanghai", "Milan", "fashion house"],
+  description: "NOREVA is a premium fashion house offering carefully chosen clothing, bags, watches, and accessories. Experience quiet luxury crafted in Shanghai and Milan. Free worldwide shipping.",
+  keywords: [
+    "luxury fashion",
+    "premium clothing",
+    "designer bags",
+    "watches",
+    "accessories",
+    "quiet luxury",
+    "Shanghai",
+    "Milan",
+    "fashion house",
+    "high-end fashion",
+    "luxury brand",
+    "men's fashion",
+    "women's fashion",
+  ],
   authors: [{ name: "NOREVA" }],
   creator: "NOREVA",
   publisher: "NOREVA",
-  openGraph: {
-    type: "website",
-    locale: "en_US",
-    alternateLocale: ["fr_FR", "it_IT", "de_DE", "es_ES"],
-    url: "https://www.noreva.cc",
-    siteName: "NOREVA",
-    title: "NOREVA — Premium Fashion House | Quiet Luxury",
-    description: "NOREVA is a premium fashion house offering carefully chosen clothing, bags, watches, and accessories.",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "NOREVA — Premium Fashion House",
-    description: "Experience quiet luxury crafted in Shanghai and Milan.",
-  },
   robots: {
     index: true,
     follow: true,
@@ -62,6 +62,30 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    alternateLocale: ["fr_FR", "it_IT", "de_DE", "es_ES"],
+    url: "https://www.noreva.cc",
+    siteName: "NOREVA",
+    title: "NOREVA — Premium Fashion House | Quiet Luxury",
+    description: "NOREVA is a premium fashion house offering carefully chosen clothing, bags, watches, and accessories. Experience quiet luxury crafted in Shanghai and Milan.",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "NOREVA - Premium Fashion House",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "NOREVA — Premium Fashion House | Quiet Luxury",
+    description: "Experience quiet luxury crafted in Shanghai and Milan.",
+    images: ["/twitter-image"],
+    creator: "@noreva",
+  },
   alternates: {
     canonical: "https://www.noreva.cc",
     languages: {
@@ -72,6 +96,7 @@ export const metadata: Metadata = {
       "es-ES": "https://www.noreva.cc?lang=es",
     },
   },
+  category: "Fashion",
 };
 
 export default function RootLayout({
@@ -84,7 +109,11 @@ export default function RootLayout({
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#ffffff" />
+        <meta name="geo.region" content="CN-31,IT-25" />
+        <meta name="geo.placename" content="Shanghai, Milan" />
         <link rel="preconnect" href="https://images.unsplash.com" />
+        <link rel="dns-prefetch" href="https://images.unsplash.com" />
+        <link rel="icon" href="/favicon.ico" sizes="any" />
       </head>
       <body className="min-h-screen bg-white text-[#1A1A1A] antialiased">
         <LanguageProvider>
