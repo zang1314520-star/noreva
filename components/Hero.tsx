@@ -28,7 +28,6 @@ export default function Hero() {
   const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "14%"]);
   const textY = useTransform(scrollYProgress, [0, 1], ["0%", "22%"]);
 
-  // 预加载 Hero 图片
   useEffect(() => {
     const link = document.createElement("link");
     link.rel = "preload";
@@ -75,6 +74,9 @@ export default function Hero() {
           {/* Gradient bleed */}
           <div className="absolute inset-y-0 left-0 w-40 bg-gradient-to-r from-white via-white/60 to-transparent hidden md:block" />
 
+          {/* Mobile overlay - 确保手机端文字清晰 */}
+          <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/80 to-transparent md:hidden" />
+
           {/* Subtle vignette */}
           <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-white/10 to-transparent" />
         </motion.div>
@@ -103,7 +105,7 @@ export default function Hero() {
             variants={itemVariants}
             initial="hidden"
             animate="visible"
-            className="label text-[#A8A8A8] uppercase tracking-[0.25em]"
+            className="label text-[#8A8A8A] uppercase tracking-[0.25em]"
           >
             SS 2026
           </motion.p>
@@ -145,7 +147,7 @@ export default function Hero() {
           className="flex items-center gap-4"
         >
           <div className="w-px h-12 bg-[#E0DDD8]" />
-          <span className="label text-[#A8A8A8] uppercase tracking-[0.25em]">
+          <span className="label text-[#A8A8A0] uppercase tracking-[0.25em]">
             Scroll
           </span>
         </motion.div>
