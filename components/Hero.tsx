@@ -141,7 +141,7 @@ export default function Hero() {
             initial="hidden"
             animate="visible"
           >
-            <Link href="#collections" className="cta-link mt-8 inline-block">
+            <Link href="#objects" className="cta-link mt-8 inline-block">
               Explore
               <svg width="20" height="1" viewBox="0 0 20 1" fill="none" aria-hidden="true">
                 <line x1="0" y1="0.5" x2="20" y2="0.5" stroke="#C9A96E" />
