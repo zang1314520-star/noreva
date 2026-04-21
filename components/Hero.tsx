@@ -115,16 +115,28 @@ export default function Hero() {
             variants={itemVariants}
             initial="hidden"
             animate="visible"
-            className="font-display font-light leading-[1.0] text-[#1A1A1A]"
-            style={{ fontSize: "clamp(3.5rem, 7.5vw, 6.5rem)" }}
+            className="font-display font-light leading-[1.15] text-[#1A1A1A]"
+            style={{ fontSize: "clamp(2.2rem, 4.5vw, 4rem)" }}
           >
-            The New
-            <br />
-            <em>Collection</em>
+            We make things<br />
+            <em>that last.</em>
           </motion.h1>
 
           <motion.div
             custom={3}
+            variants={itemVariants}
+            initial="hidden"
+            animate="visible"
+            className="mt-6"
+          >
+            <p className="font-body text-[#8A8A8A] text-base leading-relaxed">
+              Clothing is not a trend.<br />
+              It is a decision.
+            </p>
+          </motion.div>
+
+          <motion.div
+            custom={4}
             variants={itemVariants}
             initial="hidden"
             animate="visible"
@@ -135,24 +147,6 @@ export default function Hero() {
                 <line x1="0" y1="0.5" x2="20" y2="0.5" stroke="#C9A96E" />
               </svg>
             </Link>
-          </motion.div>
-
-          {/* Brand Manifesto - integrated into Hero */}
-          <motion.div
-            custom={4}
-            variants={itemVariants}
-            initial="hidden"
-            animate="visible"
-            className="mt-8 pt-8 border-t border-[#E5E5E5]"
-          >
-            <p className="font-display font-light italic text-[#1A1A1A] leading-relaxed mb-3"
-               style={{ fontSize: "clamp(1.1rem, 2vw, 1.4rem)" }}>
-              We make things that last.
-            </p>
-            <p className="font-body text-[#8A8A8A] text-sm leading-relaxed">
-              Clothing is not a trend.<br />
-              It is a decision.
-            </p>
           </motion.div>
         </div>
 
