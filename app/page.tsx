@@ -2,7 +2,6 @@
 
 import Navigation from "@/components/Navigation";
 import Hero from "@/components/Hero";
-import Manifesto from "@/components/Manifesto";
 import CollectionEntry from "@/components/CollectionEntry";
 import ProductVignettes from "@/components/ProductVignettes";
 import PersonalShopper from "@/components/PersonalShopper";
@@ -30,12 +29,7 @@ export default function HomePage() {
 
       <SectionDivider />
 
-      {/* 03 — Brand Manifesto */}
-      <Manifesto />
-
-      <SectionDivider />
-
-      {/* 04 — The Objects (moved up) */}
+      {/* 03 — The Objects */}
       <ProductVignettes />
 
       <SectionDivider />

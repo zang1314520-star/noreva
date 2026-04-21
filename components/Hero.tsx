@@ -136,11 +136,29 @@ export default function Hero() {
               </svg>
             </Link>
           </motion.div>
+
+          {/* Brand Manifesto - integrated into Hero */}
+          <motion.div
+            custom={4}
+            variants={itemVariants}
+            initial="hidden"
+            animate="visible"
+            className="mt-8 pt-8 border-t border-[#E5E5E5]"
+          >
+            <p className="font-display font-light italic text-[#1A1A1A] leading-relaxed mb-3"
+               style={{ fontSize: "clamp(1.1rem, 2vw, 1.4rem)" }}>
+              We make things that last.
+            </p>
+            <p className="font-body text-[#8A8A8A] text-sm leading-relaxed">
+              Clothing is not a trend.<br />
+              It is a decision.
+            </p>
+          </motion.div>
         </div>
 
         {/* Bottom: scroll indicator */}
         <motion.div
-          custom={4}
+          custom={5}
           variants={itemVariants}
           initial="hidden"
           animate="visible"
