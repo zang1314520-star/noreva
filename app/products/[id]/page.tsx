@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import BackToTop from "@/components/BackToTop";
 import { useLanguage } from "@/components/LanguageContext";
 
 const WHATSAPP_NUMBER = "8618508036618";
@@ -117,6 +118,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
       </section>
 
       <Footer />
+      <BackToTop />
     </main>
   );
 }

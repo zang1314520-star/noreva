@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import BackToTop from "@/components/BackToTop";
 import { useTranslation } from "@/lib/useTranslation";
 
 const ALL_BRANDS = [
@@ -46,6 +47,7 @@ export default function ProductsPage() {
           </div>
         </div>
         <Footer />
+        <BackToTop />
       </main>
     }>
       <ProductsContent />
