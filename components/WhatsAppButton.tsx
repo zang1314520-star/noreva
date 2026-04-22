@@ -11,14 +11,14 @@ export default function WhatsAppButton({ phoneNumber = "YOURNUMBER" }: WhatsAppB
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Contact us on WhatsApp"
-      className="fixed bottom-8 right-8 z-50 group"
+      className="fixed bottom-8 right-0 z-50 group"
     >
       <div className="relative">
         {/* Pulse ring */}
         <span className="absolute inset-0 rounded-full bg-[#C9A96E]/20 scale-100 opacity-0 group-hover:opacity-100 group-hover:scale-150 transition-all duration-500" />
         
-        {/* Button */}
-        <div className="relative w-12 h-12 rounded-full bg-[#1A1A1A] flex items-center justify-center transition-all duration-300 group-hover:bg-[#C9A96E] group-hover:shadow-lg group-hover:shadow-[#C9A96E]/20">
+        {/* Button - 默认向右偏移，只露出一点边，悬停时滑出 */}
+        <div className="relative w-12 h-12 rounded-l-full bg-[#1A1A1A] flex items-center justify-center transition-all duration-300 group-hover:bg-[#C9A96E] group-hover:shadow-lg group-hover:shadow-[#C9A96E]/20 translate-x-[calc(100%-16px)] group-hover:translate-x-0 hover:!translate-x-0">
           {/* Message icon - minimal line style */}
           <svg
             width="22"
