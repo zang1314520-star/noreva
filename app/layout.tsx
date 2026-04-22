@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Cormorant_Garamond, DM_Sans } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "@/components/LanguageContext";
-import WhatsAppButton from "@/components/WhatsAppButton";
+import FloatingButtons from "@/components/FloatingButtons";
 import CookieConsent from "@/components/CookieConsent";
 
 // 优化的字体加载（全球CDN）
@@ -119,7 +119,7 @@ export default function RootLayout({
         <LanguageProvider>
           {children}
           <CookieConsent />
-          <WhatsAppButton phoneNumber="8618508036618" />
+          <FloatingButtons phoneNumber="8618508036618" />
         </LanguageProvider>
       </body>
     </html>
