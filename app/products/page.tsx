@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import { useTranslation } from "@/lib/useTranslation";
 
 const ALL_BRANDS = [
   "LV", "Dior", "Gucci", "Prada", "Burberry", "Hermes", "Balenciaga", "Chanel", 
@@ -53,6 +54,7 @@ export default function ProductsPage() {
 }
 
 function ProductsContent() {
+  const { t } = useTranslation();
   const searchParams = useSearchParams();
   const router = useRouter();
   
@@ -77,7 +79,7 @@ function ProductsContent() {
       const cat = ALL_CATEGORIES.find(c => c.key === selectedCategory);
       return cat ? cat.name : selectedCategory;
     }
-    return "All Products";
+    return t("productsTitle");
   };
   
   const clearFilters = () => {
@@ -106,7 +108,7 @@ function ProductsContent() {
             <div className="relative w-full md:w-80">
               <input
                 type="text"
-                placeholder="Search products..."
+                placeholder={t("searchProducts")}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="w-full px-4 py-3 bg-[#F5F4F2] border-0 focus:outline-none focus:ring-1 focus:ring-[#C9A96E] text-sm"
@@ -125,7 +127,7 @@ function ProductsContent() {
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
               </svg>
-              Filters
+              {t("filters")}
               {hasActiveFilters && <span className="w-2 h-2 bg-[#C9A96E] rounded-full"></span>}
             </button>
             
@@ -134,7 +136,7 @@ function ProductsContent() {
               disabled={!hasActiveFilters}
               className={hasActiveFilters ? "px-4 py-2 text-sm text-[#C9A96E] hover:underline" : "px-4 py-2 text-sm text-[#8A8A8A] cursor-not-allowed"}
             >
-              View All
+              {t("viewAll")}
             </button>
             
             {selectedBrand && (
@@ -169,7 +171,7 @@ function ProductsContent() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[1,2,3,4,5,6].map(i => (<div key={i} className="group"><div className="relative aspect-[3/4] bg-[#F5F4F2] mb-4 flex items-center justify-center"><span className="text-[#8A8A8A] text-sm">Product {i}</span></div><p className="text-xs text-[#8A8A8A] mb-1">Category</p><h3 className="font-display text-base text-[#1A1A1A]">Product Name</h3><p className="text-sm text-[#1A1A1A] mt-1">0.00</p></div>))}
           </div>
-          {!hasActiveFilters && (<div className="mt-16 text-center"><p className="text-[#8A8A8A] mb-6">Browse by category</p><div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
+          {!hasActiveFilters && (<div className="mt-16 text-center"><p className="text-[#8A8A8A] mb-6">{t("browseCategory")}</p><div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
 <a href="/products?group=clothing" className="p-8 border border-[#E5E5E5] hover:border-[#1A1A1A] transition-colors text-center"><h3 className="font-display text-lg">Clothing</h3><p className="text-xs text-[#8A8A8A] mt-2">T-Shirts, Hoodies, Jackets</p></a>
 <a href="/products?group=shoesbags" className="p-8 border border-[#E5E5E5] hover:border-[#1A1A1A] transition-colors text-center"><h3 className="font-display text-lg">Shoes & Bags</h3><p className="text-xs text-[#8A8A8A] mt-2">Sneakers, Handbags, Wallets</p></a>
 <a href="/products?group=accessories" className="p-8 border border-[#E5E5E5] hover:border-[#1A1A1A] transition-colors text-center"><h3 className="font-display text-lg">Accessories</h3><p className="text-xs text-[#8A8A8A] mt-2">Watches, Belts, Jewelry</p></a></div></div>)}

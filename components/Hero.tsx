@@ -4,6 +4,7 @@ import { useRef, useEffect } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
+import { useTranslation } from "@/lib/useTranslation";
 
 const itemVariants = {
   hidden: { opacity: 0, y: 18 },
@@ -20,6 +21,7 @@ const itemVariants = {
 
 export default function Hero() {
   const ref = useRef<HTMLElement>(null);
+  const { t } = useTranslation();
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"],
@@ -94,7 +96,7 @@ export default function Hero() {
           animate="visible"
         >
           <span className="label text-[#C4C0BB] uppercase tracking-[0.3em] text-[11px]">
-            Maison NOREVA
+            {t("heroBrand")}
           </span>
         </motion.div>
 
@@ -107,7 +109,7 @@ export default function Hero() {
             animate="visible"
             className="label text-[#8A8A8A] uppercase tracking-[0.25em]"
           >
-            SS 2026
+            {t("heroSeason")}
           </motion.p>
 
           <motion.h1
@@ -118,8 +120,8 @@ export default function Hero() {
             className="font-display font-light leading-[1.15] text-[#1A1A1A]"
             style={{ fontSize: "clamp(2.2rem, 4.5vw, 4rem)" }}
           >
-            We make things<br />
-            <em>that last.</em>
+            {t("heroManifesto1")}<br />
+            <em>{t("heroManifesto2")}</em>
           </motion.h1>
 
           <motion.div
@@ -130,8 +132,7 @@ export default function Hero() {
             className="mt-6"
           >
             <p className="font-body text-[#8A8A8A] text-base leading-relaxed">
-              Clothing is not a trend.<br />
-              It is a decision.
+              {t("heroSubtext")}
             </p>
           </motion.div>
 
@@ -142,7 +143,7 @@ export default function Hero() {
             animate="visible"
           >
             <Link href="#objects" className="cta-link mt-8 inline-block">
-              Explore
+              {t("heroExplore")}
               <svg width="20" height="1" viewBox="0 0 20 1" fill="none" aria-hidden="true">
                 <line x1="0" y1="0.5" x2="20" y2="0.5" stroke="#C9A96E" />
               </svg>
@@ -160,7 +161,7 @@ export default function Hero() {
         >
           <div className="w-px h-12 bg-[#E0DDD8]" />
           <span className="label text-[#A8A8A0] uppercase tracking-[0.25em]">
-            Scroll
+            {t("heroScroll")}
           </span>
         </motion.div>
       </motion.div>
