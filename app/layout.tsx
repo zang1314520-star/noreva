@@ -1,28 +1,38 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, DM_Sans } from "next/font/google";
+import { Playfair_Display, EB_Garamond, Pinyon_Script } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "@/components/LanguageContext";
 import FloatingButtons from "@/components/FloatingButtons";
 import CookieConsent from "@/components/CookieConsent";
 
-// 优化的字体加载（全球CDN）
-const cormorant = Cormorant_Garamond({
-  variable: "--font-cormorant",
+// 欧式艺术风格字体
+const playfair = Playfair_Display({
+  variable: "--font-playfair",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
+  weight: ["400", "500", "600", "700"],
   style: ["normal", "italic"],
   display: "swap",
   preload: true,
   fallback: ["Georgia", "serif"],
 });
 
-const dmSans = DM_Sans({
-  variable: "--font-dm-sans",
+const ebGaramond = EB_Garamond({
+  variable: "--font-garamond",
   subsets: ["latin"],
-  weight: ["300", "400", "500"],
+  weight: ["400", "500", "600"],
+  style: ["normal", "italic"],
   display: "swap",
   preload: true,
-  fallback: ["system-ui", "sans-serif"],
+  fallback: ["Georgia", "serif"],
+});
+
+const pinyonScript = Pinyon_Script({
+  variable: "--font-script",
+  subsets: ["latin"],
+  weight: ["400"],
+  display: "swap",
+  preload: false,
+  fallback: ["cursive"],
 });
 
 // 完整的 SEO Metadata
