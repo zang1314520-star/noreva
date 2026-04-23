@@ -1,7 +1,7 @@
 export default {
   navShop: "Shop",
   navCollections: "Collections",
-  navWorld: "World",
+  navWorld: "Testimonials",
   navJournal: "Journal",
   navContact: "Contact",
   heroBrand: "Maison NOREVA",

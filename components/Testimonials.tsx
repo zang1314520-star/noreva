@@ -35,7 +35,7 @@ export default function Testimonials() {
   const inView = useInView(ref, { once: true, margin: "-10%" });
 
   return (
-    <section ref={ref} className="py-24 md:py-32 px-8 md:px-16 bg-white">
+    <section ref={ref} id="testimonials" className="py-24 md:py-32 px-8 md:px-16 bg-white">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}

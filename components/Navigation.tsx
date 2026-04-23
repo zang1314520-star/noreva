@@ -42,7 +42,7 @@ export default function Navigation() {
             <Link href="#collections" className="nav-link">
               {t(lang, "navCollections")}
             </Link>
-            <Link href="#world" className="nav-link">
+            <Link href="#testimonials" className="nav-link">
               {t(lang, "navWorld")}
             </Link>
           </div>
