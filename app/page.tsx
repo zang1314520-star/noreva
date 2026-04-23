@@ -64,13 +64,13 @@ export default function HomePage() {
 
       <SectionDivider />
 
-      {/* 06 — Personal Shopper / WhatsApp CTA */}
-      <PersonalShopper />
+      {/* 06 — Journal */}
+      <Journal />
 
       <SectionDivider />
 
-      {/* 07 — Journal */}
-      <Journal />
+      {/* 07 — Personal Shopper / WhatsApp CTA */}
+      <PersonalShopper />
 
       {/* 08 — Footer */}
       <Footer />
