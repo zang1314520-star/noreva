@@ -102,7 +102,7 @@ function JournalCard({ post, index }: { post: JournalPost; index: number }) {
         {post.excerpt}
       </p>
 
-      <Link href="#journal" className="cta-link text-[10px]">
+      <Link href={`/journal/${post.id}`} className="cta-link text-[10px]">
         Read
         <svg width="16" height="1" viewBox="0 0 16 1" fill="none">
           <line x1="0" y1="0.5" x2="16" y2="0.5" stroke="#C9A96E" />
