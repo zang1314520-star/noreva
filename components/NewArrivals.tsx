@@ -6,10 +6,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { useTranslation } from "@/lib/useTranslation";
 
-const WOMEN_LEFT = "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=800&q=80";
-const WOMEN_RIGHT = "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=800&q=80";
-const MEN_LEFT = "https://images.unsplash.com/photo-1617137968427-85924c800a22?w=800&q=80";
-const MEN_RIGHT = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80";
+const IMG_LEFT = "https://images.unsplash.com/photo-1509631179647-0177331693ae?w=1200&q=90";
+const IMG_RIGHT = "https://images.unsplash.com/photo-1617137968427-85924c800a22?w=1200&q=90";
 
 export default function NewArrivals() {
   const { t } = useTranslation();
@@ -47,8 +45,8 @@ export default function NewArrivals() {
             className="img-zoom"
           >
             <Image
-              src={WOMEN_LEFT}
-              alt="SS 2026 Collection"
+              src={IMG_LEFT}
+              alt="SS 2026 Upcoming New Arrivals"
               width={800}
               height={1000}
               className="w-full aspect-[4/5] object-cover"
@@ -64,8 +62,8 @@ export default function NewArrivals() {
             className="img-zoom mt-8 md:mt-12"
           >
             <Image
-              src={MEN_LEFT}
-              alt="SS 2026 Collection"
+              src={IMG_RIGHT}
+              alt="SS 2026 Upcoming New Arrivals"
               width={800}
               height={1000}
               className="w-full aspect-[4/5] object-cover"
