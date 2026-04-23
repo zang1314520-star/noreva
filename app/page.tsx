@@ -5,6 +5,7 @@ import Hero from "@/components/Hero";
 import CollectionEntry from "@/components/CollectionEntry";
 import ProductVignettes from "@/components/ProductVignettes";
 import PersonalShopper from "@/components/PersonalShopper";
+import Testimonials from "@/components/Testimonials";
 import Journal from "@/components/Journal";
 import Footer from "@/components/Footer";
 import SectionDivider from "@/components/SectionDivider";
@@ -66,6 +67,11 @@ export default function HomePage() {
 
       {/* 06 — Journal */}
       <Journal />
+
+      <SectionDivider />
+
+      {/* 07 — Testimonials */}
+      <Testimonials />
 
       <SectionDivider />
 
