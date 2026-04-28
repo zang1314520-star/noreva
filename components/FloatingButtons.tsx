@@ -28,17 +28,20 @@ export default function FloatingButtons({ phoneNumber = "8618508036618" }: Float
       <AnimatePresence>
         {isVisible && (
           <motion.button
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 20 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
             onClick={scrollToTop}
-            className="w-11 h-11 rounded-l-full bg-[#F5F4F2] flex items-center justify-center text-[#8A8A8A] hover:bg-[#1A1A1A] hover:text-white transition-all duration-300 shadow-sm hover:translate-x-0 translate-x-4"
+            className="group relative w-11 h-11"
             aria-label="Back to top"
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 19V5M5 12l7-7 7 7"/>
-            </svg>
+            <span className="absolute inset-0 rounded-full bg-[#1A1A1A]/10 scale-100 opacity-0 group-hover:opacity-100 group-hover:scale-150 transition-all duration-500" />
+            <div className="relative w-11 h-11 rounded-full bg-[#F5F4F2] flex items-center justify-center transition-all duration-300 translate-x-[22px] group-hover:translate-x-0 group-hover:bg-[#1A1A1A] shadow-sm">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-[#8A8A8A] group-hover:text-white transition-colors duration-300">
+                <path d="M12 19V5M5 12l7-7 7 7"/>
+              </svg>
+            </div>
           </motion.button>
         )}
       </AnimatePresence>
