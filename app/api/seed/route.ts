@@ -9,8 +9,8 @@ const redis = new Redis({
 });
 
 export async function GET() {
-  // Try to load products from JSON file first
-  const jsonPath = path.join(process.cwd(), "..", "..", "Desktop", "壁纸", "extracted_products", "products_for_import.json");
+  // Try to load products from public directory
+  const jsonPath = path.join(process.cwd(), "public", "products_data.json");
   
   let products: any[] = [];
   
@@ -18,6 +18,7 @@ export async function GET() {
     if (fs.existsSync(jsonPath)) {
       const fileContent = fs.readFileSync(jsonPath, "utf-8");
       products = JSON.parse(fileContent);
+      console.log("Loaded products from file:", products.length);
     }
   } catch (error) {
     console.error("Failed to load products from JSON:", error);
