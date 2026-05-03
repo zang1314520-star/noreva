@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
@@ -15,37 +15,10 @@ interface JournalPost {
   tall?: boolean;
 }
 
-const posts: JournalPost[] = [
-  {
-    id: "01",
-    category: "Materials",
-    title: "On linen in summer.",
-    excerpt:
-      "Why we return to the same fabric every season, and why that is not weakness but certainty.",
-    date: "March 2026",
-    image: "https://images.unsplash.com/photo-1558171813-4c088753af8f?w=600&q=80",
-    tall: false,
-  },
-  {
-    id: "02",
-    category: "Making",
-    title: "The atelier at 6am.",
-    excerpt:
-      "Behind the scenes of SS 2026 — before the light changes, before the world wakes.",
-    date: "February 2026",
-    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80",
-    tall: true,
-  },
-  {
-    id: "03",
-    category: "World",
-    title: "Paris, January.",
-    excerpt:
-      "Our first presentation in seven years. What it meant, and what we chose not to say.",
-    date: "January 2026",
-    image: "https://images.unsplash.com/photo-1445205170230-053b83016050?w=600&q=80",
-    tall: false,
-  },
+const DEFAULT_POSTS: JournalPost[] = [
+  { id: "01", category: "Materials", title: "On linen in summer.", excerpt: "Why we return to the same fabric every season, and why that is not weakness but certainty.", date: "March 2026", image: "https://images.unsplash.com/photo-1558171813-4c088753af8f?w=600&q=80", tall: false },
+  { id: "02", category: "Making", title: "The atelier at 6am.", excerpt: "Behind the scenes of SS 2026 — before the light changes, before the world wakes.", date: "February 2026", image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80", tall: true },
+  { id: "03", category: "World", title: "Paris, January.", excerpt: "Our first presentation in seven years. What it meant, and what we chose not to say.", date: "January 2026", image: "https://images.unsplash.com/photo-1445205170230-053b83016050?w=600&q=80", tall: false },
 ];
 
 function JournalCard({ post, index }: { post: JournalPost; index: number }) {
@@ -115,6 +88,22 @@ function JournalCard({ post, index }: { post: JournalPost; index: number }) {
 export default function Journal() {
   const headerRef = useRef<HTMLDivElement>(null);
   const headerInView = useInView(headerRef, { once: true, margin: "-10%" });
+  const [posts, setPosts] = useState<JournalPost[]>(DEFAULT_POSTS);
+
+  useEffect(() => {
+    fetch("/api/site-images")
+      .then(r => r.json())
+      .then(data => {
+        if (data?.journal) {
+          setPosts([
+            { ...DEFAULT_POSTS[0], image: data.journal.post1 || DEFAULT_POSTS[0].image },
+            { ...DEFAULT_POSTS[1], image: data.journal.post2 || DEFAULT_POSTS[1].image },
+            { ...DEFAULT_POSTS[2], image: data.journal.post3 || DEFAULT_POSTS[2].image },
+          ]);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <section

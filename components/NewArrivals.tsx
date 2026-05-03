@@ -1,18 +1,37 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useEffect, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { useTranslation } from "@/lib/useTranslation";
 
-const IMG_LEFT = "https://images.unsplash.com/photo-1509631179647-0177331693ae?w=1200&q=90";
-const IMG_RIGHT = "https://images.unsplash.com/photo-1617137968427-85924c800a22?w=1200&q=90";
+const DEFAULT_LEFT = "https://images.unsplash.com/photo-1509631179647-0177331693ae?w=1200&q=90";
+const DEFAULT_RIGHT = "https://images.unsplash.com/photo-1617137968427-85924c800a22?w=1200&q=90";
+
+interface SiteImages {
+  newArrivals?: { left: string; right: string };
+}
 
 export default function NewArrivals() {
   const { t } = useTranslation();
   const ref = useRef<HTMLElement>(null);
   const inView = useInView(ref, { once: true, margin: "-10%" });
+  const [images, setImages] = useState({ left: DEFAULT_LEFT, right: DEFAULT_RIGHT });
+
+  useEffect(() => {
+    fetch("/api/site-images")
+      .then(r => r.json())
+      .then((data: SiteImages) => {
+        if (data?.newArrivals) {
+          setImages({
+            left: data.newArrivals.left || DEFAULT_LEFT,
+            right: data.newArrivals.right || DEFAULT_RIGHT,
+          });
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <section ref={ref} className="py-[clamp(6rem,12vw,10rem)] px-8 md:px-16 bg-white">
@@ -45,7 +64,7 @@ export default function NewArrivals() {
             className="img-zoom"
           >
             <Image
-              src={IMG_LEFT}
+              src={images.left}
               alt="SS 2026 Upcoming New Arrivals"
               width={800}
               height={1000}
@@ -62,7 +81,7 @@ export default function NewArrivals() {
             className="img-zoom mt-8 md:mt-12"
           >
             <Image
-              src={IMG_RIGHT}
+              src={images.right}
               alt="SS 2026 Upcoming New Arrivals"
               width={800}
               height={1000}

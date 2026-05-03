@@ -14,6 +14,7 @@ interface Product {
 }
 interface SiteImages {
   hero: { image: string; title: string; };
+  newArrivals: { left: string; right: string; };
   womenswear: { main: string; secondary: string; };
   menswear: { main: string; secondary: string; };
   journal: { post1: string; post2: string; post3: string; };
@@ -549,7 +550,7 @@ export default function AdminPage() {
   const [tab, setTab] = useState<"dashboard" | "import" | "products" | "config" | "siteImages">("dashboard");
   const [loading, setLoading] = useState(true);
   const [config, setConfig] = useState({ whatsapp: "" });
-  const [siteImages, setSiteImages] = useState<SiteImages>({ hero: { image: "", title: "The New Collection" }, womenswear: { main: "", secondary: "" }, menswear: { main: "", secondary: "" }, journal: { post1: "", post2: "", post3: "" } });
+  const [siteImages, setSiteImages] = useState<SiteImages>({ hero: { image: "", title: "The New Collection" }, newArrivals: { left: "", right: "" }, womenswear: { main: "", secondary: "" }, menswear: { main: "", secondary: "" }, journal: { post1: "", post2: "", post3: "" } });
   const [products, setProducts] = useState<Product[]>([]);
   const [editing, setEditing] = useState<Product | null>(null);
   const [search, setSearch] = useState("");
@@ -1088,7 +1089,8 @@ export default function AdminPage() {
                   <label className="block text-sm font-medium mb-2">Hero标题</label>
                   <input value={siteImages.hero.title} onChange={e => setSiteImages({ ...siteImages, hero: { ...siteImages.hero, title: e.target.value } })} className="w-full p-3 border rounded-lg" />
                 </div>
-                <ImageUploader value={siteImages.womenswear.main} onChange={v => setSiteImages({ ...siteImages, womenswear: { ...siteImages.womenswear, main: v } })} label="女装主图" />
+                <ImageUploader value={siteImages.newArrivals.left} onChange={v => setSiteImages({ ...siteImages, newArrivals: { ...siteImages.newArrivals, left: v } })} label="New Arrivals 左图" />
+                <ImageUploader value={siteImages.newArrivals.right} onChange={v => setSiteImages({ ...siteImages, newArrivals: { ...siteImages.newArrivals, right: v } })} label="New Arrivals 右图" />
                 <ImageUploader value={siteImages.womenswear.secondary} onChange={v => setSiteImages({ ...siteImages, womenswear: { ...siteImages.womenswear, secondary: v } })} label="女装副图" />
                 <ImageUploader value={siteImages.menswear.main} onChange={v => setSiteImages({ ...siteImages, menswear: { ...siteImages.menswear, main: v } })} label="男装主图" />
                 <ImageUploader value={siteImages.menswear.secondary} onChange={v => setSiteImages({ ...siteImages, menswear: { ...siteImages.menswear, secondary: v } })} label="男装副图" />

@@ -11,6 +11,10 @@ const DEFAULT_IMAGES = {
     image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1920&q=80",
     title: "The New Collection"
   },
+  newArrivals: {
+    left: "https://images.unsplash.com/photo-1509631179647-0177331693ae?w=1200&q=90",
+    right: "https://images.unsplash.com/photo-1617137968427-85924c800a22?w=1200&q=90"
+  },
   womenswear: {
     main: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=800&q=80",
     secondary: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=800&q=80"
