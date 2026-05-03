@@ -1,10 +1,12 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { useTranslation } from "@/lib/useTranslation";
+
+const DEFAULT_HERO_IMAGE = "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1920&q=80";
 
 const itemVariants = {
   hidden: { opacity: 0, y: 18 },
@@ -30,13 +32,39 @@ export default function Hero() {
   const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "14%"]);
   const textY = useTransform(scrollYProgress, [0, 1], ["0%", "22%"]);
 
+  const [heroImage, setHeroImage] = useState<string>(DEFAULT_HERO_IMAGE);
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function fetchSiteImages() {
+      try {
+        const res = await fetch("/api/site-images");
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        if (!cancelled && data?.hero?.image) {
+          setHeroImage(data.hero.image);
+        }
+      } catch {
+        // fallback to default image
+      }
+    }
+
+    fetchSiteImages();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   useEffect(() => {
     const link = document.createElement("link");
     link.rel = "preload";
     link.as = "image";
-    link.href = "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1920&q=80";
+    link.href = heroImage;
     document.head.appendChild(link);
-  }, []);
+  }, [heroImage]);
 
   return (
     <section
@@ -55,13 +83,19 @@ export default function Hero() {
           transition={{ duration: 1.6, ease: [0.16, 1, 0.3, 1] }}
           className="w-full h-full relative"
         >
+          {/* Loading skeleton — gradient overlay without image */}
+          {!imageLoaded && (
+            <div className="absolute inset-0 bg-gradient-to-r from-white via-white/60 to-transparent" />
+          )}
+
           <Image
-            src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1920&q=80"
+            src={heroImage}
             alt="NOREVA Collection SS 2026"
             fill
             priority
             className="object-cover"
             sizes="(max-width: 768px) 100vw, 63vw"
+            onLoad={() => setImageLoaded(true)}
           />
 
           {/* Large ghost-letter */}
