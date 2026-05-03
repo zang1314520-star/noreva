@@ -6,6 +6,7 @@ import Link from "next/link";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { useLanguage } from "@/components/LanguageContext";
+import { useWishlist, useRecentlyViewed } from "@/lib/useWishlist";
 
 const WHATSAPP_NUMBER = "8618508036618";
 
@@ -163,6 +164,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const wishlist = useWishlist();
+  const recentlyViewed = useRecentlyViewed();
   const { lang } = useLanguage();
   const c = content[lang] || content.en;
   const isCn = lang === "zh";
@@ -173,7 +176,10 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         fetch(`/api/products?id=${id}`).then(r => r.json()),
         fetch("/api/products").then(r => r.json()),
       ]).then(([detail, all]) => {
-        if (detail.id) setProduct(detail);
+        if (detail.id) {
+          setProduct(detail);
+          recentlyViewed.add(detail.id);
+        }
         setAllProducts(all || []);
         setLoading(false);
       });
@@ -289,21 +295,36 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 {c.inquiry} &rarr;
               </a>
 
-              {/* Share button */}
-              <button
-                onClick={() => {
-                  if (navigator.share) {
-                    navigator.share({ title: displayName, url: window.location.href });
-                  } else {
-                    navigator.clipboard.writeText(window.location.href);
-                    alert(isCn ? "链接已复制" : "Link copied!");
-                  }
-                }}
-                className="mt-4 w-full flex items-center justify-center gap-2 py-3 border border-[#E8E6E2] text-[#8A8A8A] hover:text-[#1A1A1A] hover:border-[#1A1A1A] transition-colors font-body text-[11px] tracking-[0.15em] uppercase"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg>
-                {c.share}
-              </button>
+              {/* Wishlist + Share row */}
+              <div className="mt-4 grid grid-cols-2 gap-3">
+                <button
+                  onClick={() => product && wishlist.toggle(product.id)}
+                  className={`flex items-center justify-center gap-2 py-3 border transition-colors font-body text-[11px] tracking-[0.15em] uppercase ${
+                    product && wishlist.has(product.id)
+                      ? "border-[#C9A96E] text-[#C9A96E]"
+                      : "border-[#E8E6E2] text-[#8A8A8A] hover:text-[#1A1A1A] hover:border-[#1A1A1A]"
+                  }`}
+                >
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill={product && wishlist.has(product.id) ? "currentColor" : "none"} stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                  </svg>
+                  {product && wishlist.has(product.id) ? (isCn ? "已收藏" : "Saved") : (isCn ? "收藏" : "Save")}
+                </button>
+                <button
+                  onClick={() => {
+                    if (navigator.share) {
+                      navigator.share({ title: displayName, url: window.location.href });
+                    } else {
+                      navigator.clipboard.writeText(window.location.href);
+                      alert(isCn ? "链接已复制" : "Link copied!");
+                    }
+                  }}
+                  className="flex items-center justify-center gap-2 py-3 border border-[#E8E6E2] text-[#8A8A8A] hover:text-[#1A1A1A] hover:border-[#1A1A1A] transition-colors font-body text-[11px] tracking-[0.15em] uppercase"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg>
+                  {c.share}
+                </button>
+              </div>
             </div>
           </div>
         </div>

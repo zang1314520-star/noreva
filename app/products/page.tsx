@@ -7,6 +7,7 @@ import Image from "next/image";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { useLanguage } from "@/components/LanguageContext";
+import { useWishlist } from "@/lib/useWishlist";
 
 interface Product {
   id: string;
@@ -120,6 +121,7 @@ function ProductsContent() {
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedBrand, setSelectedBrand] = useState("all");
+  const wishlist = useWishlist();
 
   useEffect(() => {
     fetch("/api/products")
@@ -132,8 +134,10 @@ function ProductsContent() {
   useEffect(() => {
     const cat = searchParams.get("category");
     const brand = searchParams.get("brand");
+    const wl = searchParams.get("wishlist");
     if (cat) setSelectedCategory(cat);
     if (brand) setSelectedBrand(brand);
+    if (wl === "1") setSelectedCategory("wishlist");
   }, [searchParams]);
 
   // Derive available brands and categories from products
@@ -153,6 +157,7 @@ function ProductsContent() {
 
   // Filter
   const filtered = products.filter(p => {
+    if (selectedCategory === "wishlist") return wishlist.has(p.id);
     if (search) {
       const q = search.toLowerCase();
       if (!p.name?.toLowerCase().includes(q) && !p.nameCn?.includes(search) && !p.brand?.toLowerCase().includes(q)) return false;
@@ -163,6 +168,7 @@ function ProductsContent() {
   });
 
   const getPageTitle = () => {
+    if (selectedCategory === "wishlist") return isCn ? "我的收藏" : "My Wishlist";
     if (selectedBrand !== "all") return selectedBrand;
     if (selectedCategory !== "all") {
       const cat = categoryDisplay.find(c => c.key === selectedCategory);
@@ -269,46 +275,57 @@ function ProductsContent() {
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
               {filtered.map((product) => (
-                <Link
-                  key={product.id}
-                  href={`/products/${product.id}`}
-                  className="group block"
-                >
-                  <div className="img-zoom overflow-hidden mb-3 relative">
-                    {product.mainImage ? (
-                      <Image
-                        src={cdnThumb(product.mainImage, 400)}
-                        alt={product.name || ""}
-                        width={400}
-                        height={500}
-                        className="w-full aspect-[4/5] object-cover"
-                        sizes="(max-width: 768px) 50vw, 25vw"
-                        loading="lazy"
-                      />
-                    ) : (
-                      <div className="w-full aspect-[4/5] bg-[#F5F4F2] flex items-center justify-center">
-                        <svg className="w-12 h-12 text-[#E8E6E2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                <div key={product.id} className="group relative">
+                  <Link
+                    href={`/products/${product.id}`}
+                    className="block"
+                  >
+                    <div className="img-zoom overflow-hidden mb-3 relative">
+                      {product.mainImage ? (
+                        <Image
+                          src={cdnThumb(product.mainImage, 400)}
+                          alt={product.name || ""}
+                          width={400}
+                          height={500}
+                          className="w-full aspect-[4/5] object-cover"
+                          sizes="(max-width: 768px) 50vw, 25vw"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="w-full aspect-[4/5] bg-[#F5F4F2] flex items-center justify-center">
+                          <svg className="w-12 h-12 text-[#E8E6E2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                        </div>
+                      )}
+                      {/* Hover overlay */}
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500 flex items-end justify-center pb-4">
+                        <span className="bg-white/90 backdrop-blur-sm text-[10px] tracking-[0.2em] uppercase text-[#1A1A1A] px-4 py-2 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                          {isCn ? "查看详情" : "View Details"}
+                        </span>
                       </div>
-                    )}
-                    {/* Hover overlay with inquiry hint */}
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500 flex items-end justify-center pb-4">
-                      <span className="bg-white/90 backdrop-blur-sm text-[10px] tracking-[0.2em] uppercase text-[#1A1A1A] px-4 py-2 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
-                        {isCn ? "查看详情" : "View Details"}
-                      </span>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-2 mb-1">
-                    {product.brand && (
-                      <span className="text-[10px] tracking-widest uppercase text-[#C9A96E]">{product.brand}</span>
-                    )}
-                  </div>
-                  <h3 className="font-display text-sm font-light text-[#1A1A1A] mb-1 group-hover:text-[#C9A96E] transition-colors line-clamp-2">
-                    {isCn ? (product.nameCn || product.name) : product.name}
-                  </h3>
-                  <p className="text-xs text-[#8A8A8A]">
-                    {isCn ? (product.categoryNameCn || product.categoryName) : product.categoryName}
-                  </p>
-                </Link>
+                    <div className="flex items-center gap-2 mb-1">
+                      {product.brand && (
+                        <span className="text-[10px] tracking-widest uppercase text-[#C9A96E]">{product.brand}</span>
+                      )}
+                    </div>
+                    <h3 className="font-display text-sm font-light text-[#1A1A1A] mb-1 group-hover:text-[#C9A96E] transition-colors line-clamp-2">
+                      {isCn ? (product.nameCn || product.name) : product.name}
+                    </h3>
+                    <p className="text-xs text-[#8A8A8A]">
+                      {isCn ? (product.categoryNameCn || product.categoryName) : product.categoryName}
+                    </p>
+                  </Link>
+                  {/* Wishlist heart */}
+                  <button
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); wishlist.toggle(product.id); }}
+                    className="absolute top-3 right-3 z-10 p-1.5 rounded-full bg-white/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-200 hover:scale-110"
+                    aria-label="Toggle wishlist"
+                  >
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill={wishlist.has(product.id) ? "#C9A96E" : "none"} stroke={wishlist.has(product.id) ? "#C9A96E" : "#8A8A8A"} strokeWidth={1.5}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                    </svg>
+                  </button>
+                </div>
               ))}
             </div>
           )}

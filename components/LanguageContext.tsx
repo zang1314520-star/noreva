@@ -22,7 +22,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const saved = localStorage.getItem("noreva-lang") as Language;
-    if (saved && ["en", "fr", "it", "de", "es"].includes(saved)) {
+    if (saved && ["en", "fr", "it", "de", "es", "zh"].includes(saved)) {
       setLangState(saved);
     } else {
       // 默认英文

@@ -6,12 +6,14 @@ import Link from "next/link";
 import { languages, t } from "@/lib/i18n";
 import type { Language } from "@/lib/i18n";
 import { useLanguage } from "./LanguageContext";
+import { useWishlist } from "@/lib/useWishlist";
 
 export default function Navigation() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [langMenuOpen, setLangMenuOpen] = useState(false);
   const { lang, setLang, currentLangName } = useLanguage();
+  const wishlist = useWishlist();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 60);
@@ -39,8 +41,8 @@ export default function Navigation() {
         <nav className="px-8 md:px-16 h-16 flex items-center justify-between">
           {/* Left links */}
           <div className="hidden md:flex items-center gap-10">
-            <Link href="#collections" className="nav-link">
-              {t(lang, "navCollections")}
+            <Link href="/" className="nav-link">
+              {t(lang, "navHome") || "Home"}
             </Link>
             <Link href="#testimonials" className="nav-link">
               {t(lang, "navWorld")}
@@ -102,8 +104,16 @@ export default function Navigation() {
             </div>
 
             {/* Right links */}
-            <Link href="#journal" className="nav-link">
-              {t(lang, "navJournal")}
+            <Link href="/products" className="nav-link">
+              {t(lang, "navCollections")}
+            </Link>
+            <Link href="/products?wishlist=1" className="relative nav-link">
+              <svg className="w-[18px] h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+              </svg>
+              {wishlist.count > 0 && (
+                <span className="absolute -top-1.5 -right-2 w-4 h-4 bg-[#C9A96E] text-white text-[9px] rounded-full flex items-center justify-center font-medium">{wishlist.count}</span>
+              )}
             </Link>
           </div>
 
@@ -128,11 +138,12 @@ export default function Navigation() {
               className="md:hidden bg-white border-t border-[#E8E6E2]"
             >
               <div className="px-8 py-6 space-y-4">
-                <Link href="#collections" className="block font-body text-[13px] tracking-[0.15em] text-[#1A1A1A]" onClick={() => setMenuOpen(false)}>
+                <Link href="/products" className="block font-body text-[13px] tracking-[0.15em] text-[#1A1A1A]" onClick={() => setMenuOpen(false)}>
                   {t(lang, "navCollections")}
                 </Link>
-                <Link href="#world" className="block font-body text-[13px] tracking-[0.15em] text-[#1A1A1A]" onClick={() => setMenuOpen(false)}>
-                  {t(lang, "navWorld")}
+                <Link href="/products?wishlist=1" className="flex items-center gap-2 font-body text-[13px] tracking-[0.15em] text-[#1A1A1A]" onClick={() => setMenuOpen(false)}>
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" /></svg>
+                  {lang === "zh" ? "我的收藏" : "Wishlist"} {wishlist.count > 0 && `(${wishlist.count})`}
                 </Link>
                 <Link href="#journal" className="block font-body text-[13px] tracking-[0.15em] text-[#1A1A1A]" onClick={() => setMenuOpen(false)}>
                   {t(lang, "navJournal")}

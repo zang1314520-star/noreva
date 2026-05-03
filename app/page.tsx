@@ -4,6 +4,7 @@ import Navigation from "@/components/Navigation";
 import Hero from "@/components/Hero";
 import NewArrivals from "@/components/NewArrivals";
 import ProductVignettes from "@/components/ProductVignettes";
+import FeaturedProducts from "@/components/FeaturedProducts";
 import PersonalShopper from "@/components/PersonalShopper";
 import Testimonials from "@/components/Testimonials";
 import Journal from "@/components/Journal";
@@ -23,6 +24,11 @@ export default function HomePage() {
 
       {/* 03 — The Objects */}
       <ProductVignettes />
+
+      <SectionDivider />
+
+      {/* 03.5 — Featured Products (real data) */}
+      <FeaturedProducts />
 
       <SectionDivider />
 
