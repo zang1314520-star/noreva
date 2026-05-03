@@ -8,14 +8,22 @@ const redis = new Redis({
 
 function autoCategorizeCn(tag: string, desc: string): { category: string; categoryName: string; categoryNameCn: string; brand: string } {
   let brand = "Unknown";
-  if (/ferragamo/i.test(tag) || /菲拉格慕/i.test(tag)) brand = "Ferragamo";
-  else if (/gucci/i.test(tag) || /古驰/i.test(tag)) brand = "Gucci";
-  else if (/louis\s*vuitton|lv/i.test(tag)) brand = "Louis Vuitton";
-  else if (/hermes|爱马仕/i.test(tag)) brand = "Hermès";
-  else if (/chanel|香奈儿/i.test(tag)) brand = "Chanel";
-  else if (/dior|迪奥/i.test(tag)) brand = "Dior";
-  else if (/prada|普拉达/i.test(tag)) brand = "Prada";
-  else if (/burberry|巴宝莉/i.test(tag)) brand = "Burberry";
+  const brandText = (tag + " " + desc);
+  if (/ferragamo|菲拉格慕/i.test(brandText)) brand = "Ferragamo";
+  else if (/gucci|古驰/i.test(brandText)) brand = "Gucci";
+  else if (/louis\s*vuitton|\blv\b/i.test(brandText)) brand = "Louis Vuitton";
+  else if (/hermes|hermès|爱马仕/i.test(brandText)) brand = "Hermès";
+  else if (/chanel|香奈儿/i.test(brandText)) brand = "Chanel";
+  else if (/dior|迪奥/i.test(brandText)) brand = "Dior";
+  else if (/prada|普拉达/i.test(brandText)) brand = "Prada";
+  else if (/burberry|巴宝莉/i.test(brandText)) brand = "Burberry";
+  else if (/versace|范思哲/i.test(brandText)) brand = "Versace";
+  else if (/fendi|芬迪/i.test(brandText)) brand = "Fendi";
+  else if (/celine|赛琳/i.test(brandText)) brand = "Celine";
+  else if (/bottega|葆蝶家/i.test(brandText)) brand = "Bottega Veneta";
+  else if (/valentino|华伦天奴/i.test(brandText)) brand = "Valentino";
+  else if (/armani|阿玛尼/i.test(brandText)) brand = "Armani";
+  else if (/coach|蔻驰/i.test(brandText)) brand = "Coach";
 
   const text = (tag + " " + desc).toLowerCase();
   if (/丝巾|围巾|twilly|scarf|shawl/i.test(text)) {
