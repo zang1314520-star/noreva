@@ -54,19 +54,57 @@ const CATEGORY_TREE: Record<string, { name: string; nameCn: string; subcategorie
   },
 };
 
-export default function ProductsPage() {
+// Cloudinary optimized thumbnail helper
+function cdnThumb(url: string, w: number): string {
+  if (!url || !url.includes("res.cloudinary.com")) return url;
+  return url.replace("/upload/", `/upload/w_${w},c_limit,q_auto,f_auto/`);
+}
+
+// ========== Skeleton Grid ==========
+function ProductGridSkeleton() {
   return (
-    <Suspense fallback={
-      <main className="bg-white min-h-screen">
-        <Navigation />
-        <div className="pt-32 pb-24 px-8 md:px-16">
-          <div className="max-w-6xl mx-auto text-center">
-            <p className="text-[#8A8A8A]">Loading...</p>
+    <main className="bg-white min-h-screen">
+      <Navigation />
+      <section className="pt-32 pb-12 px-8 md:px-16">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+            <div>
+              <div className="h-3 w-20 bg-[#F5F4F2] animate-pulse rounded mb-3" />
+              <div className="h-10 w-48 bg-[#F5F4F2] animate-pulse rounded" />
+              <div className="h-3 w-24 bg-[#F5F4F2] animate-pulse rounded mt-3" />
+            </div>
+            <div className="h-12 w-full md:w-80 bg-[#F5F4F2] animate-pulse rounded" />
+          </div>
+          {/* Filter skeleton */}
+          <div className="mt-8 flex gap-3">
+            {[1, 2, 3, 4].map(i => (
+              <div key={i} className="h-9 w-20 bg-[#F5F4F2] animate-pulse rounded" />
+            ))}
           </div>
         </div>
-        <Footer />
-      </main>
-    }>
+      </section>
+      <section className="pb-24 px-8 md:px-16">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="space-y-3">
+                <div className="aspect-[4/5] bg-[#F5F4F2] animate-pulse rounded" />
+                <div className="h-2.5 w-16 bg-[#F5F4F2] animate-pulse rounded" />
+                <div className="h-3 w-3/4 bg-[#F5F4F2] animate-pulse rounded" />
+                <div className="h-2.5 w-12 bg-[#F5F4F2] animate-pulse rounded" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+      <Footer />
+    </main>
+  );
+}
+
+export default function ProductsPage() {
+  return (
+    <Suspense fallback={<ProductGridSkeleton />}>
       <ProductsContent />
     </Suspense>
   );
@@ -133,19 +171,7 @@ function ProductsContent() {
     return isCn ? "全部产品" : "All Products";
   };
 
-  if (loading) {
-    return (
-      <main className="bg-white min-h-screen">
-        <Navigation />
-        <div className="pt-32 pb-24 px-8 md:px-16">
-          <div className="max-w-6xl mx-auto text-center">
-            <div className="animate-spin h-8 w-8 border-2 border-[#C9A96E] border-t-transparent rounded-full mx-auto" />
-          </div>
-        </div>
-        <Footer />
-      </main>
-    );
-  }
+  if (loading) return <ProductGridSkeleton />;
 
   return (
     <main className="bg-white min-h-screen">
@@ -228,10 +254,14 @@ function ProductsContent() {
         <div className="max-w-6xl mx-auto">
           {filtered.length === 0 ? (
             <div className="text-center py-20">
-              <p className="text-[#8A8A8A] text-sm">{isCn ? "暂无产品" : "No products found"}</p>
+              <svg className="w-16 h-16 text-[#E8E6E2] mx-auto mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={0.8} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <p className="font-display text-xl text-[#8A8A8A] mb-2">{isCn ? "未找到匹配产品" : "No products found"}</p>
+              <p className="text-sm text-[#A8A4A0] mb-6">{isCn ? "试试搜索 Ferragamo 或 Gucci" : "Try searching for Ferragamo or Gucci"}</p>
               <button
                 onClick={() => { setSearch(""); setSelectedCategory("all"); setSelectedBrand("all"); }}
-                className="mt-4 cta-link text-xs"
+                className="cta-link text-xs"
               >
                 {isCn ? "清除筛选" : "Clear filters"}
               </button>
@@ -244,21 +274,28 @@ function ProductsContent() {
                   href={`/products/${product.id}`}
                   className="group block"
                 >
-                  <div className="img-zoom overflow-hidden mb-3">
+                  <div className="img-zoom overflow-hidden mb-3 relative">
                     {product.mainImage ? (
                       <Image
-                        src={product.mainImage}
+                        src={cdnThumb(product.mainImage, 400)}
                         alt={product.name || ""}
                         width={400}
                         height={500}
                         className="w-full aspect-[4/5] object-cover"
                         sizes="(max-width: 768px) 50vw, 25vw"
+                        loading="lazy"
                       />
                     ) : (
                       <div className="w-full aspect-[4/5] bg-[#F5F4F2] flex items-center justify-center">
                         <svg className="w-12 h-12 text-[#E8E6E2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                       </div>
                     )}
+                    {/* Hover overlay with inquiry hint */}
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500 flex items-end justify-center pb-4">
+                      <span className="bg-white/90 backdrop-blur-sm text-[10px] tracking-[0.2em] uppercase text-[#1A1A1A] px-4 py-2 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                        {isCn ? "查看详情" : "View Details"}
+                      </span>
+                    </div>
                   </div>
                   <div className="flex items-center gap-2 mb-1">
                     {product.brand && (
