@@ -114,9 +114,17 @@ export async function POST(request: Request) {
 
 export async function PUT(request: Request) {
   try {
-    const product = await request.json();
-    const products: Product[] = (await redis.get("products")) || [];
+    const body = await request.json();
 
+    // Bulk update: { products: Product[] }
+    if (body.products && Array.isArray(body.products)) {
+      await redis.set("products", body.products);
+      return NextResponse.json({ success: true, updated: body.products.length });
+    }
+
+    // Single update
+    const product = body;
+    const products: Product[] = (await redis.get("products")) || [];
     const index = products.findIndex((p) => p.id === product.id);
     if (index >= 0) {
       products[index] = { ...products[index], ...product };

@@ -551,6 +551,9 @@ export default function AdminPage() {
   const [page, setPage] = useState(1);
   const [recategorizing, setRecategorizing] = useState(false);
   const [recategorizeResult, setRecategorizeResult] = useState<any>(null);
+  const [batchEditOpen, setBatchEditOpen] = useState(false);
+  const [batchBrand, setBatchBrand] = useState("");
+  const [batchCategory, setBatchCategory] = useState("");
   const PAGE_SIZE = 20;
 
   async function fetchAll() {
@@ -619,6 +622,39 @@ export default function AdminPage() {
     if (!confirm("确定删除此产品？")) return;
     await fetch("/api/products", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) });
     await fetchAll();
+  }
+
+  async function batchEdit() {
+    if (selectedIds.size === 0) return;
+    const updates: Partial<Product> = {};
+    if (batchBrand) updates.brand = batchBrand;
+    if (batchCategory) {
+      const sub = Object.values(CATEGORY_TREE).flatMap(g => Object.entries(g.subcategories)).find(([k]) => k === batchCategory);
+      if (sub) { updates.category = batchCategory; updates.categoryName = sub[1].name; updates.categoryNameCn = sub[1].nameCn; }
+    }
+    if (Object.keys(updates).length === 0) return;
+    const updated = products.map(p => selectedIds.has(p.id) ? { ...p, ...updates } : p);
+    await fetch("/api/products", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ products: updated }) });
+    setBatchEditOpen(false); setBatchBrand(""); setBatchCategory(""); setSelectedIds(new Set());
+    await fetchAll();
+  }
+
+  function exportData(format: "csv" | "json") {
+    const data = filtered.length > 0 ? filtered : products;
+    let content: string, mime: string, ext: string;
+    if (format === "json") {
+      content = JSON.stringify(data, null, 2);
+      mime = "application/json"; ext = "json";
+    } else {
+      const headers = ["id","name","nameCn","brand","category","categoryName","categoryNameCn","description","mainImage","createdAt"];
+      const rows = data.map(p => headers.map(h => `"${String((p as any)[h] || "").replace(/"/g, '""')}"`).join(","));
+      content = [headers.join(","), ...rows].join("\n");
+      mime = "text/csv"; ext = "csv";
+    }
+    const blob = new Blob([content], { type: mime });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a"); a.href = url; a.download = `noreva-products.${ext}`; a.click();
+    URL.revokeObjectURL(url);
   }
 
   async function saveConfig() {
@@ -830,10 +866,21 @@ export default function AdminPage() {
                     <h2 className="text-2xl font-semibold">产品管理</h2>
                     <div className="flex gap-2">
                       {selectedIds.size > 0 && (
-                        <button onClick={batchDelete} className="px-4 py-2 bg-red-500 text-white rounded-lg text-sm hover:bg-red-600">
-                          删除选中 ({selectedIds.size})
-                        </button>
+                        <>
+                          <button onClick={() => setBatchEditOpen(true)} className="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600">
+                            批量编辑 ({selectedIds.size})
+                          </button>
+                          <button onClick={batchDelete} className="px-4 py-2 bg-red-500 text-white rounded-lg text-sm hover:bg-red-600">
+                            删除选中 ({selectedIds.size})
+                          </button>
+                        </>
                       )}
+                      <button onClick={() => exportData("csv")} className="px-4 py-2 border border-gray-200 rounded-lg text-sm hover:bg-gray-50" title="导出CSV">
+                        CSV
+                      </button>
+                      <button onClick={() => exportData("json")} className="px-4 py-2 border border-gray-200 rounded-lg text-sm hover:bg-gray-50" title="导出JSON">
+                        JSON
+                      </button>
                       {products.length > 0 && (
                         <button onClick={deleteAll} className="px-4 py-2 border border-red-300 text-red-500 rounded-lg text-sm hover:bg-red-50">
                           清空全部
@@ -844,6 +891,38 @@ export default function AdminPage() {
                       </button>
                     </div>
                   </div>
+
+                  {/* Batch Edit Modal */}
+                  {batchEditOpen && (
+                    <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center" onClick={() => setBatchEditOpen(false)}>
+                      <div className="bg-white rounded-xl p-6 shadow-xl w-full max-w-md" onClick={e => e.stopPropagation()}>
+                        <h3 className="text-lg font-semibold mb-4">批量编辑 ({selectedIds.size} 个产品)</h3>
+                        <div className="space-y-4">
+                          <div>
+                            <label className="text-sm text-gray-600">修改品牌（留空不修改）</label>
+                            <input value={batchBrand} onChange={e => setBatchBrand(e.target.value)} placeholder="e.g. Ferragamo" className="w-full p-2 border rounded mt-1" />
+                          </div>
+                          <div>
+                            <label className="text-sm text-gray-600">修改分类（留空不修改）</label>
+                            <select value={batchCategory} onChange={e => setBatchCategory(e.target.value)} className="w-full p-2 border rounded mt-1">
+                              <option value="">不修改</option>
+                              {Object.entries(CATEGORY_TREE).map(([gk, group]) => (
+                                <optgroup key={gk} label={`${group.name} (${group.nameCn})`}>
+                                  {Object.entries(group.subcategories).map(([sk, sub]) => (
+                                    <option key={sk} value={sk}>{sub.name} - {sub.nameCn}</option>
+                                  ))}
+                                </optgroup>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
+                        <div className="flex gap-3 mt-6">
+                          <button onClick={batchEdit} className="px-6 py-2 bg-[#1A1A1A] text-white rounded-lg hover:bg-[#333] text-sm">确认修改</button>
+                          <button onClick={() => setBatchEditOpen(false)} className="px-6 py-2 border rounded-lg hover:bg-gray-50 text-sm">取消</button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
                   {/* Filters */}
                   <div className="bg-white rounded-xl p-4 shadow-sm space-y-3">

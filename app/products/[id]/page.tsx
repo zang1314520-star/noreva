@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Navigation from "@/components/Navigation";
@@ -51,6 +51,8 @@ function Lightbox({ images, index, onClose, onNext, onPrev }: {
   onNext: () => void;
   onPrev: () => void;
 }) {
+  const touchRef = useRef<{ x: number; y: number } | null>(null);
+
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.key === "Escape") onClose();
     if (e.key === "ArrowRight") onNext();
@@ -66,8 +68,21 @@ function Lightbox({ images, index, onClose, onNext, onPrev }: {
     };
   }, [handleKeyDown]);
 
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+  };
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (!touchRef.current) return;
+    const dx = e.changedTouches[0].clientX - touchRef.current.x;
+    const dy = e.changedTouches[0].clientY - touchRef.current.y;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
+      dx < 0 ? onNext() : onPrev();
+    }
+    touchRef.current = null;
+  };
+
   return (
-    <div className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center" onClick={onClose}>
+    <div className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center" onClick={onClose} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
       {/* Close button */}
       <button onClick={onClose} className="absolute top-6 right-6 text-white/70 hover:text-white z-10 transition-colors">
         <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" /></svg>
