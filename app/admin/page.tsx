@@ -572,7 +572,10 @@ export default function AdminPage() {
         fetch("/api/products").then(r => r.json()),
         fetch("/api/site-images").then(r => r.json())
       ]);
-      setConfig(c); setProducts(p || []); setSiteImages(si); setLoading(false);
+      setConfig(c); setProducts(p || []);
+      const siDefault: SiteImages = { hero: { image: "", title: "The New Collection" }, newArrivals: { left: "", right: "" }, womenswear: { main: "", secondary: "" }, menswear: { main: "", secondary: "" }, journal: { post1: "", post2: "", post3: "" } };
+      setSiteImages({ ...siDefault, ...(si as object) });
+      setLoading(false);
     } catch { setLoading(false); }
   }
 
