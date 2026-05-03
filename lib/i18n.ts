@@ -1,5 +1,5 @@
 // 全局语言类型
-export type Language = "en" | "fr" | "it" | "de" | "es";
+export type Language = "en" | "fr" | "it" | "de" | "es" | "zh";
 
 export const languages = [
   { code: "en" as Language, name: "EN", native: "English" },
@@ -7,6 +7,7 @@ export const languages = [
   { code: "it" as Language, name: "IT", native: "Italiano" },
   { code: "de" as Language, name: "DE", native: "Deutsch" },
   { code: "es" as Language, name: "ES", native: "Español" },
+  { code: "zh" as Language, name: "中文", native: "中文" },
 ];
 
 // 导入所有翻译
@@ -15,8 +16,9 @@ import fr from "./fr";
 import it from "./it";
 import de from "./de";
 import es from "./es";
+import zh from "./zh";
 
-export const translations: Record<Language, Record<string, string>> = { en, fr, it, de, es };
+export const translations: Record<Language, Record<string, string>> = { en, fr, it, de, es, zh };
 
 // 全局翻译函数
 export function t(lang: Language, key: string): string {
