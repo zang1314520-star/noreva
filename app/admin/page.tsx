@@ -563,9 +563,13 @@ export default function AdminPage() {
   const [batchEditOpen, setBatchEditOpen] = useState(false);
   const [batchBrand, setBatchBrand] = useState("");
   const [batchCategory, setBatchCategory] = useState("");
+  const ADMIN_PASS = "zang1314";
+  const [authed, setAuthed] = useState(false);
+  const [passInput, setPassInput] = useState("");
   const PAGE_SIZE = 20;
 
   async function fetchAll() {
+    if (!authed) return;
     try {
       const [c, p, si] = await Promise.all([
         fetch("/api/config").then(r => r.json()),
@@ -585,7 +589,7 @@ export default function AdminPage() {
     } catch { setLoading(false); }
   }
 
-  useEffect(() => { fetchAll(); }, []);
+  useEffect(() => { if (authed) fetchAll(); }, [authed]);
 
   // Stats
   const brands = [...new Set(products.map(p => p.brand).filter(Boolean))];
@@ -703,6 +707,38 @@ export default function AdminPage() {
     const allSelected = paged.every(p => s.has(p.id));
     paged.forEach(p => allSelected ? s.delete(p.id) : s.add(p.id));
     setSelectedIds(s);
+  }
+
+  // Password gate first — before any loading or data fetch
+  const ADMIN_PASS = "zang1314";
+  const [authed, setAuthed] = useState(false);
+  const [passInput, setPassInput] = useState("");
+
+  if (!authed) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="bg-white rounded-xl p-8 shadow-sm w-full max-w-sm text-center space-y-6">
+          <h1 className="font-display text-2xl font-light text-[#1A1A1A]">NOREVA Admin</h1>
+          <input
+            type="password"
+            value={passInput}
+            onChange={e => setPassInput(e.target.value)}
+            onKeyDown={e => e.key === "Enter" && setAuthed(passInput === ADMIN_PASS)}
+            placeholder="请输入访问密码"
+            className="w-full px-4 py-3 border border-gray-200 rounded-lg text-center font-body text-sm"
+          />
+          <button
+            onClick={() => setAuthed(passInput === ADMIN_PASS)}
+            className="w-full py-3 bg-[#1A1A1A] text-white font-body text-xs tracking-[0.2em] hover:bg-[#333] transition-colors"
+          >
+            进入后台
+          </button>
+          {passInput && passInput !== ADMIN_PASS && (
+            <p className="text-red-500 text-xs">密码错误，请重试</p>
+          )}
+        </div>
+      </div>
+    );
   }
 
   if (loading) return <div className="min-h-screen flex items-center justify-center bg-gray-50"><div className="animate-spin h-8 w-8 border-2 border-[#C9A96E] border-t-transparent rounded-full" /></div>;
