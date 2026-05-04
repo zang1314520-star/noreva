@@ -43,6 +43,66 @@ function cdnThumb(url: string, w: number): string {
   return url.replace("/upload/", `/upload/w_${w},c_limit,q_auto,f_auto/`);
 }
 
+// ========== Image Zoom Component ==========
+function ImageWithZoom({ src, alt, onClick }: { src: string; alt: string; onClick?: () => void }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [zoomPos, setZoomPos] = useState({ x: 50, y: 50 });
+  const [isHovering, setIsHovering] = useState(false);
+  const [containerSize, setContainerSize] = useState({ w: 0, h: 0 });
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    setZoomPos({ x, y });
+    setContainerSize({ w: rect.width, h: rect.height });
+  };
+
+  return (
+    <div className="relative">
+      {/* Main Image */}
+      <div
+        ref={containerRef}
+        className="aspect-[4/5] overflow-hidden bg-[#F5F4F2] relative cursor-crosshair"
+        onMouseEnter={() => setIsHovering(true)}
+        onMouseLeave={() => setIsHovering(false)}
+        onMouseMove={handleMouseMove}
+        onClick={onClick}
+      >
+        <Image
+          src={src}
+          alt={alt}
+          fill
+          className="object-cover"
+          sizes="(max-width: 1024px) 100vw, 50vw"
+          placeholder="blur"
+          blurDataURL={shimmer}
+          priority
+        />
+        {/* Zoom hint */}
+        <div className="absolute bottom-4 right-4 bg-white/80 backdrop-blur-sm rounded-full p-2.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+          <svg className="w-4 h-4 text-[#1A1A1A]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg>
+        </div>
+      </div>
+
+      {/* Zoom Panel - appears to the right on hover */}
+      {isHovering && containerSize.w > 0 && (
+        <div className="hidden lg:block absolute left-full top-0 ml-6 w-[400px] h-[500px] bg-white border border-[#E8E6E2] shadow-xl overflow-hidden pointer-events-none z-10">
+          <div
+            className="w-full h-full bg-no-repeat"
+            style={{
+              backgroundImage: `url(${src})`,
+              backgroundPosition: `${zoomPos.x}% ${zoomPos.y}%`,
+              backgroundSize: "250%",
+            }}
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ========== Lightbox Component ==========
 function Lightbox({ images, index, onClose, onNext, onPrev }: {
   images: string[];
@@ -251,16 +311,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
             <div className="space-y-4">
               {allImages.length > 0 ? (
                 <>
-                  <div
-                    className="aspect-[4/5] overflow-hidden bg-[#F5F4F2] relative cursor-zoom-in group"
-                    onClick={() => setLightboxOpen(true)}
-                  >
-                    <Image src={allImages[selectedImage]} alt={displayName} fill className="object-cover transition-transform duration-700 group-hover:scale-[1.03]" sizes="(max-width: 1024px) 100vw, 50vw" placeholder="blur" blurDataURL={shimmer} priority />
-                    {/* Zoom hint */}
-                    <div className="absolute bottom-4 right-4 bg-white/80 backdrop-blur-sm rounded-full p-2.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <svg className="w-4 h-4 text-[#1A1A1A]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg>
-                    </div>
-                  </div>
+                  <ImageWithZoom src={allImages[selectedImage]} alt={displayName} onClick={() => setLightboxOpen(true)} />
                   {allImages.length > 1 && (
                     <div className="flex gap-3 overflow-x-auto pb-1">
                       {allImages.map((img, index) => (
