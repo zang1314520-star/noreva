@@ -83,15 +83,6 @@ function autoCategorizeCn(tag: string, desc: string): { category: string; catego
   if (/丝巾|围巾|twilly|scarf|shawl/i.test(text)) {
     return { category: "scarves", categoryName: "Scarves", categoryNameCn: "丝巾/围巾", brand };
   }
-  if (/皮带|腰带|belt/i.test(text)) {
-    return { category: "belts", categoryName: "Belts", categoryNameCn: "皮带", brand };
-  }
-  if (/手提包|包(?![盆盆])|bag|handbag|钱包|wallet/i.test(text)) {
-    if (/钱包|wallet/i.test(text)) {
-      return { category: "wallets", categoryName: "Wallets", categoryNameCn: "钱包", brand };
-    }
-    return { category: "handbags", categoryName: "Handbags", categoryNameCn: "手提包", brand };
-  }
   if (/手表|腕表|watch/i.test(text)) {
     return { category: "watches", categoryName: "Watches", categoryNameCn: "手表", brand };
   }
@@ -101,7 +92,7 @@ function autoCategorizeCn(tag: string, desc: string): { category: string; catego
   if (/眼镜|太阳镜|sunglasses/i.test(text)) {
     return { category: "sunglasses", categoryName: "Sunglasses", categoryNameCn: "太阳镜", brand };
   }
-  // 鞋类检测 - 优先于默认皮带
+  // 鞋类检测 - 优先于包检测
   if (/鞋|靴|shoe|sneaker|运动鞋|皮鞋|凉鞋|拖鞋|休闲鞋|正装鞋|马丁靴|切尔西靴/i.test(text)) {
     if (/运动鞋|sneaker|跑步鞋/i.test(text)) {
       return { category: "sneakers", categoryName: "Sneakers", categoryNameCn: "运动鞋", brand };
@@ -117,6 +108,15 @@ function autoCategorizeCn(tag: string, desc: string): { category: string; catego
     }
     // 默认鞋类
     return { category: "sneakers", categoryName: "Sneakers", categoryNameCn: "运动鞋", brand };
+  }
+  if (/皮带|腰带|belt/i.test(text)) {
+    return { category: "belts", categoryName: "Belts", categoryNameCn: "皮带", brand };
+  }
+  if (/手提包|bag(?!\w)|handbag|钱包|wallet/i.test(text)) {
+    if (/钱包|wallet/i.test(text)) {
+      return { category: "wallets", categoryName: "Wallets", categoryNameCn: "钱包", brand };
+    }
+    return { category: "handbags", categoryName: "Handbags", categoryNameCn: "手提包", brand };
   }
   return { category: "belts", categoryName: "Belts", categoryNameCn: "皮带", brand };
 }
