@@ -1253,6 +1253,391 @@ function ExcelImporter({ onImportComplete }: { onImportComplete: () => void }) {
   );
 }
 
+// ========== HD Image Matcher Component ==========
+function HDImageMatcher({ products, onMatchComplete }: { products: Product[]; onMatchComplete: () => void }) {
+  const [step, setStep] = useState<"select" | "preview" | "updating">("select");
+  const [folderProducts, setFolderProducts] = useState<any[]>([]);
+  const [matchedProducts, setMatchedProducts] = useState<any[]>([]);
+  const [scanningFolder, setScanningFolder] = useState(false);
+  const [progress, setProgress] = useState({ current: 0, total: 0, phase: "" });
+  const [result, setResult] = useState<any>(null);
+  const folderInputRef = useRef<HTMLInputElement>(null);
+
+  // Step 1: Handle folder selection
+  async function handleFolderSelect(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setScanningFolder(true);
+    setProgress({ current: 0, total: 0, phase: "正在读取文件夹..." });
+
+    const folderMap: Record<string, { folderName: string; images: File[] }> = {};
+    let processedCount = 0;
+
+    for (const file of Array.from(files)) {
+      const relativePath = file.webkitRelativePath || file.name;
+      const pathParts = relativePath.split("/").filter(Boolean);
+
+      let folderName: string;
+      if (pathParts.length >= 3) {
+        folderName = pathParts[pathParts.length - 2];
+      } else if (pathParts.length === 2) {
+        folderName = pathParts[0];
+      } else {
+        folderName = "Root";
+      }
+
+      if (!folderMap[folderName]) {
+        folderMap[folderName] = { folderName, images: [] };
+      }
+      if (file.type.startsWith("image/") || /\.(jpg|jpeg|png|webp)$/i.test(file.name)) {
+        folderMap[folderName].images.push(file);
+      }
+
+      processedCount++;
+      if (processedCount % 100 === 0) {
+        setProgress({ current: 0, total: 0, phase: `已读取 ${processedCount} 个文件...` });
+      }
+    }
+
+    const folderProds = Object.values(folderMap)
+      .filter((fp) => fp.images.length > 0)
+      .sort((a, b) => a.folderName.localeCompare(b.folderName));
+
+    setFolderProducts(folderProds);
+    setScanningFolder(false);
+    setProgress({ current: 0, total: folderProds.length, phase: `读取完成，发现 ${folderProds.length} 个产品文件夹` });
+
+    if (folderInputRef.current) {
+      folderInputRef.current.value = "";
+    }
+  }
+
+  // Step 2: Match existing products with folder images
+  function doMatch() {
+    const matched: any[] = [];
+    const usedFolderIdx = new Set<number>();
+
+    for (const product of products) {
+      const productKey = normalizeKey(product.nameCn || product.name || "");
+
+      let bestMatch: any = null;
+      let bestScore = 0;
+
+      for (let i = 0; i < folderProducts.length; i++) {
+        if (usedFolderIdx.has(i)) continue;
+        const folderProd = folderProducts[i];
+        const folderKey = normalizeKey(folderProd.folderName);
+        const score = calculateMatchScore(productKey, folderKey);
+
+        if (score > bestScore) {
+          bestScore = score;
+          bestMatch = { ...folderProd, folderIndex: i, matchScore: score };
+        }
+      }
+
+      if (bestMatch && bestScore > 0.5) {
+        usedFolderIdx.add(bestMatch.folderIndex);
+        matched.push({
+          product,
+          folderName: bestMatch.folderName,
+          hdImages: bestMatch.images,
+          matchedScore: bestMatch.matchScore,
+          isNew: false,
+        });
+      }
+    }
+
+    const matchedCount = matched.filter(m => m.hdImages && m.hdImages.length > 0).length;
+    setMatchedProducts(matched);
+    setStep("preview");
+  }
+
+  function normalizeKey(text: string): string {
+    return text
+      .replace(/[✈️🐂🌈✨👏❤️🎁💪🏻]+/g, "")
+      .replace(/[^\w\u4e00-\u9fff]/g, "")
+      .toLowerCase();
+  }
+
+  function calculateMatchScore(key1: string, key2: string): number {
+    if (!key1 || !key2) return 0;
+    if (key2.includes(key1) || key1.includes(key2)) return 0.9;
+    const words1 = key1.split("").filter(Boolean);
+    const words2 = key2.split("").filter(Boolean);
+    const overlap = words1.filter(w => words2.includes(w)).length;
+    const maxLen = Math.max(words1.length, words2.length);
+    return maxLen > 0 ? overlap / maxLen : 0;
+  }
+
+  // Step 3: Upload and update matched products
+  async function startUpdate() {
+    const matchedWithImages = matchedProducts.filter(p => p.hdImages && p.hdImages.length > 0);
+    if (matchedWithImages.length === 0) return;
+
+    setStep("updating");
+    setResult(null);
+
+    let successCount = 0;
+    let failCount = 0;
+    const errors: string[] = [];
+
+    for (let i = 0; i < matchedWithImages.length; i++) {
+      const item = matchedWithImages[i];
+      setProgress({
+        current: i,
+        total: matchedWithImages.length,
+        phase: `上传中 ${i + 1}/${matchedWithImages.length}: ${item.product.nameCn || item.product.name}`
+      });
+
+      try {
+        // Upload images to Cloudinary
+        let mainImageUrl = "";
+        const detailImages: string[] = [];
+
+        for (let j = 0; j < Math.min(item.hdImages.length, 10); j++) {
+          const file = item.hdImages[j];
+          const formData = new FormData();
+          formData.append("file", file);
+
+          try {
+            const uploadRes = await fetch("/api/upload", { method: "POST", body: formData });
+            const uploadData = await uploadRes.json();
+            if (uploadData.url) {
+              if (j === 0) {
+                mainImageUrl = uploadData.url;
+              } else {
+                detailImages.push(uploadData.url);
+              }
+            }
+          } catch (uploadErr) {
+            console.error("Upload failed for image", j, uploadErr);
+          }
+        }
+
+        // Update product with new images
+        if (mainImageUrl) {
+          const updatedProduct = {
+            ...item.product,
+            mainImage: mainImageUrl,
+            detailImages: detailImages.length > 0 ? detailImages : [mainImageUrl],
+            specs: item.product.specs.map((spec: any, idx: number) => ({
+              ...spec,
+              image: idx === 0 ? mainImageUrl : (spec.image || mainImageUrl),
+            })),
+          };
+
+          const res = await fetch("/api/products", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ products: [updatedProduct] }),
+          });
+          const data = await res.json();
+          if (data.success || data.products) {
+            successCount++;
+          } else {
+            failCount++;
+            errors.push(`Failed to update ${item.product.nameCn || item.product.name}`);
+          }
+        } else {
+          failCount++;
+          errors.push(`Failed to upload images for ${item.product.nameCn || item.product.name}`);
+        }
+      } catch (err: any) {
+        failCount++;
+        errors.push(err.message);
+      }
+    }
+
+    setResult({ success: successCount, failed: failCount, errors });
+    setProgress({ current: matchedWithImages.length, total: matchedWithImages.length, phase: "更新完成！" });
+    onMatchComplete();
+  }
+
+  return (
+    <div className="space-y-4">
+      {/* Hidden folder picker */}
+      <input
+        type="file"
+        ref={(el: HTMLInputElement | null) => {
+          folderInputRef.current = el;
+          if (el) el.setAttribute("webkitdirectory", "");
+        }}
+        multiple
+        accept="image/*"
+        className="hidden"
+        onChange={handleFolderSelect}
+      />
+
+      {/* Step 1: Select Folder */}
+      {step === "select" && (
+        <div>
+          <div
+            className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-[#C9A96E] transition-colors cursor-pointer"
+            onClick={() => folderInputRef.current?.click()}
+          >
+            <svg className="w-10 h-10 mx-auto text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>
+            <p className="text-gray-600 font-medium">选择高清图片文件夹</p>
+            <p className="text-sm text-gray-400 mt-1">包含产品图片的文件夹（系统会自动按名称匹配）</p>
+          </div>
+
+          {scanningFolder && (
+            <div className="mt-3 p-3 bg-gray-50 rounded-lg">
+              <div className="flex items-center gap-3">
+                <div className="animate-spin h-5 w-5 border-2 border-[#C9A96E] border-t-transparent rounded-full" />
+                <p className="text-sm text-gray-600">{progress.phase}</p>
+              </div>
+            </div>
+          )}
+
+          {folderProducts.length > 0 && (
+            <div className="mt-4">
+              <h4 className="text-sm font-medium mb-2">
+                发现 {folderProducts.length} 个产品文件夹，共 {folderProducts.reduce((acc: number, fp: any) => acc + (fp.images?.length || 0), 0)} 张图片
+              </h4>
+              <div className="max-h-40 overflow-y-auto border rounded-lg p-3 space-y-2">
+                {folderProducts.map((fp: any, i: number) => (
+                  <div key={i} className="flex items-center gap-3 text-sm">
+                    <span className="px-2 py-0.5 bg-green-100 text-green-700 rounded text-xs">{fp.images?.length || 0}张</span>
+                    <span className="truncate text-gray-600 flex-1">{fp.folderName.substring(0, 50)}</span>
+                  </div>
+                ))}
+              </div>
+              <button
+                onClick={doMatch}
+                className="mt-4 w-full px-6 py-3 bg-[#1A1A1A] text-white rounded-lg hover:bg-[#333] font-medium"
+              >
+                开始匹配 {folderProducts.length} 个图片夹 → {products.length} 个产品
+              </button>
+            </div>
+          )}
+
+          {folderProducts.length === 0 && !scanningFolder && (
+            <p className="text-sm text-gray-400 mt-3 text-center">
+              当前数据库有 {products.length} 个产品，请先导入产品后再匹配高清图
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* Step 2: Preview Matches */}
+      {step === "preview" && (
+        <div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+            <div className="bg-gray-50 rounded-lg p-3 text-center">
+              <p className="text-xl font-bold text-[#1A1A1A]">{products.length}</p>
+              <p className="text-xs text-gray-500">产品总数</p>
+            </div>
+            <div className="bg-gray-50 rounded-lg p-3 text-center">
+              <p className="text-xl font-bold text-[#1A1A1A]">{folderProducts.length}</p>
+              <p className="text-xs text-gray-500">图片文件夹</p>
+            </div>
+            <div className="bg-green-50 rounded-lg p-3 text-center">
+              <p className="text-xl font-bold text-green-600">{matchedProducts.filter(p => p.hdImages?.length > 0).length}</p>
+              <p className="text-xs text-gray-500">已匹配</p>
+            </div>
+            <div className="bg-yellow-50 rounded-lg p-3 text-center">
+              <p className="text-xl font-bold text-yellow-600">{matchedProducts.filter(p => !p.hdImages?.length).length}</p>
+              <p className="text-xs text-gray-500">未匹配</p>
+            </div>
+          </div>
+
+          <div className="max-h-60 overflow-y-auto border rounded-lg mb-4">
+            <table className="w-full text-sm">
+              <thead className="bg-gray-50 sticky top-0">
+                <tr>
+                  <th className="px-3 py-2 text-left">产品</th>
+                  <th className="px-3 py-2 text-left">匹配</th>
+                  <th className="px-3 py-2 text-left">图片</th>
+                </tr>
+              </thead>
+              <tbody>
+                {matchedProducts.slice(0, 15).map((m: any, i: number) => (
+                  <tr key={i} className="border-t hover:bg-gray-50">
+                    <td className="px-3 py-2 max-w-[150px] truncate">{m.product.nameCn || m.product.name}</td>
+                    <td className="px-3 py-2">
+                      {m.hdImages?.length > 0 ? (
+                        <span className="px-2 py-0.5 bg-green-100 text-green-700 rounded text-xs">
+                          ✓ {Math.round(m.matchedScore * 100)}%
+                        </span>
+                      ) : (
+                        <span className="px-2 py-0.5 bg-yellow-100 text-yellow-700 rounded text-xs">未匹配</span>
+                      )}
+                    </td>
+                    <td className="px-3 py-2 text-gray-500">
+                      {m.hdImages?.length > 0 ? `${m.hdImages.length}张` : "-"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            {matchedProducts.length > 15 && (
+              <p className="text-center text-xs text-gray-400 py-2">... 还有 {matchedProducts.length - 15} 个</p>
+            )}
+          </div>
+
+          <div className="flex gap-3">
+            <button
+              onClick={() => setStep("select")}
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-sm"
+            >
+              返回重选
+            </button>
+            <button
+              onClick={startUpdate}
+              disabled={matchedProducts.filter(p => p.hdImages?.length > 0).length === 0}
+              className="flex-1 px-6 py-3 bg-[#C9A96E] text-white rounded-lg hover:bg-[#B8944E] disabled:opacity-50 font-medium"
+            >
+              更新 {matchedProducts.filter(p => p.hdImages?.length > 0).length} 个产品的图片
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Step 3: Updating */}
+      {step === "updating" && (
+        <div>
+          <div className="bg-gray-50 rounded-xl p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="animate-spin h-6 w-6 border-2 border-[#C9A96E] border-t-transparent rounded-full" />
+              <span className="font-medium">正在上传高清图片...</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-3 mb-2">
+              <div
+                className="bg-[#C9A96E] h-3 rounded-full transition-all duration-300"
+                style={{ width: `${progress.total > 0 ? (progress.current / progress.total) * 100 : 0}%` }}
+              />
+            </div>
+            <p className="text-sm text-gray-500">{progress.phase}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Result */}
+      {result && (
+        <div className={`rounded-xl p-4 ${result.failed === 0 ? "bg-green-50 border border-green-200" : "bg-yellow-50 border border-yellow-200"}`}>
+          <h4 className="font-semibold mb-2">{result.failed === 0 ? "更新成功！" : "更新完成（部分失败）"}</h4>
+          <div className="flex gap-4 text-sm">
+            <span className="text-green-600">成功: {result.success}</span>
+            {result.failed > 0 && <span className="text-red-600">失败: {result.failed}</span>}
+          </div>
+          {result.errors.length > 0 && (
+            <div className="mt-2 text-xs text-red-500">
+              {result.errors.slice(0, 3).map((e: string, i: number) => <p key={i}>{e}</p>)}
+            </div>
+          )}
+          <button
+            onClick={() => { setStep("select"); setFolderProducts([]); setMatchedProducts([]); setResult(null); }}
+            className="mt-3 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 text-sm"
+          >
+            继续匹配
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ========== Main Admin Page ==========
 export default function AdminPage() {
   const [tab, setTab] = useState<"dashboard" | "import" | "products" | "config" | "siteImages">("dashboard");
@@ -1620,10 +2005,27 @@ export default function AdminPage() {
           {tab === "import" && (
             <div>
               <h2 className="text-2xl font-semibold mb-6">导入产品</h2>
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6 text-sm text-blue-700">
-                <strong>推荐：</strong>先上传Excel获取产品信息，再选择批量下载的高清图片文件夹，系统会自动匹配并上传高清图片替换模糊缩略图。
+              <div className="grid grid-cols-2 gap-6">
+                {/* Left: Original Excel Import */}
+                <div className="bg-white rounded-xl p-6 shadow-sm">
+                  <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                    <svg className="w-5 h-5 text-[#C9A96E]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                    导入产品
+                  </h3>
+                  <p className="text-sm text-gray-500 mb-4">上传微购相册导出的Excel文件，导入产品信息（不包含高清图片）</p>
+                  <ExcelImporter onImportComplete={fetchAll} />
+                </div>
+
+                {/* Right: HD Image Matching */}
+                <div className="bg-white rounded-xl p-6 shadow-sm">
+                  <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                    <svg className="w-5 h-5 text-[#C9A96E]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                    匹配高清图
+                  </h3>
+                  <p className="text-sm text-gray-500 mb-4">为已导入的产品匹配本地文件夹中的高清图片（自动按产品名称匹配）</p>
+                  <HDImageMatcher products={products} onMatchComplete={fetchAll} />
+                </div>
               </div>
-              <HDImageImporter onImportComplete={fetchAll} />
             </div>
           )}
 
