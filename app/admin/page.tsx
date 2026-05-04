@@ -48,6 +48,15 @@ const CATEGORY_TREE: Record<string, { name: string; nameCn: string; subcategorie
       wallets: { name: "Wallets", nameCn: "钱包" },
     },
   },
+  shoes: {
+    name: "Shoes", nameCn: "鞋靴",
+    subcategories: {
+      sneakers: { name: "Sneakers", nameCn: "运动鞋" },
+      leather Shoes: { name: "Leather Shoes", nameCn: "皮鞋" },
+      sandals: { name: "Sandals", nameCn: "凉鞋/拖鞋" },
+      boots: { name: "Boots", nameCn: "靴子" },
+    },
+  },
 };
 
 // ========== Helper: Auto-categorize from tag/description ==========
@@ -77,11 +86,11 @@ function autoCategorizeCn(tag: string, desc: string): { category: string; catego
   if (/皮带|腰带|belt/i.test(text)) {
     return { category: "belts", categoryName: "Belts", categoryNameCn: "皮带", brand };
   }
-  if (/手提包|包|bag|handbag/i.test(text)) {
+  if (/手提包|包(?![盆盆])|bag|handbag|钱包|wallet/i.test(text)) {
+    if (/钱包|wallet/i.test(text)) {
+      return { category: "wallets", categoryName: "Wallets", categoryNameCn: "钱包", brand };
+    }
     return { category: "handbags", categoryName: "Handbags", categoryNameCn: "手提包", brand };
-  }
-  if (/钱包|wallet/i.test(text)) {
-    return { category: "wallets", categoryName: "Wallets", categoryNameCn: "钱包", brand };
   }
   if (/手表|腕表|watch/i.test(text)) {
     return { category: "watches", categoryName: "Watches", categoryNameCn: "手表", brand };
@@ -91,6 +100,23 @@ function autoCategorizeCn(tag: string, desc: string): { category: string; catego
   }
   if (/眼镜|太阳镜|sunglasses/i.test(text)) {
     return { category: "sunglasses", categoryName: "Sunglasses", categoryNameCn: "太阳镜", brand };
+  }
+  // 鞋类检测 - 优先于默认皮带
+  if (/鞋|靴|shoe|sneaker|运动鞋|皮鞋|凉鞋|拖鞋|休闲鞋|正装鞋|马丁靴|切尔西靴/i.test(text)) {
+    if (/运动鞋|sneaker|跑步鞋/i.test(text)) {
+      return { category: "sneakers", categoryName: "Sneakers", categoryNameCn: "运动鞋", brand };
+    }
+    if (/靴|boot|马丁|切尔西/i.test(text)) {
+      return { category: "boots", categoryName: "Boots", categoryNameCn: "靴子", brand };
+    }
+    if (/凉鞋|拖鞋|sandal|沙滩鞋/i.test(text)) {
+      return { category: "sandals", categoryName: "Sandals", categoryNameCn: "凉鞋/拖鞋", brand };
+    }
+    if (/皮鞋|正装鞋|loafer|牛津鞋|德比鞋/i.test(text)) {
+      return { category: "leather Shoes", categoryName: "Leather Shoes", categoryNameCn: "皮鞋", brand };
+    }
+    // 默认鞋类
+    return { category: "sneakers", categoryName: "Sneakers", categoryNameCn: "运动鞋", brand };
   }
   return { category: "belts", categoryName: "Belts", categoryNameCn: "皮带", brand };
 }
