@@ -332,26 +332,50 @@ function HDImageImporter({ onImportComplete }: { onImportComplete: () => void })
     setScanningFolder(true);
     setProgress({ current: 0, total: 0, phase: "正在读取文件夹..." });
 
-    // Group files by their parent folder name
+    // Group files by their parent folder name using webkitRelativePath
     const folderMap: Record<string, { folderName: string; images: File[] }> = {};
+    let processedCount = 0;
 
     for (const file of Array.from(files)) {
-      // webkitRelativePath gives us the full path within the folder
-      const pathParts = file.webkitRelativePath.split("/");
-      const folderName = pathParts.length > 1 ? pathParts[pathParts.length - 2] : "Root";
+      // webkitRelativePath gives us the full path within the selected folder
+      // e.g., "Ashley Luxury/20260504/品名：Ferrgamo../img_001.jpg"
+      const relativePath = file.webkitRelativePath || file.name;
+      const pathParts = relativePath.split("/").filter(Boolean);
+
+      // Determine folder name: if path has 3+ parts, take the product folder (2nd from end)
+      // e.g., ["Ashley Luxury", "20260504", "品名：Ferrgamo...", "img_001.jpg"] -> "品名：Ferrgamo..."
+      let folderName: string;
+      if (pathParts.length >= 3) {
+        folderName = pathParts[pathParts.length - 2];
+      } else if (pathParts.length === 2) {
+        // Just "FolderName/img.jpg" - use parent folder
+        folderName = pathParts[0];
+      } else {
+        folderName = "Root";
+      }
 
       if (!folderMap[folderName]) {
         folderMap[folderName] = { folderName, images: [] };
       }
-      // Only add image files
-      if (file.type.startsWith("image/")) {
+      // Add image files
+      if (file.type.startsWith("image/") || /\.(jpg|jpeg|png|webp)$/i.test(file.name)) {
         folderMap[folderName].images.push(file);
+      }
+
+      processedCount++;
+      if (processedCount % 100 === 0) {
+        setProgress({ current: 0, total: 0, phase: `已读取 ${processedCount} 个文件...` });
       }
     }
 
     const products = Object.values(folderMap)
       .filter((fp) => fp.images.length > 0)
       .sort((a, b) => a.folderName.localeCompare(b.folderName));
+
+    console.log("Folder read complete:", products.length, "folders with images");
+    products.forEach((p) => {
+      console.log(`  - ${p.folderName}: ${p.images.length} images`);
+    });
 
     setFolderProducts(products);
     setScanningFolder(false);
@@ -376,66 +400,105 @@ function HDImageImporter({ onImportComplete }: { onImportComplete: () => void })
 
     const folderMap: Record<string, { folderName: string; images: File[] }> = {};
 
-    // Use FileSystemDirectoryReader for dropped folders
+    // First, collect all top-level directories from dropped items
+    const dirEntries: FileSystemDirectoryEntry[] = [];
+
     for (const item of Array.from(items)) {
       if (item.kind === "file") {
         const entry = item.webkitGetAsEntry ? item.webkitGetAsEntry() : null;
         if (entry && entry.isDirectory) {
-          await readDirectory(entry as FileSystemDirectoryEntry, folderMap);
+          dirEntries.push(entry as FileSystemDirectoryEntry);
         }
       }
+    }
+
+    // Read each directory recursively
+    for (const dirEntry of dirEntries) {
+      await readDirectoryRecursive(dirEntry, folderMap);
     }
 
     const products = Object.values(folderMap)
       .filter((fp) => fp.images.length > 0)
       .sort((a, b) => a.folderName.localeCompare(b.folderName));
 
+    console.log("Folder drop read complete:", products.length, "folders with images");
+
     setFolderProducts(products);
     setScanningFolder(false);
     setProgress({ current: 0, total: products.length, phase: `读取完成，发现 ${products.length} 个产品文件夹` });
   }
 
-  // Helper to read directory recursively
-  function readDirectory(dirEntry: FileSystemDirectoryEntry, folderMap: Record<string, { folderName: string; images: File[] }>): Promise<void> {
-    return new Promise((resolve) => {
+  // Helper to read directory recursively - properly handles readEntries pagination
+  function readDirectoryRecursive(dirEntry: FileSystemDirectoryEntry, folderMap: Record<string, { folderName: string; images: File[] }>): Promise<void> {
+    return new Promise((resolve, reject) => {
       const reader = dirEntry.createReader();
-      const subFolders: FileSystemDirectoryEntry[] = [];
+      const allEntries: FileSystemEntry[] = [];
 
-      reader.readEntries(async (entries) => {
-        for (const entry of Array.from(entries)) {
-          if (entry.isFile) {
-            const file = await new Promise<File>((res) => {
-              (entry as FileSystemFileEntry).file(res);
-            });
-            if (file.type.startsWith("image/")) {
-              const folderName = dirEntry.name;
-              if (!folderMap[folderName]) {
-                folderMap[folderName] = { folderName, images: [] };
-              }
-              folderMap[folderName].images.push(file);
+      // Collect all entries first (readEntries may return partial results)
+      const collectEntries = (): Promise<void> => {
+        return new Promise((res) => {
+          reader.readEntries((entries: FileSystemEntry[]) => {
+            if (entries.length > 0) {
+              allEntries.push(...entries);
+              collectEntries().then(res);
+            } else {
+              res();
             }
-          } else if (entry.isDirectory) {
-            subFolders.push(entry as FileSystemDirectoryEntry);
-          }
-        }
+          });
+        });
+      };
 
-        // Process subfolders
-        for (const subFolder of subFolders) {
-          await readDirectory(subFolder, folderMap);
-        }
-        resolve();
+      collectEntries().then(() => {
+        const subFolders: FileSystemDirectoryEntry[] = [];
+
+        const processEntries = async () => {
+          for (const entry of allEntries) {
+            if (entry.isFile) {
+              try {
+                const file = await new Promise<File>((res, rej) => {
+                  (entry as FileSystemFileEntry).file(res, rej);
+                });
+                if (file.type.startsWith("image/") || /\.(jpg|jpeg|png|webp)$/i.test(file.name)) {
+                  const folderName = dirEntry.name;
+                  if (!folderMap[folderName]) {
+                    folderMap[folderName] = { folderName, images: [] };
+                  }
+                  folderMap[folderName].images.push(file);
+                }
+              } catch (e) {
+                // Skip files we can't read
+              }
+            } else if (entry.isDirectory) {
+              subFolders.push(entry as FileSystemDirectoryEntry);
+            }
+          }
+
+          // Process subfolders
+          for (const subFolder of subFolders) {
+            await readDirectoryRecursive(subFolder, folderMap);
+          }
+          resolve();
+        };
+
+        processEntries();
       });
     });
   }
 
   // Step 3: Match Excel products with folder products
   function doMatch() {
+    console.log("=== Starting Match ===");
+    console.log("Excel products:", parsedProducts.length);
+    console.log("Folder products:", folderProducts.length);
+
     const matched: any[] = [];
     const usedFolderIdx = new Set<number>();
 
-    for (const excelProd of parsedProducts) {
+    for (let ei = 0; ei < parsedProducts.length; ei++) {
+      const excelProd = parsedProducts[ei];
       // Create a normalized search key from Excel product
       const excelKey = normalizeKey(excelProd.nameCn || excelProd.name || excelProd.sourceTag || "");
+      console.log(`Excel[${ei}]: "${excelKey.substring(0, 30)}..."`);
 
       let bestMatch: any = null;
       let bestScore = 0;
@@ -444,16 +507,16 @@ function HDImageImporter({ onImportComplete }: { onImportComplete: () => void })
         if (usedFolderIdx.has(i)) continue;
         const folderProd = folderProducts[i];
         const folderKey = normalizeKey(folderProd.folderName);
-
-        // Calculate similarity score
         const score = calculateMatchScore(excelKey, folderKey);
-        if (score > bestScore && score > 0.5) {
+
+        if (score > bestScore) {
           bestScore = score;
+          console.log(`  Folder[${i}] "${folderKey.substring(0, 20)}..." score: ${score.toFixed(2)}`);
           bestMatch = { ...folderProd, folderIndex: i, matchScore: score };
         }
       }
 
-      if (bestMatch) {
+      if (bestMatch && bestScore > 0.5) {
         usedFolderIdx.add(bestMatch.folderIndex);
         matched.push({
           ...excelProd,
@@ -461,11 +524,15 @@ function HDImageImporter({ onImportComplete }: { onImportComplete: () => void })
           hdImages: bestMatch.images,
           matchedScore: bestMatch.matchScore,
         });
+        console.log(`  => MATCHED with score ${bestMatch.matchScore.toFixed(2)}`);
       } else {
-        // No match found - use Excel data only
         matched.push({ ...excelProd, folderName: null, hdImages: [], matchedScore: 0 });
+        console.log(`  => NO MATCH (best score: ${bestScore.toFixed(2)})`);
       }
     }
+
+    const matchedCount = matched.filter(m => m.hdImages && m.hdImages.length > 0).length;
+    console.log(`=== Match Complete: ${matchedCount}/${matched.length} products matched ===`);
 
     setMatchedProducts(matched);
     setStep("preview");
