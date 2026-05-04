@@ -177,7 +177,477 @@ function ImageUploader({ value, onChange, label }: { value: string; onChange: (u
   );
 }
 
-// ========== Excel Import Component ==========
+// ========== Excel + HD Images Import Component ==========
+function HDImageImporter({ onImportComplete }: { onImportComplete: () => void }) {
+  const [step, setStep] = useState<"excel" | "folder" | "preview" | "importing">("excel");
+  const [excelFile, setExcelFile] = useState<File | null>(null);
+  const [folderPath, setFolderPath] = useState("");
+  const [parsedProducts, setParsedProducts] = useState<any[]>([]);
+  const [folderProducts, setFolderProducts] = useState<any[]>([]);
+  const [matchedProducts, setMatchedProducts] = useState<any[]>([]);
+  const [importing, setImporting] = useState(false);
+  const [progress, setProgress] = useState({ current: 0, total: 0, phase: "" });
+  const [result, setResult] = useState<any>(null);
+  const [clearExisting, setClearExisting] = useState(true);
+  const excelRef = useRef<HTMLInputElement>(null);
+
+  // Step 1: Parse Excel file
+  async function parseExcel(file: File) {
+    setExcelFile(file);
+    setProgress({ current: 0, total: 0, phase: "解析Excel文件..." });
+
+    const arrayBuffer = await file.arrayBuffer();
+    const XLSX = (await import("xlsx")).default;
+    const JSZip = (await import("jszip")).default;
+
+    const workbook = XLSX.read(arrayBuffer, { type: "array" });
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const rows = XLSX.utils.sheet_to_json<any>(sheet, { header: 1 });
+
+    setProgress({ current: 0, total: 0, phase: "提取产品图片..." });
+    const zip = await JSZip.loadAsync(arrayBuffer);
+
+    const relsFile = zip.file("xl/drawings/_rels/drawing1.xml.rels");
+    const ridToImage: Record<string, string> = {};
+    if (relsFile) {
+      const relsXml = await relsFile.async("text");
+      const parser = new DOMParser();
+      const relsDoc = parser.parseFromString(relsXml, "application/xml");
+      relsDoc.querySelectorAll("Relationship").forEach((rel) => {
+        const id = rel.getAttribute("Id") || "";
+        const target = rel.getAttribute("Target") || "";
+        if (target.includes("image")) ridToImage[id] = target.replace("../media/", "");
+      });
+    }
+
+    const drawingFile = zip.file("xl/drawings/drawing1.xml");
+    const rowToRid: Record<number, string> = {};
+    if (drawingFile) {
+      const drawingXml = await drawingFile.async("text");
+      const parser = new DOMParser();
+      const drawingDoc = parser.parseFromString(drawingXml, "application/xml");
+      const anchors = drawingDoc.querySelectorAll("twoCellAnchor, oneCellAnchor");
+      let anchorList: Element[] = Array.from(anchors);
+      if (anchorList.length === 0) {
+        const allElements = drawingDoc.getElementsByTagName("*");
+        for (let i = 0; i < allElements.length; i++) {
+          const el = allElements[i];
+          if (el.localName === "twoCellAnchor" || el.localName === "oneCellAnchor") anchorList.push(el);
+        }
+      }
+      anchorList.forEach((anchor) => {
+        let rowVal = -1;
+        const fromElements = anchor.getElementsByTagName("*");
+        for (let i = 0; i < fromElements.length; i++) {
+          const el = fromElements[i];
+          if (el.localName === "from") {
+            const children = el.getElementsByTagName("*");
+            for (let j = 0; j < children.length; j++) {
+              if (children[j].localName === "row") rowVal = parseInt(children[j].textContent || "-1");
+            }
+          }
+        }
+        for (let i = 0; i < fromElements.length; i++) {
+          const el = fromElements[i];
+          if (el.localName === "blip") {
+            const embed = el.getAttribute("r:embed") || el.getAttributeNS("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "embed") || "";
+            if (embed && rowVal >= 0) rowToRid[rowVal] = embed;
+          }
+        }
+      });
+    }
+
+    const rowToImageBase64: Record<number, { data: string; mime: string }> = {};
+    for (const [rowStr, rid] of Object.entries(rowToRid)) {
+      const imageFile = ridToImage[rid];
+      if (imageFile) {
+        const zipEntry = zip.file(`xl/media/${imageFile}`);
+        if (zipEntry) {
+          const base64 = await zipEntry.async("base64");
+          const ext = imageFile.split(".").pop()?.toLowerCase() || "jpeg";
+          const mime = ext === "png" ? "image/png" : "image/jpeg";
+          rowToImageBase64[parseInt(rowStr)] = { data: base64, mime };
+        }
+      }
+    }
+
+    const products: any[] = [];
+    for (let i = 1; i < rows.length; i++) {
+      const row = rows[i];
+      if (!row || !row[1]) continue;
+      const desc = String(row[1] || "");
+      const tag = String(row[5] || "");
+      const sourceId = String(row[4] || "");
+      const searchCode = String(row[20] || "");
+      const catInfo = autoCategorizeCn(tag, desc);
+      const { name, nameCn, descClean } = parseProductName(desc, tag);
+      const imgData = rowToImageBase64[i];
+      products.push({
+        name, nameCn, brand: catInfo.brand,
+        category: catInfo.category, categoryName: catInfo.categoryName, categoryNameCn: catInfo.categoryNameCn,
+        description: descClean, descriptionCn: descClean,
+        sourceTag: tag, sourceId, searchCode,
+        imageBase64: imgData?.data || "", imageMimeType: imgData?.mime || "image/jpeg", hasImage: !!imgData,
+        excelIndex: i,
+      });
+    }
+
+    setParsedProducts(products);
+    setProgress({ current: 0, total: products.length, phase: `解析完成，共 ${products.length} 个产品（已记录Excel中的产品信息）` });
+  }
+
+  // Step 2: Scan local folder for HD images
+  async function scanFolder(path: string) {
+    if (!path.trim()) return;
+    setFolderPath(path);
+    setProgress({ current: 0, total: 0, phase: "扫描本地文件夹..." });
+
+    try {
+      const res = await fetch("/api/scan-folder", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ folderPath: path }),
+      });
+      const data = await res.json();
+      if (data.error) {
+        alert("扫描失败: " + data.error);
+        return;
+      }
+      setFolderProducts(data.products || []);
+      setProgress({ current: 0, total: data.products?.length || 0, phase: `扫描完成，发现 ${data.products?.length || 0} 个产品文件夹` });
+    } catch (e: any) {
+      alert("扫描失败: " + e.message);
+    }
+  }
+
+  // Step 3: Match Excel products with folder products
+  function doMatch() {
+    const matched: any[] = [];
+    const usedFolderIdx = new Set<number>();
+
+    for (const excelProd of parsedProducts) {
+      // Create a normalized search key from Excel product
+      const excelKey = normalizeKey(excelProd.nameCn || excelProd.name || excelProd.sourceTag || "");
+
+      let bestMatch: any = null;
+      let bestScore = 0;
+
+      for (let i = 0; i < folderProducts.length; i++) {
+        if (usedFolderIdx.has(i)) continue;
+        const folderProd = folderProducts[i];
+        const folderKey = normalizeKey(folderProd.folderName);
+
+        // Calculate similarity score
+        const score = calculateMatchScore(excelKey, folderKey);
+        if (score > bestScore && score > 0.5) {
+          bestScore = score;
+          bestMatch = { ...folderProd, folderIndex: i, matchScore: score };
+        }
+      }
+
+      if (bestMatch) {
+        usedFolderIdx.add(bestMatch.folderIndex);
+        matched.push({
+          ...excelProd,
+          folderName: bestMatch.folderName,
+          hdImages: bestMatch.images,
+          matchedScore: bestMatch.matchScore,
+        });
+      } else {
+        // No match found - use Excel data only
+        matched.push({ ...excelProd, folderName: null, hdImages: [], matchedScore: 0 });
+      }
+    }
+
+    setMatchedProducts(matched);
+    setStep("preview");
+  }
+
+  function normalizeKey(text: string): string {
+    return text
+      .replace(/[✈️🐂🌈✨👏❤️🎁💪🏻]+/g, "")
+      .replace(/[^\w\u4e00-\u9fff]/g, "")
+      .toLowerCase();
+  }
+
+  function calculateMatchScore(key1: string, key2: string): number {
+    if (!key1 || !key2) return 0;
+    // Check if key1 is contained in key2 or vice versa
+    if (key2.includes(key1) || key1.includes(key2)) return 0.9;
+    // Word overlap scoring
+    const words1 = key1.split("").filter(Boolean);
+    const words2 = key2.split("").filter(Boolean);
+    const overlap = words1.filter(w => words2.includes(w)).length;
+    const maxLen = Math.max(words1.length, words2.length);
+    return maxLen > 0 ? overlap / maxLen : 0;
+  }
+
+  // Step 4: Start import with HD images
+  async function startImport() {
+    if (matchedProducts.length === 0) return;
+    setStep("importing");
+    setImporting(true);
+    setResult(null);
+
+    const productsWithHD = matchedProducts.filter(p => p.hdImages && p.hdImages.length > 0);
+    const BATCH_SIZE = 5;
+    let totalSuccess = 0;
+    let totalFailed = 0;
+    let hdUploaded = 0;
+    const allErrors: string[] = [];
+
+    for (let i = 0; i < matchedProducts.length; i += BATCH_SIZE) {
+      const batch = matchedProducts.slice(i, i + BATCH_SIZE);
+      setProgress({
+        current: i,
+        total: matchedProducts.length,
+        phase: `上传中 ${i + 1}-${Math.min(i + BATCH_SIZE, matchedProducts.length)} / ${matchedProducts.length}${productsWithHD.length > 0 ? ` (已匹配 ${hdUploaded} 个高清图)` : ""}`
+      });
+
+      try {
+        const res = await fetch("/api/bulk-import-hd", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            products: batch,
+            clearExisting: i === 0 && clearExisting,
+          }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          totalSuccess += data.imported || 0;
+          totalFailed += data.failed || 0;
+          hdUploaded += data.hdUploaded || 0;
+          if (data.errors) allErrors.push(...data.errors);
+        } else {
+          totalFailed += batch.length;
+          allErrors.push(data.error || "Unknown error");
+        }
+      } catch (err: any) {
+        totalFailed += batch.length;
+        allErrors.push(err.message);
+      }
+    }
+
+    setResult({ success: totalSuccess, failed: totalFailed, hdUploaded, errors: allErrors });
+    setProgress({ current: matchedProducts.length, total: matchedProducts.length, phase: "导入完成！" });
+    setImporting(false);
+    onImportComplete();
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Step indicators */}
+      <div className="flex items-center gap-4 mb-6">
+        {["excel", "folder", "preview", "importing"].map((s, idx) => (
+          <div key={s} className="flex items-center">
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${step === s ? "bg-[#C9A96E] text-white" : "bg-gray-200 text-gray-500"}`}>
+              {idx + 1}
+            </div>
+            <span className={`ml-2 text-sm ${step === s ? "text-[#C9A96E] font-medium" : "text-gray-400"}`}>
+              {s === "excel" ? "上传Excel" : s === "folder" ? "选择图片文件夹" : s === "preview" ? "确认匹配" : "导入中"}
+            </span>
+            {idx < 3 && <div className="w-8 h-0.5 bg-gray-200 ml-4" />}
+          </div>
+        ))}
+      </div>
+
+      {/* Step 1: Excel Upload */}
+      {step === "excel" && (
+        <div className="bg-white rounded-xl p-8 shadow-sm">
+          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            <svg className="w-5 h-5 text-[#C9A96E]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+            步骤1: 上传微购相册导出的Excel文件
+          </h3>
+          <p className="text-sm text-gray-500 mb-4">上传包含产品信息的Excel文件，系统会解析产品名称、型号等信息用于匹配高清图片</p>
+          <div
+            className="border-2 border-dashed border-gray-300 rounded-xl p-12 text-center hover:border-[#C9A96E] transition-colors cursor-pointer"
+            onClick={() => excelRef.current?.click()}
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={(e) => { e.preventDefault(); const f = e.dataTransfer.files[0]; if (f?.name.endsWith(".xlsx")) { parseExcel(f); setStep("folder"); } }}
+          >
+            {excelFile ? (
+              <div>
+                <svg className="w-12 h-12 mx-auto text-green-500 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <p className="font-medium text-gray-800">{excelFile.name}</p>
+                <p className="text-sm text-gray-500 mt-1">{(excelFile.size / 1024 / 1024).toFixed(2)} MB</p>
+              </div>
+            ) : (
+              <div>
+                <svg className="w-12 h-12 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                <p className="text-gray-600 font-medium">点击或拖拽上传 Excel 文件</p>
+                <p className="text-sm text-gray-400 mt-1">支持 .xlsx 格式</p>
+              </div>
+            )}
+            <input ref={excelRef} type="file" accept=".xlsx,.xls" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) { parseExcel(f); setStep("folder"); } }} />
+          </div>
+        </div>
+      )}
+
+      {/* Step 2: Folder Selection */}
+      {step === "folder" && (
+        <div className="bg-white rounded-xl p-8 shadow-sm">
+          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            <svg className="w-5 h-5 text-[#C9A96E]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+            步骤2: 选择高清图片所在文件夹
+          </h3>
+          <p className="text-sm text-gray-500 mb-4">
+            请输入微购相册批量下载的高清图片文件夹路径（包含各产品图片的文件夹）
+          </p>
+          <div className="flex gap-3">
+            <input
+              type="text"
+              value={folderPath}
+              onChange={(e) => setFolderPath(e.target.value)}
+              placeholder="例如: C:\Users\86191\Desktop\批量下载\Ashley Luxury\20260504"
+              className="flex-1 px-4 py-3 border border-gray-300 rounded-lg text-sm"
+            />
+            <button
+              onClick={() => scanFolder(folderPath)}
+              className="px-6 py-3 bg-[#C9A96E] text-white rounded-lg hover:bg-[#B8944E] font-medium"
+            >
+              扫描文件夹
+            </button>
+          </div>
+          {progress.phase && (
+            <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+              <p className="text-sm text-gray-600">{progress.phase}</p>
+            </div>
+          )}
+          {folderProducts.length > 0 && (
+            <div className="mt-6">
+              <h4 className="text-sm font-medium mb-3">扫描到的产品文件夹 ({folderProducts.length} 个)</h4>
+              <div className="max-h-60 overflow-y-auto border rounded-lg p-3 space-y-2">
+                {folderProducts.map((fp: any, i: number) => (
+                  <div key={i} className="flex items-center gap-3 text-sm">
+                    <span className="px-2 py-0.5 bg-green-100 text-green-700 rounded text-xs">{fp.images?.length || 0}张图</span>
+                    <span className="truncate text-gray-600 flex-1">{fp.folderName.substring(0, 60)}...</span>
+                  </div>
+                ))}
+              </div>
+              <button
+                onClick={doMatch}
+                className="mt-4 px-8 py-3 bg-[#1A1A1A] text-white rounded-lg hover:bg-[#333] font-medium"
+              >
+                开始匹配产品
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Step 3: Preview & Confirm */}
+      {step === "preview" && (
+        <div className="bg-white rounded-xl p-8 shadow-sm">
+          <h3 className="text-lg font-semibold mb-4">步骤3: 确认匹配结果</h3>
+          <p className="text-sm text-gray-500 mb-4">
+            已将Excel中的 {parsedProducts.length} 个产品与本地 {folderProducts.length} 个图片文件夹进行匹配
+          </p>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <div className="bg-gray-50 rounded-lg p-4 text-center">
+              <p className="text-2xl font-bold text-[#1A1A1A]">{parsedProducts.length}</p>
+              <p className="text-xs text-gray-500">Excel产品</p>
+            </div>
+            <div className="bg-gray-50 rounded-lg p-4 text-center">
+              <p className="text-2xl font-bold text-[#1A1A1A]">{folderProducts.length}</p>
+              <p className="text-xs text-gray-500">图片文件夹</p>
+            </div>
+            <div className="bg-gray-50 rounded-lg p-4 text-center">
+              <p className="text-2xl font-bold text-green-600">{matchedProducts.filter(p => p.hdImages?.length > 0).length}</p>
+              <p className="text-xs text-gray-500">已匹配高清图</p>
+            </div>
+            <div className="bg-gray-50 rounded-lg p-4 text-center">
+              <p className="text-2xl font-bold text-yellow-600">{matchedProducts.filter(p => !p.hdImages?.length).length}</p>
+              <p className="text-xs text-gray-500">未匹配(用原图)</p>
+            </div>
+          </div>
+
+          <div className="max-h-80 overflow-y-auto border rounded-lg mb-6">
+            <table className="w-full text-sm">
+              <thead className="bg-gray-50 sticky top-0">
+                <tr>
+                  <th className="px-4 py-2 text-left">#</th>
+                  <th className="px-4 py-2 text-left">产品名称</th>
+                  <th className="px-4 py-2 text-left">匹配状态</th>
+                  <th className="px-4 py-2 text-left">高清图</th>
+                </tr>
+              </thead>
+              <tbody>
+                {matchedProducts.slice(0, 20).map((p: any, i: number) => (
+                  <tr key={i} className="border-t hover:bg-gray-50">
+                    <td className="px-4 py-2 text-gray-400">{i + 1}</td>
+                    <td className="px-4 py-2 max-w-[200px] truncate">{p.nameCn || p.name}</td>
+                    <td className="px-4 py-2">
+                      {p.hdImages?.length > 0 ? (
+                        <span className="px-2 py-0.5 bg-green-100 text-green-700 rounded text-xs">
+                          ✓ {Math.round(p.matchedScore * 100)}%
+                        </span>
+                      ) : (
+                        <span className="px-2 py-0.5 bg-yellow-100 text-yellow-700 rounded text-xs">使用原图</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-2 text-gray-500">
+                      {p.hdImages?.length > 0 ? `${p.hdImages.length}张高清图` : "-"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            {matchedProducts.length > 20 && (
+              <p className="text-center text-sm text-gray-400 py-2">... 还有 {matchedProducts.length - 20} 个产品</p>
+            )}
+          </div>
+
+          <div className="flex items-center justify-between">
+            <label className="flex items-center gap-2 text-sm">
+              <input type="checkbox" checked={clearExisting} onChange={(e) => setClearExisting(e.target.checked)} className="rounded" />
+              清除现有产品（推荐首次导入时勾选）
+            </label>
+            <button
+              onClick={startImport}
+              className="px-8 py-3 bg-[#C9A96E] text-white rounded-lg hover:bg-[#B8944E] disabled:opacity-50 font-medium"
+            >
+              开始导入 {matchedProducts.length} 个产品
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Progress */}
+      {(importing || (progress.phase && progress.total > 0)) && (
+        <div className="bg-white rounded-xl p-6 shadow-sm">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-medium">{progress.phase}</span>
+            <span className="text-sm text-gray-500">{progress.current}/{progress.total}</span>
+          </div>
+          <div className="w-full bg-gray-200 rounded-full h-3">
+            <div className="bg-[#C9A96E] h-3 rounded-full transition-all duration-300" style={{ width: `${progress.total > 0 ? (progress.current / progress.total) * 100 : 0}%` }} />
+          </div>
+        </div>
+      )}
+
+      {/* Result */}
+      {result && (
+        <div className={`rounded-xl p-6 shadow-sm ${result.failed === 0 ? "bg-green-50 border border-green-200" : "bg-yellow-50 border border-yellow-200"}`}>
+          <h3 className="font-semibold mb-2">{result.failed === 0 ? "导入成功！" : "导入完成（部分失败）"}</h3>
+          <div className="flex gap-6 text-sm">
+            <span className="text-green-600">成功: {result.success}</span>
+            <span className="text-blue-600">使用高清图: {result.hdUploaded}</span>
+            {result.failed > 0 && <span className="text-red-600">失败: {result.failed}</span>}
+          </div>
+          {result.errors.length > 0 && (
+            <div className="mt-3 text-sm text-red-600">
+              {result.errors.slice(0, 5).map((e: string, i: number) => <p key={i}>{e}</p>)}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ========== Original Excel Import Component (kept for reference) ==========
 function ExcelImporter({ onImportComplete }: { onImportComplete: () => void }) {
   const [file, setFile] = useState<File | null>(null);
   const [parsedProducts, setParsedProducts] = useState<any[]>([]);
@@ -572,6 +1042,7 @@ export default function AdminPage() {
 
   async function fetchAll() {
     if (!authed) return;
+    try {
       const [c, p, si] = await Promise.all([
         fetch("/api/config").then(r => r.json()),
         fetch("/api/products").then(r => r.json()),
@@ -911,7 +1382,10 @@ export default function AdminPage() {
           {tab === "import" && (
             <div>
               <h2 className="text-2xl font-semibold mb-6">导入产品</h2>
-              <ExcelImporter onImportComplete={fetchAll} />
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6 text-sm text-blue-700">
+                <strong>推荐：</strong>先上传Excel获取产品信息，再选择批量下载的高清图片文件夹，系统会自动匹配并上传高清图片替换模糊缩略图。
+              </div>
+              <HDImageImporter onImportComplete={fetchAll} />
             </div>
           )}
 
