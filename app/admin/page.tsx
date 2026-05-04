@@ -564,13 +564,14 @@ export default function AdminPage() {
   const [batchBrand, setBatchBrand] = useState("");
   const [batchCategory, setBatchCategory] = useState("");
   const ADMIN_PASS = "zang1314";
-  const [authed, setAuthed] = useState(false);
+  const [authed, setAuthed] = useState(
+    typeof window !== "undefined" ? sessionStorage.getItem("noreva_admin") === "1" : false
+  );
   const [passInput, setPassInput] = useState("");
   const PAGE_SIZE = 20;
 
   async function fetchAll() {
     if (!authed) return;
-    try {
       const [c, p, si] = await Promise.all([
         fetch("/api/config").then(r => r.json()),
         fetch("/api/products").then(r => r.json()),
@@ -719,12 +720,23 @@ export default function AdminPage() {
             type="password"
             value={passInput}
             onChange={e => setPassInput(e.target.value)}
-            onKeyDown={e => e.key === "Enter" && setAuthed(passInput === ADMIN_PASS)}
+            onKeyDown={e => {
+              if (e.key === "Enter") {
+                const ok = passInput === ADMIN_PASS;
+                if (ok) sessionStorage.setItem("noreva_admin", "1");
+                setAuthed(ok);
+              }
+            }}
             placeholder="请输入访问密码"
             className="w-full px-4 py-3 border border-gray-200 rounded-lg text-center font-body text-sm"
           />
           <button
-            onClick={() => setAuthed(passInput === ADMIN_PASS)}
+            disabled={!passInput}
+            onClick={() => {
+              const ok = passInput === ADMIN_PASS;
+              if (ok) sessionStorage.setItem("noreva_admin", "1");
+              setAuthed(ok);
+            }}
             className="w-full py-3 bg-[#1A1A1A] text-white font-body text-xs tracking-[0.2em] hover:bg-[#333] transition-colors"
           >
             进入后台
