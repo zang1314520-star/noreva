@@ -1378,79 +1378,137 @@ function HDImageMatcher({ products, onMatchComplete }: { products: Product[]; on
     setStep("updating");
     setResult(null);
 
+    const CONCURRENCY = 5; // 并行上传数量限制
     let successCount = 0;
     let failCount = 0;
     const errors: string[] = [];
+    const totalImages = matchedWithImages.reduce((sum, m) => Math.min(m.hdImages.length, 10), 0);
+    let uploadedImages = 0;
 
-    for (let i = 0; i < matchedWithImages.length; i++) {
-      const item = matchedWithImages[i];
-      setProgress({
-        current: i,
-        total: matchedWithImages.length,
-        phase: `上传中 ${i + 1}/${matchedWithImages.length}: ${item.product.nameCn || item.product.name}`
-      });
+    // Helper: 上传单张图片
+    async function uploadImage(file: File): Promise<string | null> {
+      const formData = new FormData();
+      formData.append("file", file);
+      try {
+        const res = await fetch("/api/upload", { method: "POST", body: formData });
+        const data = await res.json();
+        return data.url || null;
+      } catch {
+        return null;
+      }
+    }
+
+    // Helper: 并行上传一组图片
+    async function uploadImagesInParallel(files: File[], concurrency: number): Promise<string[]> {
+      const results: string[] = [];
+      for (let i = 0; i < files.length; i += concurrency) {
+        const batch = files.slice(i, i + concurrency);
+        const uploaded = await Promise.all(batch.map(f => uploadImage(f)));
+        results.push(...uploaded.filter((url): url is string => url !== null));
+        uploadedImages += batch.length;
+        setProgress({
+          current: uploadedImages,
+          total: totalImages,
+          phase: `上传图片 ${uploadedImages}/${totalImages}`
+        });
+      }
+      return results;
+    }
+
+    // Helper: 更新单个产品
+    async function updateProduct(item: any, mainImageUrl: string, detailImages: string[]): Promise<boolean> {
+      const updatedProduct = {
+        ...item.product,
+        mainImage: mainImageUrl,
+        detailImages: detailImages.length > 0 ? detailImages : [mainImageUrl],
+        specs: item.product.specs.map((spec: any, idx: number) => ({
+          ...spec,
+          image: idx === 0 ? mainImageUrl : (spec.image || mainImageUrl),
+        })),
+      };
 
       try {
-        // Upload images to Cloudinary
-        let mainImageUrl = "";
-        const detailImages: string[] = [];
+        const res = await fetch("/api/products", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ products: [updatedProduct] }),
+        });
+        const data = await res.json();
+        return !!(data.success || data.products);
+      } catch {
+        return false;
+      }
+    }
 
-        for (let j = 0; j < Math.min(item.hdImages.length, 10); j++) {
-          const file = item.hdImages[j];
-          const formData = new FormData();
-          formData.append("file", file);
+    // 阶段1: 并行上传所有图片
+    setProgress({ current: 0, total: totalImages, phase: "准备上传..." });
 
-          try {
-            const uploadRes = await fetch("/api/upload", { method: "POST", body: formData });
-            const uploadData = await uploadRes.json();
-            if (uploadData.url) {
-              if (j === 0) {
-                mainImageUrl = uploadData.url;
-              } else {
-                detailImages.push(uploadData.url);
-              }
-            }
-          } catch (uploadErr) {
-            console.error("Upload failed for image", j, uploadErr);
-          }
-        }
+    // 为每个产品准备上传任务
+    const uploadTasks: Array<{
+      item: any;
+      imageFiles: File[];
+    }> = matchedWithImages.map(item => ({
+      item,
+      imageFiles: Array.from(item.hdImages as File[]).slice(0, 10),
+    }));
 
-        // Update product with new images
-        if (mainImageUrl) {
-          const updatedProduct = {
-            ...item.product,
-            mainImage: mainImageUrl,
-            detailImages: detailImages.length > 0 ? detailImages : [mainImageUrl],
-            specs: item.product.specs.map((spec: any, idx: number) => ({
-              ...spec,
-              image: idx === 0 ? mainImageUrl : (spec.image || mainImageUrl),
-            })),
-          };
+    // 并行处理所有产品的图片上传
+    const uploadedResults: Array<{
+      item: any;
+      mainImageUrl: string;
+      detailImages: string[];
+      success: boolean;
+    }> = [];
 
-          const res = await fetch("/api/products", {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ products: [updatedProduct] }),
-          });
-          const data = await res.json();
-          if (data.success || data.products) {
-            successCount++;
-          } else {
-            failCount++;
-            errors.push(`Failed to update ${item.product.nameCn || item.product.name}`);
-          }
-        } else {
-          failCount++;
-          errors.push(`Failed to upload images for ${item.product.nameCn || item.product.name}`);
-        }
-      } catch (err: any) {
+    for (const task of uploadTasks) {
+      const { item, imageFiles } = task;
+      const urls = await uploadImagesInParallel(imageFiles, CONCURRENCY);
+
+      if (urls.length > 0) {
+        uploadedResults.push({
+          item,
+          mainImageUrl: urls[0],
+          detailImages: urls.slice(1),
+          success: true,
+        });
+      } else {
+        uploadedResults.push({
+          item,
+          mainImageUrl: "",
+          detailImages: [],
+          success: false,
+        });
+      }
+    }
+
+    // 阶段2: 并行更新产品信息
+    setProgress({ current: 0, total: uploadedResults.length, phase: "更新产品信息..." });
+
+    const updateTasks = uploadedResults.map((r, i) => async () => {
+      setProgress({ current: i, total: uploadedResults.length, phase: `更新产品 ${i + 1}/${uploadedResults.length}` });
+      if (r.success && r.mainImageUrl) {
+        const ok = await updateProduct(r.item, r.mainImageUrl, r.detailImages);
+        return ok;
+      }
+      return false;
+    });
+
+    // 并行执行更新
+    const updateResults = await Promise.all(updateTasks.map(t => t()));
+
+    // 统计结果
+    for (let i = 0; i < updateResults.length; i++) {
+      if (updateResults[i]) {
+        successCount++;
+      } else {
         failCount++;
-        errors.push(err.message);
+        const item = uploadedResults[i].item;
+        errors.push(`Failed: ${item.product.nameCn || item.product.name}`);
       }
     }
 
     setResult({ success: successCount, failed: failCount, errors });
-    setProgress({ current: matchedWithImages.length, total: matchedWithImages.length, phase: "更新完成！" });
+    setProgress({ current: totalImages, total: totalImages, phase: "更新完成！" });
     onMatchComplete();
   }
 
