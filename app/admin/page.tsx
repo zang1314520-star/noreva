@@ -573,8 +573,14 @@ export default function AdminPage() {
         fetch("/api/site-images").then(r => r.json())
       ]);
       setConfig(c); setProducts(p || []);
-      const siDefault: SiteImages = { hero: { image: "", title: "The New Collection" }, newArrivals: { left: "", right: "" }, womenswear: { main: "", secondary: "" }, menswear: { main: "", secondary: "" }, journal: { post1: "", post2: "", post3: "" } };
-      setSiteImages({ ...siDefault, ...(si as object) });
+      const loaded: SiteImages = {
+        hero: { image: si?.hero?.image || "", title: si?.hero?.title || "The New Collection" },
+        newArrivals: { left: si?.newArrivals?.left || "", right: si?.newArrivals?.right || "" },
+        womenswear: { main: si?.womenswear?.main || "", secondary: si?.womenswear?.secondary || "" },
+        menswear: { main: si?.menswear?.main || "", secondary: si?.menswear?.secondary || "" },
+        journal: { post1: si?.journal?.post1 || "", post2: si?.journal?.post2 || "", post3: si?.journal?.post3 || "" },
+      };
+      setSiteImages(loaded);
       setLoading(false);
     } catch { setLoading(false); }
   }
