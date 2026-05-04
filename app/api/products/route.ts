@@ -116,9 +116,17 @@ export async function PUT(request: Request) {
   try {
     const body = await request.json();
 
-    // Bulk update: { products: Product[] }
+    // Bulk update: { products: Product[] } - MERGE with existing products
     if (body.products && Array.isArray(body.products)) {
-      await redis.set("products", body.products);
+      const existingProducts: Product[] = (await redis.get("products")) || [];
+      const updateMap = new Map(existingProducts.map(p => [p.id, p]));
+
+      for (const p of body.products) {
+        updateMap.set(p.id, p);
+      }
+
+      const merged = Array.from(updateMap.values());
+      await redis.set("products", merged);
       return NextResponse.json({ success: true, updated: body.products.length });
     }
 
