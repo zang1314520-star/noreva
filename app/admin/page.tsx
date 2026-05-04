@@ -709,11 +709,7 @@ export default function AdminPage() {
     setSelectedIds(s);
   }
 
-  // Password gate first — before any loading or data fetch
-  const ADMIN_PASS = "zang1314";
-  const [authed, setAuthed] = useState(false);
-  const [passInput, setPassInput] = useState("");
-
+  // Password gate — before loading or any render
   if (!authed) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
