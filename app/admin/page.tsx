@@ -1378,134 +1378,121 @@ function HDImageMatcher({ products, onMatchComplete }: { products: Product[]; on
     setStep("updating");
     setResult(null);
 
-    const CONCURRENCY = 5; // 并行上传数量限制
+    const CONCURRENCY = 8; // 提高并行数
     let successCount = 0;
     let failCount = 0;
     const errors: string[] = [];
-    const totalImages = matchedWithImages.reduce((sum, m) => Math.min(m.hdImages.length, 10), 0);
-    let uploadedImages = 0;
 
-    // Helper: 上传单张图片
-    async function uploadImage(file: File): Promise<string | null> {
-      const formData = new FormData();
-      formData.append("file", file);
-      try {
-        const res = await fetch("/api/upload", { method: "POST", body: formData });
-        const data = await res.json();
-        return data.url || null;
-      } catch {
-        return null;
-      }
-    }
+    // 准备：收集所有需要上传的图片（打平）
+    type ImageTask = { productIdx: number; imageIdx: number; file: File };
+    const allImageTasks: ImageTask[] = [];
+    const productImagesMap: Map<number, string[]> = new Map(); // productIdx -> uploaded URLs
 
-    // Helper: 并行上传一组图片
-    async function uploadImagesInParallel(files: File[], concurrency: number): Promise<string[]> {
-      const results: string[] = [];
-      for (let i = 0; i < files.length; i += concurrency) {
-        const batch = files.slice(i, i + concurrency);
-        const uploaded = await Promise.all(batch.map(f => uploadImage(f)));
-        results.push(...uploaded.filter((url): url is string => url !== null));
-        uploadedImages += batch.length;
+    matchedWithImages.forEach((item, productIdx) => {
+      const files = Array.from(item.hdImages as File[]).slice(0, 10);
+      productImagesMap.set(productIdx, []);
+      files.forEach((file, imageIdx) => {
+        allImageTasks.push({ productIdx, imageIdx, file });
+      });
+    });
+
+    const totalImages = allImageTasks.length;
+    setProgress({ current: 0, total: totalImages, phase: `准备上传 ${totalImages} 张图片...` });
+
+    // 真正并行的上传函数
+    async function uploadAllImages() {
+      let completed = 0;
+      const results: Array<string | null> = new Array(totalImages).fill(null);
+
+      // 使用 Promise.all + chunk 方式实现并发控制
+      for (let i = 0; i < allImageTasks.length; i += CONCURRENCY) {
+        const chunk = allImageTasks.slice(i, i + CONCURRENCY);
+        const chunkResults = await Promise.all(
+          chunk.map(async (task, idx) => {
+            const formData = new FormData();
+            formData.append("file", task.file);
+            try {
+              const res = await fetch("/api/upload", { method: "POST", body: formData });
+              const data = await res.json();
+              return { localIdx: i + idx, url: data.url || null };
+            } catch {
+              return { localIdx: i + idx, url: null };
+            }
+          })
+        );
+
+        // 填充结果
+        chunkResults.forEach(({ localIdx, url }) => {
+          results[localIdx] = url;
+        });
+
+        completed += chunk.length;
         setProgress({
-          current: uploadedImages,
+          current: completed,
           total: totalImages,
-          phase: `上传图片 ${uploadedImages}/${totalImages}`
+          phase: `上传中 ${completed}/${totalImages}`
         });
       }
+
       return results;
     }
 
-    // Helper: 更新单个产品
-    async function updateProduct(item: any, mainImageUrl: string, detailImages: string[]): Promise<boolean> {
-      const updatedProduct = {
-        ...item.product,
-        mainImage: mainImageUrl,
-        detailImages: detailImages.length > 0 ? detailImages : [mainImageUrl],
-        specs: item.product.specs.map((spec: any, idx: number) => ({
-          ...spec,
-          image: idx === 0 ? mainImageUrl : (spec.image || mainImageUrl),
-        })),
+    // 上传所有图片
+    const allUrls = await uploadAllImages();
+
+    // 按产品分组结果
+    const uploadedResults = matchedWithImages.map((item, productIdx) => {
+      const urls = allUrls.filter((_, idx) => allImageTasks[idx].productIdx === productIdx) as string[];
+      return {
+        item,
+        mainImageUrl: urls[0] || "",
+        detailImages: urls.slice(1),
+        success: urls.length > 0 && !!urls[0],
       };
-
-      try {
-        const res = await fetch("/api/products", {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ products: [updatedProduct] }),
-        });
-        const data = await res.json();
-        return !!(data.success || data.products);
-      } catch {
-        return false;
-      }
-    }
-
-    // 阶段1: 并行上传所有图片
-    setProgress({ current: 0, total: totalImages, phase: "准备上传..." });
-
-    // 为每个产品准备上传任务
-    const uploadTasks: Array<{
-      item: any;
-      imageFiles: File[];
-    }> = matchedWithImages.map(item => ({
-      item,
-      imageFiles: Array.from(item.hdImages as File[]).slice(0, 10),
-    }));
-
-    // 并行处理所有产品的图片上传
-    const uploadedResults: Array<{
-      item: any;
-      mainImageUrl: string;
-      detailImages: string[];
-      success: boolean;
-    }> = [];
-
-    for (const task of uploadTasks) {
-      const { item, imageFiles } = task;
-      const urls = await uploadImagesInParallel(imageFiles, CONCURRENCY);
-
-      if (urls.length > 0) {
-        uploadedResults.push({
-          item,
-          mainImageUrl: urls[0],
-          detailImages: urls.slice(1),
-          success: true,
-        });
-      } else {
-        uploadedResults.push({
-          item,
-          mainImageUrl: "",
-          detailImages: [],
-          success: false,
-        });
-      }
-    }
-
-    // 阶段2: 并行更新产品信息
-    setProgress({ current: 0, total: uploadedResults.length, phase: "更新产品信息..." });
-
-    const updateTasks = uploadedResults.map((r, i) => async () => {
-      setProgress({ current: i, total: uploadedResults.length, phase: `更新产品 ${i + 1}/${uploadedResults.length}` });
-      if (r.success && r.mainImageUrl) {
-        const ok = await updateProduct(r.item, r.mainImageUrl, r.detailImages);
-        return ok;
-      }
-      return false;
     });
 
-    // 并行执行更新
-    const updateResults = await Promise.all(updateTasks.map(t => t()));
+    // 并行更新所有产品
+    setProgress({ current: 0, total: uploadedResults.length, phase: "更新产品信息..." });
+
+    const updateResults = await Promise.all(
+      uploadedResults.map(async (r, i) => {
+        setProgress({ current: i, total: uploadedResults.length, phase: `更新产品 ${i + 1}/${uploadedResults.length}` });
+        if (r.success && r.mainImageUrl) {
+          const updatedProduct = {
+            ...r.item.product,
+            mainImage: r.mainImageUrl,
+            detailImages: r.detailImages.length > 0 ? r.detailImages : [r.mainImageUrl],
+            specs: r.item.product.specs.map((spec: any, idx: number) => ({
+              ...spec,
+              image: idx === 0 ? r.mainImageUrl : (spec.image || r.mainImageUrl),
+            })),
+          };
+          try {
+            const res = await fetch("/api/products", {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ products: [updatedProduct] }),
+            });
+            const data = await res.json();
+            return !!(data.success || data.products);
+          } catch {
+            return false;
+          }
+        }
+        return false;
+      })
+    );
 
     // 统计结果
-    for (let i = 0; i < updateResults.length; i++) {
-      if (updateResults[i]) {
+    updateResults.forEach((ok, i) => {
+      if (ok === true) {
         successCount++;
       } else {
         failCount++;
         const item = uploadedResults[i].item;
         errors.push(`Failed: ${item.product.nameCn || item.product.name}`);
       }
-    }
+    });
 
     setResult({ success: successCount, failed: failCount, errors });
     setProgress({ current: totalImages, total: totalImages, phase: "更新完成！" });
