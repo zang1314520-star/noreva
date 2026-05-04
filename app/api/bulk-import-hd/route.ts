@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import { Redis } from "@upstash/redis";
 import { v2 as cloudinary } from "cloudinary";
-import fs from "fs";
-import path from "path";
 
 const redis = new Redis({
   url: process.env.UPSTASH_REDIS_REST_URL!,
@@ -17,7 +15,49 @@ cloudinary.config({
 
 export async function POST(request: Request) {
   try {
-    const { products, clearExisting } = await request.json();
+    // Handle both JSON (with base64 images) and FormData (with File objects)
+    let products: any[];
+    let clearExisting = true;
+
+    if (request.headers.get("content-type")?.includes("multipart/form-data")) {
+      const formData = await request.formData();
+
+      const productsJson = formData.get("products") as string;
+      products = JSON.parse(productsJson);
+      clearExisting = formData.get("clearExisting") === "true";
+
+      // Get the image files - they're named by index like "image_0_0" (product 0, image 0)
+      for (let i = 0; i < products.length; i++) {
+        const product = products[i];
+        const imageFiles: File[] = [];
+
+        // Collect up to 10 images for this product
+        for (let j = 0; j < 10; j++) {
+          const key = `image_${i}_${j}`;
+          const file = formData.get(key) as File | null;
+          if (file && file.size > 0) {
+            imageFiles.push(file);
+          }
+        }
+
+        // Convert File objects to base64 for upload
+        if (imageFiles.length > 0) {
+          const base64Images: string[] = [];
+          for (const file of imageFiles) {
+            const buffer = await file.arrayBuffer();
+            const base64 = Buffer.from(buffer).toString("base64");
+            base64Images.push(base64);
+          }
+          product.hdImagesBase64 = base64Images;
+          product.imageMimeType = imageFiles[0].type || "image/jpeg";
+        }
+      }
+    } else {
+      // Legacy JSON format
+      const body = await request.json();
+      products = body.products;
+      clearExisting = body.clearExisting;
+    }
 
     if (!products || !Array.isArray(products) || products.length === 0) {
       return NextResponse.json({ error: "No products provided" }, { status: 400 });
@@ -42,17 +82,14 @@ export async function POST(request: Request) {
           let detailImages: string[] = [];
           let hdUploadedCount = 0;
 
-          // If product has local HD images, upload them
-          if (product.hdImages && product.hdImages.length > 0) {
-            const imagesToUpload = product.hdImages.slice(0, 10); // Max 10 images
+          // If product has local HD images (base64 from FormData), upload them
+          if (product.hdImagesBase64 && product.hdImagesBase64.length > 0) {
+            const imagesToUpload = product.hdImagesBase64.slice(0, 10);
 
             for (let j = 0; j < imagesToUpload.length; j++) {
-              const imagePath = imagesToUpload[j];
+              const base64 = imagesToUpload[j];
               try {
-                const imageBuffer = fs.readFileSync(imagePath);
-                const base64 = imageBuffer.toString("base64");
-                const ext = path.extname(imagePath).toLowerCase().slice(1) || "jpg";
-                const mimeType = ext === "png" ? "image/png" : "image/jpeg";
+                const mimeType = product.imageMimeType || "image/jpeg";
 
                 const uploadResult = await new Promise<any>((resolve, reject) => {
                   cloudinary.uploader.upload(
@@ -78,7 +115,7 @@ export async function POST(request: Request) {
                 }
                 hdUploadedCount++;
               } catch (uploadError: any) {
-                console.error(`Failed to upload image ${imagePath}:`, uploadError.message);
+                console.error(`Failed to upload HD image:`, uploadError.message);
               }
             }
           }

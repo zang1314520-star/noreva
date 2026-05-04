@@ -52,7 +52,7 @@ const CATEGORY_TREE: Record<string, { name: string; nameCn: string; subcategorie
     name: "Shoes", nameCn: "鞋靴",
     subcategories: {
       sneakers: { name: "Sneakers", nameCn: "运动鞋" },
-      leather Shoes: { name: "Leather Shoes", nameCn: "皮鞋" },
+      "leather Shoes": { name: "Leather Shoes", nameCn: "皮鞋" },
       sandals: { name: "Sandals", nameCn: "凉鞋/拖鞋" },
       boots: { name: "Boots", nameCn: "靴子" },
     },
@@ -207,7 +207,6 @@ function ImageUploader({ value, onChange, label }: { value: string; onChange: (u
 function HDImageImporter({ onImportComplete }: { onImportComplete: () => void }) {
   const [step, setStep] = useState<"excel" | "folder" | "preview" | "importing">("excel");
   const [excelFile, setExcelFile] = useState<File | null>(null);
-  const [folderPath, setFolderPath] = useState("");
   const [parsedProducts, setParsedProducts] = useState<any[]>([]);
   const [folderProducts, setFolderProducts] = useState<any[]>([]);
   const [matchedProducts, setMatchedProducts] = useState<any[]>([]);
@@ -215,7 +214,10 @@ function HDImageImporter({ onImportComplete }: { onImportComplete: () => void })
   const [progress, setProgress] = useState({ current: 0, total: 0, phase: "" });
   const [result, setResult] = useState<any>(null);
   const [clearExisting, setClearExisting] = useState(true);
+  const [scanningFolder, setScanningFolder] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
   const excelRef = useRef<HTMLInputElement>(null);
+  const folderInputRef = useRef<HTMLInputElement>(null);
 
   // Step 1: Parse Excel file
   async function parseExcel(file: File) {
@@ -322,28 +324,108 @@ function HDImageImporter({ onImportComplete }: { onImportComplete: () => void })
     setProgress({ current: 0, total: products.length, phase: `解析完成，共 ${products.length} 个产品（已记录Excel中的产品信息）` });
   }
 
-  // Step 2: Scan local folder for HD images
-  async function scanFolder(path: string) {
-    if (!path.trim()) return;
-    setFolderPath(path);
-    setProgress({ current: 0, total: 0, phase: "扫描本地文件夹..." });
+  // Step 2: Handle folder selection (client-side reading)
+  async function handleFolderSelect(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
 
-    try {
-      const res = await fetch("/api/scan-folder", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ folderPath: path }),
-      });
-      const data = await res.json();
-      if (data.error) {
-        alert("扫描失败: " + data.error);
-        return;
+    setScanningFolder(true);
+    setProgress({ current: 0, total: 0, phase: "正在读取文件夹..." });
+
+    // Group files by their parent folder name
+    const folderMap: Record<string, { folderName: string; images: File[] }> = {};
+
+    for (const file of Array.from(files)) {
+      // webkitRelativePath gives us the full path within the folder
+      const pathParts = file.webkitRelativePath.split("/");
+      const folderName = pathParts.length > 1 ? pathParts[pathParts.length - 2] : "Root";
+
+      if (!folderMap[folderName]) {
+        folderMap[folderName] = { folderName, images: [] };
       }
-      setFolderProducts(data.products || []);
-      setProgress({ current: 0, total: data.products?.length || 0, phase: `扫描完成，发现 ${data.products?.length || 0} 个产品文件夹` });
-    } catch (e: any) {
-      alert("扫描失败: " + e.message);
+      // Only add image files
+      if (file.type.startsWith("image/")) {
+        folderMap[folderName].images.push(file);
+      }
     }
+
+    const products = Object.values(folderMap)
+      .filter((fp) => fp.images.length > 0)
+      .sort((a, b) => a.folderName.localeCompare(b.folderName));
+
+    setFolderProducts(products);
+    setScanningFolder(false);
+    setProgress({ current: 0, total: products.length, phase: `读取完成，发现 ${products.length} 个产品文件夹` });
+
+    // Reset input so same folder can be selected again
+    if (folderInputRef.current) {
+      folderInputRef.current.value = "";
+    }
+  }
+
+  // Handle folder drag and drop
+  async function handleFolderDrop(e: React.DragEvent) {
+    e.preventDefault();
+    setDragOver(false);
+
+    const items = e.dataTransfer.items;
+    if (!items) return;
+
+    setScanningFolder(true);
+    setProgress({ current: 0, total: 0, phase: "正在读取文件夹..." });
+
+    const folderMap: Record<string, { folderName: string; images: File[] }> = {};
+
+    // Use FileSystemDirectoryReader for dropped folders
+    for (const item of Array.from(items)) {
+      if (item.kind === "file") {
+        const entry = item.webkitGetAsEntry ? item.webkitGetAsEntry() : null;
+        if (entry && entry.isDirectory) {
+          await readDirectory(entry as FileSystemDirectoryEntry, folderMap);
+        }
+      }
+    }
+
+    const products = Object.values(folderMap)
+      .filter((fp) => fp.images.length > 0)
+      .sort((a, b) => a.folderName.localeCompare(b.folderName));
+
+    setFolderProducts(products);
+    setScanningFolder(false);
+    setProgress({ current: 0, total: products.length, phase: `读取完成，发现 ${products.length} 个产品文件夹` });
+  }
+
+  // Helper to read directory recursively
+  function readDirectory(dirEntry: FileSystemDirectoryEntry, folderMap: Record<string, { folderName: string; images: File[] }>): Promise<void> {
+    return new Promise((resolve) => {
+      const reader = dirEntry.createReader();
+      const subFolders: FileSystemDirectoryEntry[] = [];
+
+      reader.readEntries(async (entries) => {
+        for (const entry of Array.from(entries)) {
+          if (entry.isFile) {
+            const file = await new Promise<File>((res) => {
+              (entry as FileSystemFileEntry).file(res);
+            });
+            if (file.type.startsWith("image/")) {
+              const folderName = dirEntry.name;
+              if (!folderMap[folderName]) {
+                folderMap[folderName] = { folderName, images: [] };
+              }
+              folderMap[folderName].images.push(file);
+            }
+          } else if (entry.isDirectory) {
+            subFolders.push(entry as FileSystemDirectoryEntry);
+          }
+        }
+
+        // Process subfolders
+        for (const subFolder of subFolders) {
+          await readDirectory(subFolder, folderMap);
+        }
+        resolve();
+      });
+    });
   }
 
   // Step 3: Match Excel products with folder products
@@ -431,23 +513,58 @@ function HDImageImporter({ onImportComplete }: { onImportComplete: () => void })
       });
 
       try {
-        const res = await fetch("/api/bulk-import-hd", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            products: batch,
-            clearExisting: i === 0 && clearExisting,
-          }),
-        });
-        const data = await res.json();
-        if (data.success) {
-          totalSuccess += data.imported || 0;
-          totalFailed += data.failed || 0;
-          hdUploaded += data.hdUploaded || 0;
-          if (data.errors) allErrors.push(...data.errors);
+        // Check if any product in batch has File objects (hdImages)
+        const hasFileImages = batch.some((p: any) => p.hdImages && p.hdImages.length > 0 && p.hdImages[0] instanceof File);
+
+        if (hasFileImages) {
+          // Use FormData to send files
+          const formData = new FormData();
+          formData.append("products", JSON.stringify(batch));
+          formData.append("clearExisting", i === 0 && clearExisting ? "true" : "false");
+
+          // Add image files with indexed keys
+          batch.forEach((product: any, prodIdx: number) => {
+            if (product.hdImages) {
+              product.hdImages.slice(0, 10).forEach((imgFile: File, imgIdx: number) => {
+                formData.append(`image_${prodIdx}_${imgIdx}`, imgFile);
+              });
+            }
+          });
+
+          const res = await fetch("/api/bulk-import-hd", {
+            method: "POST",
+            body: formData,
+          });
+          const data = await res.json();
+          if (data.success) {
+            totalSuccess += data.imported || 0;
+            totalFailed += data.failed || 0;
+            hdUploaded += data.hdUploaded || 0;
+            if (data.errors) allErrors.push(...data.errors);
+          } else {
+            totalFailed += batch.length;
+            allErrors.push(data.error || "Unknown error");
+          }
         } else {
-          totalFailed += batch.length;
-          allErrors.push(data.error || "Unknown error");
+          // Fallback to JSON (no files to upload)
+          const res = await fetch("/api/bulk-import-hd", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              products: batch,
+              clearExisting: i === 0 && clearExisting,
+            }),
+          });
+          const data = await res.json();
+          if (data.success) {
+            totalSuccess += data.imported || 0;
+            totalFailed += data.failed || 0;
+            hdUploaded += data.hdUploaded || 0;
+            if (data.errors) allErrors.push(...data.errors);
+          } else {
+            totalFailed += batch.length;
+            allErrors.push(data.error || "Unknown error");
+          }
         }
       } catch (err: any) {
         totalFailed += batch.length;
@@ -518,36 +635,64 @@ function HDImageImporter({ onImportComplete }: { onImportComplete: () => void })
             步骤2: 选择高清图片所在文件夹
           </h3>
           <p className="text-sm text-gray-500 mb-4">
-            请输入微购相册批量下载的高清图片文件夹路径（包含各产品图片的文件夹）
+            点击下方按钮，选择微购相册批量下载的高清图片文件夹（会读取所有子文件夹内的图片）
           </p>
-          <div className="flex gap-3">
-            <input
-              type="text"
-              value={folderPath}
-              onChange={(e) => setFolderPath(e.target.value)}
-              placeholder="例如: C:\Users\86191\Desktop\批量下载\Ashley Luxury\20260504"
-              className="flex-1 px-4 py-3 border border-gray-300 rounded-lg text-sm"
-            />
+
+          {/* Hidden folder picker */}
+          <input
+            type="file"
+            ref={(el: HTMLInputElement | null) => {
+              folderInputRef.current = el;
+              if (el) el.setAttribute("webkitdirectory", "");
+            }}
+            multiple
+            accept="image/*"
+            className="hidden"
+            onChange={handleFolderSelect}
+          />
+
+          <div className="flex gap-3 mb-4">
             <button
-              onClick={() => scanFolder(folderPath)}
-              className="px-6 py-3 bg-[#C9A96E] text-white rounded-lg hover:bg-[#B8944E] font-medium"
+              onClick={() => folderInputRef.current?.click()}
+              className="px-6 py-3 bg-[#C9A96E] text-white rounded-lg hover:bg-[#B8944E] font-medium flex items-center gap-2"
             >
-              扫描文件夹
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>
+              选择图片文件夹
             </button>
           </div>
-          {progress.phase && (
+
+          {/* Drag and drop zone */}
+          <div
+            className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-[#C9A96E] transition-colors cursor-pointer"
+            onClick={() => folderInputRef.current?.click()}
+            onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+            onDragLeave={() => setDragOver(false)}
+            onDrop={handleFolderDrop}
+          >
+            <svg className="w-12 h-12 mx-auto text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>
+            <p className="text-gray-600 font-medium">或将整个文件夹拖拽到此处</p>
+            <p className="text-sm text-gray-400 mt-1">支持 jpg、png、webp 图片</p>
+          </div>
+
+          {scanningFolder && (
             <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-              <p className="text-sm text-gray-600">{progress.phase}</p>
+              <div className="flex items-center gap-3">
+                <div className="animate-spin h-5 w-5 border-2 border-[#C9A96E] border-t-transparent rounded-full" />
+                <p className="text-sm text-gray-600">正在读取文件夹...</p>
+              </div>
             </div>
           )}
+
           {folderProducts.length > 0 && (
             <div className="mt-6">
-              <h4 className="text-sm font-medium mb-3">扫描到的产品文件夹 ({folderProducts.length} 个)</h4>
+              <h4 className="text-sm font-medium mb-3">
+                读取到的产品图片 ({folderProducts.length} 个文件夹，共 {folderProducts.reduce((acc: number, fp: any) => acc + (fp.images?.length || 0), 0)} 张图)
+              </h4>
               <div className="max-h-60 overflow-y-auto border rounded-lg p-3 space-y-2">
                 {folderProducts.map((fp: any, i: number) => (
                   <div key={i} className="flex items-center gap-3 text-sm">
                     <span className="px-2 py-0.5 bg-green-100 text-green-700 rounded text-xs">{fp.images?.length || 0}张图</span>
-                    <span className="truncate text-gray-600 flex-1">{fp.folderName.substring(0, 60)}...</span>
+                    <span className="truncate text-gray-600 flex-1">{fp.folderName.substring(0, 60)}</span>
                   </div>
                 ))}
               </div>
