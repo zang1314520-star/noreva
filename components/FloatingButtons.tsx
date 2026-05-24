@@ -7,7 +7,7 @@ interface FloatingButtonsProps {
   phoneNumber?: string;
 }
 
-export default function FloatingButtons({ phoneNumber = "8618508036618" }: FloatingButtonsProps) {
+export default function FloatingButtons({ phoneNumber = "8617338700032" }: FloatingButtonsProps) {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
