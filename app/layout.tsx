@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Playfair_Display, EB_Garamond, Pinyon_Script } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "@/components/LanguageContext";
+import Providers from "@/components/Providers";
 import FloatingButtons from "@/components/FloatingButtons";
 import CookieConsent from "@/components/CookieConsent";
 
@@ -127,9 +128,11 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen bg-white text-[#1A1A1A] antialiased">
         <LanguageProvider>
-          {children}
-          <CookieConsent />
-          <FloatingButtons phoneNumber="8618508036618" />
+          <Providers>
+            {children}
+            <CookieConsent />
+            <FloatingButtons phoneNumber="8618508036618" />
+          </Providers>
         </LanguageProvider>
       </body>
     </html>
