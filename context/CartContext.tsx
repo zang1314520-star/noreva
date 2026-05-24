@@ -5,8 +5,12 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from '
 interface CartItem {
   id: string
   name: string
-  price: string
+  brand: string
+  price: number
+  currency: string
   image: string
+  color?: string
+  size?: string
   quantity: number
 }
 
@@ -14,7 +18,7 @@ interface CartContextType {
   items: CartItem[]
   addItem: (item: Omit<CartItem, 'quantity'>) => void
   removeItem: (id: string) => void
-  updateQuantity: (id: string, quantity: number) => void
+  updateQuantity: (id: string, change: number) => void
   clearCart: () => void
   totalItems: number
   subtotal: number
@@ -35,7 +39,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
-    const saved = localStorage.getItem('noreva_cart')
+    const saved = localStorage.getItem('noreva_cart_v2')
     if (saved) {
       try { setItems(JSON.parse(saved)) } catch {}
     }
@@ -44,45 +48,46 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (loaded) {
-      localStorage.setItem('noreva_cart', JSON.stringify(items))
+      localStorage.setItem('noreva_cart_v2', JSON.stringify(items))
     }
   }, [items, loaded])
 
   const addItem = (newItem: Omit<CartItem, 'quantity'>) => {
     setItems(prev => {
-      const existing = prev.find(item => item.id === newItem.id)
-      if (existing) {
-        return prev.map(item =>
-          item.id === newItem.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        )
+      const existingIdx = prev.findIndex(item =>
+        item.id === newItem.id && item.color === newItem.color && item.size === newItem.size
+      )
+      if (existingIdx > -1) {
+        const updated = [...prev]
+        updated[existingIdx] = { ...updated[existingIdx], quantity: updated[existingIdx].quantity + 1 }
+        return updated
       }
       return [...prev, { ...newItem, quantity: 1 }]
     })
   }
 
   const removeItem = (id: string) => {
-    setItems(prev => prev.filter(item => item.id !== id))
+    setItems(prev => prev.filter((_, i) => String(i) !== id))
   }
 
-  const updateQuantity = (id: string, quantity: number) => {
-    if (quantity < 1) {
-      removeItem(id)
-      return
-    }
-    setItems(prev =>
-      prev.map(item => (item.id === id ? { ...item, quantity } : item))
-    )
+  const updateQuantity = (id: string, change: number) => {
+    setItems(prev => {
+      const idx = parseInt(id)
+      if (isNaN(idx) || idx < 0 || idx >= prev.length) return prev
+      const updated = [...prev]
+      const newQty = updated[idx].quantity + change
+      if (newQty < 1) {
+        return updated.filter((_, i) => i !== idx)
+      }
+      updated[idx] = { ...updated[idx], quantity: newQty }
+      return updated
+    })
   }
 
   const clearCart = () => setItems([])
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0)
-  const subtotal = items.reduce((sum, item) => {
-    const price = parseFloat(item.price.replace(/[^0-9.]/g, '')) || 0
-    return sum + price * item.quantity
-  }, 0)
+  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0)
 
   return (
     <CartContext.Provider

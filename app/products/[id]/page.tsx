@@ -3,10 +3,12 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { ShoppingBag } from 'lucide-react';
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { useLanguage } from "@/components/LanguageContext";
 import { useWishlist, useRecentlyViewed } from "@/lib/useWishlist";
+import { useCart } from "@/context/CartContext";
 
 const WHATSAPP_NUMBER = "8618508036618";
 
@@ -240,6 +242,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   const [selectedImage, setSelectedImage] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const wishlist = useWishlist();
+  const cart = useCart();
   const recentlyViewed = useRecentlyViewed();
   const { lang } = useLanguage();
   const c = content[lang] || content.en;
@@ -360,6 +363,25 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               <a href={`https://wa.me/${WHATSAPP_NUMBER}?text=${whatsappMessage}`} target="_blank" rel="noopener noreferrer" className="block w-full bg-[#1A1A1A] text-white text-center py-4 font-body text-[11px] tracking-[0.22em] uppercase hover:bg-[#C9A96E] transition-colors duration-300">
                 {c.inquiry} &rarr;
               </a>
+
+              {/* Add to Cart */}
+              <button
+                onClick={() => {
+                  if (!product) return;
+                  cart.addItem({
+                    id: product.id,
+                    name: isCn ? (product.nameCn || product.name) : product.name,
+                    brand: product.brand || "",
+                    price: product.price || 0,
+                    currency: product.currency || "EUR",
+                    image: product.mainImage || "",
+                  });
+                }}
+                className="mt-3 block w-full bg-[#C9A96E] text-white text-center py-4 font-body text-[11px] tracking-[0.22em] uppercase hover:bg-amber-700 transition-colors duration-300"
+              >
+                <ShoppingBag className="w-4 h-4 inline-block mr-2" />
+                {isCn ? "加入购物车" : "Add to Bag"}
+              </button>
 
               {/* Wishlist + Share row */}
               <div className="mt-4 grid grid-cols-2 gap-3">

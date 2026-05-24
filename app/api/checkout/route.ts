@@ -11,17 +11,27 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'No items' }, { status: 400 })
     }
 
-    const line_items = items.map((item: any) => ({
-      price_data: {
-        currency: 'eur',
-        product_data: {
-          name: item.name,
-          images: item.image ? [item.image] : [],
+    const line_items = items.map((item: any) => {
+      // Parse price - handle both "€890" string format and raw numbers
+      let unitAmount: number
+      if (typeof item.price === 'number') {
+        unitAmount = Math.round(item.price * 100)
+      } else {
+        unitAmount = Math.round(parseFloat(String(item.price).replace(/[^0-9.]/g, '')) * 100)
+      }
+      
+      return {
+        price_data: {
+          currency: 'eur',
+          product_data: {
+            name: `${item.brand ? item.brand + ' - ' : ''}${item.name}`,
+            images: item.image ? [item.image] : [],
+          },
+          unit_amount: unitAmount,
         },
-        unit_amount: Math.round(parseFloat(item.price.replace(/[^0-9.]/g, '')) * 100),
-      },
-      quantity: item.quantity || 1,
-    }))
+        quantity: item.quantity || 1,
+      }
+    })
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card', 'alipay', 'wechat_pay'],
