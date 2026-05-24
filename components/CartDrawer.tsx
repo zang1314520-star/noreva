@@ -51,12 +51,12 @@ export default function CartDrawer() {
         <span className="absolute inset-0 rounded-full bg-[#C9A96E]/20 scale-100 opacity-0 group-hover:opacity-100 group-hover:scale-150 transition-all duration-500" />
         <div className="relative w-11 h-11 rounded-full bg-[#C9A96E] flex items-center justify-center transition-all duration-300 translate-x-[22px] group-hover:translate-x-0 group-hover:shadow-lg shadow-[#C9A96E]/20">
           <ShoppingBag className="w-5 h-5 text-white" />
+          {totalItems > 0 && (
+            <span className="absolute -top-1 -left-3 bg-red-500 text-white text-xs min-w-[18px] h-[18px] rounded-full flex items-center justify-center font-bold z-10">
+              {totalItems > 99 ? '99+' : totalItems}
+            </span>
+          )}
         </div>
-        {totalItems > 0 && (
-          <span className="absolute top-0 left-0 bg-red-500 text-white text-xs min-w-[18px] h-[18px] rounded-full flex items-center justify-center font-bold -translate-x-[18px] group-hover:translate-x-[2px] transition-transform duration-300 z-10">
-            {totalItems > 99 ? '99+' : totalItems}
-          </span>
-        )}
       </button>
 
       <AnimatePresence>
