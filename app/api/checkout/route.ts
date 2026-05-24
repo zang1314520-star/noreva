@@ -12,14 +12,13 @@ export async function POST(request: Request) {
     }
 
     const line_items = items.map((item: any) => {
-      // Parse price - handle both "€890" string format and raw numbers
       let unitAmount: number
       if (typeof item.price === 'number') {
         unitAmount = Math.round(item.price * 100)
       } else {
         unitAmount = Math.round(parseFloat(String(item.price).replace(/[^0-9.]/g, '')) * 100)
       }
-      
+
       return {
         price_data: {
           currency: 'eur',
@@ -34,7 +33,7 @@ export async function POST(request: Request) {
     })
 
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card', 'alipay', 'wechat_pay'],
+      payment_method_types: ['card', 'alipay'],
       mode: 'payment',
       success_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://noreva.cc'}/thank-you?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://noreva.cc'}`,
