@@ -135,6 +135,7 @@ export default function RootLayout({
           </Providers>
         </LanguageProvider>
       </body>
-    </html>
+    
+</html>
   );
 }
