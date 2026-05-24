@@ -1,10 +1,39 @@
 import { NextResponse } from "next/server";
-import { Redis } from "@upstash/redis";
+import fs from "fs";
+import path from "path";
 
-const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL!,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
-});
+// Try Redis, fallback to local JSON
+let redis: any = null;
+try {
+  if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
+    const { Redis } = require("@upstash/redis");
+    redis = new Redis({
+      url: process.env.UPSTASH_REDIS_REST_URL!,
+      token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+    });
+  }
+} catch {}
+
+const PRODUCTS_FILE = path.join(process.cwd(), "data", "products.json");
+
+function ensureDataDir() {
+  const dir = path.dirname(PRODUCTS_FILE);
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+}
+
+function readLocal(): Product[] {
+  try {
+    if (!fs.existsSync(PRODUCTS_FILE)) return [];
+    return JSON.parse(fs.readFileSync(PRODUCTS_FILE, "utf-8"));
+  } catch {
+    return [];
+  }
+}
+
+function writeLocal(products: Product[]) {
+  ensureDataDir();
+  fs.writeFileSync(PRODUCTS_FILE, JSON.stringify(products, null, 2), "utf-8");
+}
 
 export interface ProductSpec {
   id: string;
@@ -18,10 +47,10 @@ export interface Product {
   id: string;
   name: string;
   nameCn?: string;
-  brand: string;            // e.g. "Ferragamo", "Gucci"
-  category: string;          // e.g. "belts", "scarves", "bags"
-  categoryName: string;      // e.g. "Belts"
-  categoryNameCn?: string;   // e.g. "皮带"
+  brand: string;
+  category: string;
+  categoryName: string;
+  categoryNameCn?: string;
   price: number;
   currency: string;
   description: string;
@@ -31,16 +60,11 @@ export interface Product {
   detailImages: string[];
   featured?: boolean;
   createdAt: string;
-  sourceTag?: string;        // original tag from import
-  searchCode?: string;       // search code from import
-  sourceId?: string;         // original product ID from import
 }
 
-// Category hierarchy definition
 export const CATEGORY_TREE = {
   accessories: {
-    name: "Accessories",
-    nameCn: "配饰",
+    name: "Accessories", nameCn: "配饰",
     subcategories: {
       belts: { name: "Belts", nameCn: "皮带" },
       scarves: { name: "Scarves", nameCn: "丝巾/围巾" },
@@ -49,8 +73,7 @@ export const CATEGORY_TREE = {
     },
   },
   clothing: {
-    name: "Clothing",
-    nameCn: "服装",
+    name: "Clothing", nameCn: "服装",
     subcategories: {
       tops: { name: "Tops", nameCn: "上装" },
       pants: { name: "Pants", nameCn: "裤装" },
@@ -59,8 +82,7 @@ export const CATEGORY_TREE = {
     },
   },
   bags: {
-    name: "Bags & Luggage",
-    nameCn: "箱包",
+    name: "Bags & Luggage", nameCn: "箱包",
     subcategories: {
       handbags: { name: "Handbags", nameCn: "手提包" },
       crossbody: { name: "Crossbody", nameCn: "斜挎包" },
@@ -75,7 +97,19 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
 
-    const data: Product[] = (await redis.get("products")) || [];
+    let data: Product[] = [];
+    
+    // Try Redis first
+    if (redis) {
+      try {
+        data = (await redis.get("products")) || [];
+      } catch {}
+    }
+    
+    // Fallback to local JSON
+    if (!data || data.length === 0) {
+      data = readLocal();
+    }
 
     if (id) {
       const product = data.find((p) => p.id === id);
@@ -92,7 +126,12 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     const product = await request.json();
-    const products: Product[] = (await redis.get("products")) || [];
+    let products: Product[] = [];
+
+    if (redis) {
+      try { products = (await redis.get("products")) || []; } catch {}
+    }
+    if (products.length === 0) products = readLocal();
 
     if (!product.specs) product.specs = [];
     if (!product.detailImages) product.detailImages = [];
@@ -102,67 +141,37 @@ export async function POST(request: Request) {
     if (index >= 0) {
       products[index] = product;
     } else {
-      products.push(product);
+      products.unshift(product);
     }
 
-    await redis.set("products", products);
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    return NextResponse.json({ error: "Failed to save product" }, { status: 500 });
-  }
-}
-
-export async function PUT(request: Request) {
-  try {
-    const body = await request.json();
-
-    // Bulk update: { products: Product[] } - MERGE with existing products
-    if (body.products && Array.isArray(body.products)) {
-      const existingProducts: Product[] = (await redis.get("products")) || [];
-      const updateMap = new Map(existingProducts.map(p => [p.id, p]));
-
-      for (const p of body.products) {
-        updateMap.set(p.id, p);
-      }
-
-      const merged = Array.from(updateMap.values());
-      await redis.set("products", merged);
-      return NextResponse.json({ success: true, updated: body.products.length });
+    // Save to both
+    writeLocal(products);
+    if (redis) {
+      try { await redis.set("products", JSON.stringify(products)); } catch {}
     }
 
-    // Single update
-    const product = body;
-    const products: Product[] = (await redis.get("products")) || [];
-    const index = products.findIndex((p) => p.id === product.id);
-    if (index >= 0) {
-      products[index] = { ...products[index], ...product };
-      await redis.set("products", products);
-      return NextResponse.json({ success: true });
-    }
-    return NextResponse.json({ error: "Product not found" }, { status: 404 });
-  } catch (error) {
-    return NextResponse.json({ error: "Failed to update product" }, { status: 500 });
+    return NextResponse.json(product);
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
 
 export async function DELETE(request: Request) {
   try {
-    const { id, ids } = await request.json();
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
+    if (!id) return NextResponse.json({ error: "id required" }, { status: 400 });
 
-    const products: Product[] = (await redis.get("products")) || [];
+    let products = readLocal();
+    products = products.filter((p) => p.id !== id);
 
-    let filtered: Product[];
-    if (ids && Array.isArray(ids)) {
-      // Batch delete
-      const idSet = new Set(ids);
-      filtered = products.filter((p) => !idSet.has(p.id));
-    } else {
-      filtered = products.filter((p) => p.id !== id);
+    writeLocal(products);
+    if (redis) {
+      try { await redis.set("products", JSON.stringify(products)); } catch {}
     }
 
-    await redis.set("products", filtered);
-    return NextResponse.json({ success: true, remaining: filtered.length });
-  } catch (error) {
-    return NextResponse.json({ error: "Failed to delete product" }, { status: 500 });
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

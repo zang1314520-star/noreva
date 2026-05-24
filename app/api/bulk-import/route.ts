@@ -1,17 +1,49 @@
 import { NextResponse } from "next/server";
-import { Redis } from "@upstash/redis";
-import { v2 as cloudinary } from "cloudinary";
+import fs from "fs";
+import path from "path";
 
-const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL!,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
-});
+const PRODUCTS_FILE = path.join(process.cwd(), "data", "products.json");
 
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+// Optional Redis
+let redis: any = null;
+try {
+  if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
+    const { Redis } = require("@upstash/redis");
+    redis = new Redis({
+      url: process.env.UPSTASH_REDIS_REST_URL!,
+      token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+    });
+  }
+} catch {}
+
+// Optional Cloudinary
+let cloudinary: any = null;
+try {
+  if (process.env.CLOUDINARY_CLOUD_NAME) {
+    const { v2 } = require("cloudinary");
+    cloudinary = v2;
+    cloudinary.config({
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_API_SECRET,
+    });
+  }
+} catch {}
+
+function readLocal(): any[] {
+  try {
+    if (!fs.existsSync(PRODUCTS_FILE)) return [];
+    return JSON.parse(fs.readFileSync(PRODUCTS_FILE, "utf-8"));
+  } catch {
+    return [];
+  }
+}
+
+function writeLocal(products: any[]) {
+  const dir = path.dirname(PRODUCTS_FILE);
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(PRODUCTS_FILE, JSON.stringify(products, null, 2), "utf-8");
+}
 
 export async function POST(request: Request) {
   try {
@@ -23,39 +55,29 @@ export async function POST(request: Request) {
 
     const results = { success: 0, failed: 0, errors: [] as string[] };
 
-    // Get existing or start fresh
     let existingProducts: any[] = [];
     if (!clearExisting) {
-      existingProducts = (await redis.get("products")) || [];
+      if (redis) {
+        try { existingProducts = (await redis.get("products")) || []; } catch {}
+      }
+      if (existingProducts.length === 0) existingProducts = readLocal();
     }
 
-    // Process products in batches of 5 for image uploads
     const BATCH_SIZE = 5;
     for (let i = 0; i < products.length; i += BATCH_SIZE) {
       const batch = products.slice(i, i + BATCH_SIZE);
-
       const batchResults = await Promise.allSettled(
         batch.map(async (product: any) => {
           let mainImageUrl = "";
 
-          // Upload image to Cloudinary if base64 provided
-          if (product.imageBase64) {
+          if (product.imageBase64 && cloudinary) {
             try {
               const mimeType = product.imageMimeType || "image/jpeg";
               const uploadResult = await new Promise<any>((resolve, reject) => {
                 cloudinary.uploader.upload(
                   `data:${mimeType};base64,${product.imageBase64}`,
-                  {
-                    folder: "noreva/products",
-                    transformation: [
-                      { quality: "auto:good", fetch_format: "auto" },
-                      { width: 1200, crop: "limit" },
-                    ],
-                  },
-                  (error: any, result: any) => {
-                    if (error) reject(error);
-                    else resolve(result);
-                  }
+                  { folder: "noreva/products", transformation: [{ quality: "auto:good", fetch_format: "auto" }, { width: 1200, crop: "limit" }] },
+                  (error: any, result: any) => { if (error) reject(error); else resolve(result); }
                 );
               });
               mainImageUrl = uploadResult.secure_url;
@@ -64,7 +86,7 @@ export async function POST(request: Request) {
             }
           }
 
-          const newProduct = {
+          return {
             id: product.id || `prod-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
             name: product.name || "",
             nameCn: product.nameCn || "",
@@ -73,28 +95,18 @@ export async function POST(request: Request) {
             categoryName: product.categoryName || "Belts",
             categoryNameCn: product.categoryNameCn || "皮带",
             price: product.price || 0,
-            currency: product.currency || "USD",
+            currency: product.currency || "EUR",
             description: product.description || "",
             descriptionCn: product.descriptionCn || "",
             mainImage: mainImageUrl || product.mainImage || "",
-            specs: product.specs || [
-              {
-                id: "1",
-                color: "Default",
-                size: "One Size",
-                image: mainImageUrl || "",
-                stock: 999,
-              },
-            ],
-            detailImages: mainImageUrl ? [mainImageUrl] : [],
-            featured: false,
+            specs: product.specs || [{ id: "1", color: "Default", size: "One Size", image: "", stock: 999 }],
+            detailImages: product.detailImages || (mainImageUrl ? [mainImageUrl] : []),
+            featured: product.featured || false,
             createdAt: new Date().toISOString().split("T")[0],
             sourceTag: product.sourceTag || "",
             searchCode: product.searchCode || "",
             sourceId: product.sourceId || "",
           };
-
-          return newProduct;
         })
       );
 
@@ -104,23 +116,19 @@ export async function POST(request: Request) {
           results.success++;
         } else {
           results.failed++;
-          results.errors.push(result.reason?.message || "Unknown error");
+          results.errors.push((result.reason as any)?.message || "Unknown error");
         }
       }
     }
 
-    // Save to Redis
-    await redis.set("products", existingProducts);
+    // Save
+    writeLocal(existingProducts);
+    if (redis) {
+      try { await redis.set("products", JSON.stringify(existingProducts)); } catch {}
+    }
 
-    return NextResponse.json({
-      success: true,
-      imported: results.success,
-      failed: results.failed,
-      total: existingProducts.length,
-      errors: results.errors.slice(0, 10),
-    });
+    return NextResponse.json(results);
   } catch (error: any) {
-    console.error("Bulk import error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

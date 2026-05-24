@@ -17,7 +17,7 @@ export default function CartDrawer() {
         name: item.name,
         brand: item.brand,
         image: item.image,
-        price: `${item.currency === 'CNY' ? '¥' : '€'}${item.price.toFixed(0)}`,
+        price: item.price,
         quantity: item.quantity,
       }))
       const res = await fetch('/api/checkout', {
@@ -42,9 +42,10 @@ export default function CartDrawer() {
 
   return (
     <>
+      {/* Floating button - positioned above WhatsApp to avoid overlap */}
       <button
         onClick={() => setOpen(true)}
-        className="fixed bottom-6 right-6 z-50 bg-[#C9A96E] text-white p-4 rounded-full shadow-lg hover:bg-amber-700 transition-colors"
+        className="fixed bottom-24 right-6 z-50 bg-[#C9A96E] text-white p-4 rounded-full shadow-lg hover:bg-amber-700 transition-colors"
         aria-label="Shopping bag"
       >
         <ShoppingBag className="w-5 h-5" />
