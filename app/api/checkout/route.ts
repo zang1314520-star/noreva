@@ -24,7 +24,7 @@ export async function POST(request: Request) {
           currency: 'eur',
           product_data: {
             name: `${item.brand ? item.brand + ' - ' : ''}${item.name}`,
-            images: item.image ? [item.image] : [],
+            images: item.image ? [(item.image.startsWith('http') ? item.image : (process.env.NEXT_PUBLIC_SITE_URL || 'https://noreva.cc') + item.image)] : [],
           },
           unit_amount: unitAmount,
         },
