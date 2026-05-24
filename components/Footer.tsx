@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { useTranslation } from "@/lib/useTranslation";
 
-const WHATSAPP_NUMBER = "8618508036618";
+const WHATSAPP_NUMBER = "8617338700032";
 
 export default function Footer() {
   const { t } = useTranslation();

@@ -8,7 +8,7 @@ const defaults = {
   siteName: "NOREVA",
   siteNameCn: "NOREVA",
   email: "hello@noreva.cc",
-  phone: "8618508036618",
+  phone: "8617338700032",
   trackingCode: "",
   heroTitle: "Quiet Luxury, Curated",
   heroTitleCn: "静奢精选",

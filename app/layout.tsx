@@ -131,7 +131,7 @@ export default function RootLayout({
           <Providers>
             {children}
             <CookieConsent />
-            <FloatingButtons phoneNumber="8618508036618" />
+            <FloatingButtons phoneNumber="8617338700032" />
           </Providers>
         </LanguageProvider>
       </body>

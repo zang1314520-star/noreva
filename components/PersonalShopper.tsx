@@ -4,7 +4,7 @@ import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { useTranslation } from "@/lib/useTranslation";
 
-const WHATSAPP_NUMBER = "8618508036618";
+const WHATSAPP_NUMBER = "8617338700032";
 
 export default function PersonalShopper() {
   const ref = useRef<HTMLElement>(null);

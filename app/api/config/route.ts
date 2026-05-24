@@ -8,7 +8,7 @@ const redis = new Redis({
 
 const DEFAULT_CONFIG = {
   site: { brand: "NOREVA", tagline: "Maison NOREVA", description: "Quiet refinement. Timeless objects." },
-  whatsapp: { number: "8618508036618" },
+  whatsapp: { number: "8617338700032" },
   hero: { headline: "SS 2026", subtitle: "新 系列", cta: "探索" },
   manifesto: { headline: "我们生产经久耐用的产品。", text: "服装不是潮流，而是一种选择。NOREVA专为那些精心挑选、用心穿着的人士而打造。" },
   collections: {

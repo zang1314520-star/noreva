@@ -146,7 +146,7 @@ export default function SizeGuidePage() {
 
       <Footer />
       <CookieConsent />
-      <WhatsAppButton phoneNumber="8618508036618" />
+      <WhatsAppButton phoneNumber="8617338700032" />
     </main>
   );
 }
