@@ -33,6 +33,8 @@ interface Product {
   categoryNameCn?: string;
   description: string;
   descriptionCn?: string;
+  price?: number;
+  currency?: string;
   materials?: string;
   mainImage: string;
   images?: string[];
