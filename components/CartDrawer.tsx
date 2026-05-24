@@ -53,7 +53,7 @@ export default function CartDrawer() {
           <ShoppingBag className="w-5 h-5 text-white" />
         </div>
         {totalItems > 0 && (
-          <span className="absolute top-0 right-0 bg-red-500 text-white text-xs min-w-[18px] h-[18px] rounded-full flex items-center justify-center font-bold translate-x-[18px] group-hover:translate-x-[-2px] transition-transform duration-300">
+          <span className="absolute top-0 left-0 bg-red-500 text-white text-xs min-w-[18px] h-[18px] rounded-full flex items-center justify-center font-bold -translate-x-[18px] group-hover:translate-x-[2px] transition-transform duration-300 z-10">
             {totalItems > 99 ? '99+' : totalItems}
           </span>
         )}
