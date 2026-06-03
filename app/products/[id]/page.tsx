@@ -36,6 +36,9 @@ interface Product {
   price?: number;
   currency?: string;
   materials?: string;
+  highlights?: string[];
+  techSpecs?: Record<string, string>;
+  warranty?: string;
   mainImage: string;
   images?: string[];
   detailImages?: string[];
@@ -414,6 +417,33 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 <p className="font-body text-[15px] text-[#8A8A8A] leading-[1.9] whitespace-pre-line">{displayDesc}</p>
               </div>
 
+              {product.highlights?.length ? (
+                <div className="mb-10">
+                  <h3 className="label text-[#8A8A8A] mb-4">Product Highlights</h3>
+                  <div className="grid grid-cols-2 gap-3">
+                    {product.highlights.map((item) => (
+                      <div key={item} className="bg-[#F7F5F1] px-4 py-3">
+                        <p className="font-body text-[12px] uppercase tracking-[0.12em] text-[#1A1A1A]">{item}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+
+              {product.techSpecs ? (
+                <div className="mb-10">
+                  <h3 className="label text-[#8A8A8A] mb-4">Technical Specs</h3>
+                  <div className="divide-y divide-[#E8E6E2] border-y border-[#E8E6E2]">
+                    {Object.entries(product.techSpecs).map(([key, value]) => (
+                      <div key={key} className="flex items-center justify-between gap-6 py-3">
+                        <span className="font-body text-[13px] text-[#8A8A8A]">{key}</span>
+                        <span className="font-body text-[13px] text-[#1A1A1A] text-right">{value}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+
               {product.materials && (
                 <div className="mb-10">
                   <h3 className="label text-[#8A8A8A] mb-4">{c.materials}</h3>
@@ -423,16 +453,16 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
               <div className="mb-8 grid grid-cols-1 sm:grid-cols-3 gap-3 border-y border-[#E8E6E2] py-5">
                 <div>
-                  <p className="label text-[#1A1A1A] mb-1">Personal sourcing</p>
-                  <p className="font-body text-xs leading-[1.7] text-[#8A8A8A]">Styling and availability support by WhatsApp.</p>
+                  <p className="label text-[#1A1A1A] mb-1">Pack finder</p>
+                  <p className="font-body text-xs leading-[1.7] text-[#8A8A8A]">Capacity and laptop-fit support by WhatsApp.</p>
                 </div>
                 <div>
                   <p className="label text-[#1A1A1A] mb-1">Worldwide delivery</p>
                   <p className="font-body text-xs leading-[1.7] text-[#8A8A8A]">Shipping options confirmed before payment.</p>
                 </div>
                 <div>
-                  <p className="label text-[#1A1A1A] mb-1">14-day returns</p>
-                  <p className="font-body text-xs leading-[1.7] text-[#8A8A8A]">Clear return window on eligible items.</p>
+                  <p className="label text-[#1A1A1A] mb-1">30-day returns</p>
+                  <p className="font-body text-xs leading-[1.7] text-[#8A8A8A]">{product.warranty || "24-month warranty included."}</p>
                 </div>
               </div>
 

@@ -1,0 +1,10 @@
+<svg width="900" height="1125" viewBox="0 0 900 1125" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="900" height="1125" fill="#EFEDE7"/>
+  <path d="M270 250C270 200 310 160 360 160H540C590 160 630 200 630 250V880H270V250Z" fill="#23302D"/>
+  <path d="M305 210H595V315H305V210Z" fill="#364B45"/>
+  <rect x="318" y="370" width="264" height="360" rx="34" fill="#2C3D39"/>
+  <path d="M350 315H600" stroke="#C9A96E" stroke-width="16" stroke-linecap="round"/>
+  <path d="M350 510H550" stroke="#C9A96E" stroke-width="10" stroke-linecap="round"/>
+  <path d="M348 790H552" stroke="#526B64" stroke-width="14" stroke-linecap="round"/>
+  <text x="450" y="975" text-anchor="middle" font-family="Georgia, serif" font-size="36" fill="#23302D">ROLLTOP 22L</text>
+</svg>

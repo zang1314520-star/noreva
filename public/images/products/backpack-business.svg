@@ -1,0 +1,10 @@
+<svg width="900" height="1125" viewBox="0 0 900 1125" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="900" height="1125" fill="#F7F5F1"/>
+  <rect x="265" y="180" width="370" height="720" rx="42" fill="#191B1D"/>
+  <rect x="305" y="245" width="290" height="570" rx="28" fill="#2B2F31"/>
+  <rect x="345" y="320" width="210" height="140" rx="20" fill="#111315"/>
+  <path d="M350 540H550" stroke="#C9A96E" stroke-width="10" stroke-linecap="round"/>
+  <path d="M350 610H550" stroke="#555B5E" stroke-width="10" stroke-linecap="round"/>
+  <path d="M350 680H550" stroke="#555B5E" stroke-width="10" stroke-linecap="round"/>
+  <text x="450" y="975" text-anchor="middle" font-family="Georgia, serif" font-size="36" fill="#191B1D">EXECUTIVE 20L</text>
+</svg>

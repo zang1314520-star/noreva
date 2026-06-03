@@ -39,16 +39,16 @@ export default function Footer() {
             <span className="label text-[#8A8A8A] block mb-5">{t("footerCollections")}</span>
             <nav className="space-y-3">
               <Link href="/products" className="block font-body text-[13px] text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors duration-200">
-                Shop All
+                Shop Backpacks
               </Link>
-              <Link href="/products?category=bags" className="block font-body text-[13px] text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors duration-200">
-                Bags
+              <Link href="/products?use=commute" className="block font-body text-[13px] text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors duration-200">
+                Commuter Backpacks
               </Link>
-              <Link href="/products?category=clothing" className="block font-body text-[13px] text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors duration-200">
-                Clothing
+              <Link href="/products?use=travel" className="block font-body text-[13px] text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors duration-200">
+                Travel Backpacks
               </Link>
-              <Link href="/products?category=watches" className="block font-body text-[13px] text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors duration-200">
-                Watches
+              <Link href="/products?use=business" className="block font-body text-[13px] text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors duration-200">
+                Business Backpacks
               </Link>
             </nav>
           </motion.div>
@@ -72,6 +72,9 @@ export default function Footer() {
               </Link>
               <Link href="/about" className="block font-body text-[13px] text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors duration-200">
                 About
+              </Link>
+              <Link href="/faq" className="block font-body text-[13px] text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors duration-200">
+                FAQ
               </Link>
             </nav>
           </motion.div>

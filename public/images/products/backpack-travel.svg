@@ -1,0 +1,11 @@
+<svg width="900" height="1125" viewBox="0 0 900 1125" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="900" height="1125" fill="#ECE7DE"/>
+  <rect x="220" y="160" width="460" height="760" rx="64" fill="#273033"/>
+  <rect x="275" y="230" width="350" height="620" rx="42" fill="#394448"/>
+  <rect x="320" y="300" width="260" height="130" rx="24" fill="#1A1E20"/>
+  <rect x="310" y="485" width="280" height="240" rx="30" fill="#2C3639"/>
+  <path d="M340 790H560" stroke="#C9A96E" stroke-width="14" stroke-linecap="round"/>
+  <circle cx="610" cy="555" r="28" fill="#C9A96E"/>
+  <circle cx="290" cy="555" r="28" fill="#C9A96E"/>
+  <text x="450" y="985" text-anchor="middle" font-family="Georgia, serif" font-size="36" fill="#273033">TRANSIT 25L</text>
+</svg>

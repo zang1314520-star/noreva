@@ -6,25 +6,25 @@ const redis = getRedis();
 const DEFAULT_CONFIG = {
   site: {
     brand: "NOREVA",
-    tagline: "Maison NOREVA",
-    description: "Curated luxury fashion with personal shopping support.",
+    tagline: "Smart Backpacks",
+    description: "Smart backpacks for work, travel, commuting, and organized daily carry.",
   },
   whatsapp: { number: "8617338700032" },
   hero: {
-    headline: "Curated Luxury, Personally Sourced",
-    subtitle: "Clothing, bags, watches and accessories selected with a private-client mindset.",
-    cta: "Explore the Collection",
+    headline: "Smarter Carry, Built for Movement",
+    subtitle: "Backpacks organized by capacity, laptop fit, materials, and real travel needs.",
+    cta: "Shop Backpacks",
   },
   manifesto: {
-    headline: "A slower, more considered way to shop luxury.",
-    text: "NOREVA focuses on trust, clarity and personal guidance instead of endless catalog browsing.",
+    headline: "A clearer way to choose the right backpack.",
+    text: "NOREVA focuses on laptop compatibility, capacity, comfort, materials, and travel organization.",
   },
   personalShopper: {
-    headline: "Your Private Shopping Desk",
-    subheadline: "Tell us what you are looking for.",
-    description: "We help source, compare and coordinate luxury pieces through a direct conversation.",
+    headline: "Your Pack Finder",
+    subheadline: "Tell us how you carry.",
+    description: "We help compare backpack size, laptop fit, commute style, and travel needs through a direct conversation.",
     responseTime: "We usually reply within 24 hours.",
-    quote: "Every good piece starts with a conversation.",
+    quote: "The right backpack starts with how you move.",
   },
 };
 

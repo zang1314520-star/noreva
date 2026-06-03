@@ -4,7 +4,7 @@ import { CONTACT_EMAIL, CONTACT_EMAIL_HREF } from "@/lib/site";
 
 export const metadata = {
   title: "Shipping and Returns - NOREVA",
-  description: "NOREVA shipping and returns policy. Complimentary worldwide shipping and 14-day returns.",
+  description: "NOREVA backpack shipping, returns, and warranty policy. Worldwide shipping, 30-day returns, and 24-month warranty.",
 };
 
 export default function ReturnsPage() {
@@ -18,7 +18,7 @@ export default function ReturnsPage() {
             Shipping & Returns
           </h1>
           <p className="font-body text-[#8A8A8A] mb-12">
-            Complimentary worldwide shipping on all orders.
+            Worldwide shipping, 30-day easy returns, and a 24-month backpack warranty.
           </p>
 
           <div className="space-y-12">
@@ -28,21 +28,21 @@ export default function ReturnsPage() {
                 <div className="flex justify-between items-start border-b border-[#E8E6E2] pb-4">
                   <div>
                     <p className="font-body text-[#1A1A1A]">Standard Delivery</p>
-                    <p className="font-body text-[#8A8A8A] text-sm">Europe: 3-5 business days</p>
+                  <p className="font-body text-[#8A8A8A] text-sm">Most regions: 5-10 business days</p>
                   </div>
                   <p className="font-body text-[#1A1A1A]">Complimentary</p>
                 </div>
                 <div className="flex justify-between items-start border-b border-[#E8E6E2] pb-4">
                   <div>
                     <p className="font-body text-[#1A1A1A]">Express Delivery</p>
-                    <p className="font-body text-[#8A8A8A] text-sm">Europe: 1-2 business days</p>
+                  <p className="font-body text-[#8A8A8A] text-sm">Available for selected regions</p>
                   </div>
                   <p className="font-body text-[#1A1A1A]">Complimentary</p>
                 </div>
                 <div className="flex justify-between items-start border-b border-[#E8E6E2] pb-4">
                   <div>
                     <p className="font-body text-[#1A1A1A]">International</p>
-                    <p className="font-body text-[#8A8A8A] text-sm">Worldwide: 5-10 business days</p>
+                  <p className="font-body text-[#8A8A8A] text-sm">Confirmed before payment</p>
                   </div>
                   <p className="font-body text-[#1A1A1A]">Complimentary</p>
                 </div>
@@ -53,8 +53,8 @@ export default function ReturnsPage() {
               <h2 className="font-display text-xl text-[#1A1A1A] mb-4">Returns</h2>
               <div className="space-y-4 font-body text-[#8A8A8A] leading-relaxed">
                 <p>
-                  We offer complimentary returns within 14 days of delivery. Items must be in
-                  original condition with all tags attached.
+                  We offer returns within 30 days of delivery. Items must be in
+                  original condition with all tags, dust bag, and packaging included.
                 </p>
                 <p>
                   To initiate a return, please contact us via WhatsApp or email with your
@@ -62,6 +62,10 @@ export default function ReturnsPage() {
                 </p>
                 <p>
                   Refunds will be processed within 5-7 business days after we receive the returned item.
+                </p>
+                <p>
+                  Backpacks include a 24-month warranty against manufacturing defects in zippers,
+                  stitching, buckles, handles, and structural seams.
                 </p>
               </div>
             </section>

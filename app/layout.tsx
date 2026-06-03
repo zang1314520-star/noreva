@@ -40,22 +40,21 @@ const pinyonScript = Pinyon_Script({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "NOREVA | Curated Luxury Fashion and Personal Shopping",
+    default: "NOREVA | Smart Backpacks for Work, Travel and Daily Carry",
     template: "%s | NOREVA",
   },
   description:
-    "Curated luxury clothing, bags, watches, and accessories with personal shopping support from NOREVA. Worldwide delivery and direct WhatsApp assistance.",
+    "Smart backpacks for work, travel, commuting and organized daily carry. Water-resistant materials, laptop protection, worldwide delivery and direct WhatsApp assistance.",
   keywords: [
-    "luxury fashion",
-    "curated fashion",
-    "designer bags",
-    "watches",
-    "accessories",
-    "personal shopping",
-    "private styling",
+    "smart backpacks",
+    "travel backpacks",
+    "laptop backpacks",
+    "commuter backpacks",
+    "water-resistant backpacks",
+    "business backpacks",
     "Shanghai",
     "Milan",
-    "quiet luxury",
+    "organized carry",
   ],
   authors: [{ name: SITE_NAME }],
   creator: SITE_NAME,
@@ -77,9 +76,9 @@ export const metadata: Metadata = {
     alternateLocale: ["fr_FR", "it_IT", "de_DE", "es_ES"],
     url: SITE_URL,
     siteName: SITE_NAME,
-    title: "NOREVA | Curated Luxury Fashion and Personal Shopping",
+    title: "NOREVA | Smart Backpacks for Work, Travel and Daily Carry",
     description:
-      "Curated luxury clothing, bags, watches, and accessories with personal shopping support from NOREVA.",
+      "Smart backpacks for work, travel, commuting and organized daily carry.",
     images: [
       {
         url: "/opengraph-image",
@@ -91,9 +90,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "NOREVA | Curated Luxury Fashion and Personal Shopping",
+    title: "NOREVA | Smart Backpacks for Work, Travel and Daily Carry",
     description:
-      "Curated luxury clothing, bags, watches, and accessories with direct WhatsApp assistance.",
+      "Water-resistant laptop backpacks with direct WhatsApp assistance.",
     images: ["/twitter-image"],
     creator: "@noreva",
   },
