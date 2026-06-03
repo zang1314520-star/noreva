@@ -29,53 +29,46 @@ interface Product {
   mainImage: string;
   specs: ProductSpec[];
   detailImages: string[];
+  highlights?: string[];
+  techSpecs?: Record<string, string>;
+  warranty?: string;
   featured?: boolean;
   createdAt: string;
+  [key: string]: any;
 }
-
-const CATEGORY_TREE = {
-  accessories: {
-    name: "Accessories",
-    nameCn: "配饰",
-    subcategories: {
-      belts: { name: "Belts", nameCn: "腰带" },
-      scarves: { name: "Scarves", nameCn: "丝巾/围巾" },
-      jewelry: { name: "Jewelry", nameCn: "珠宝" },
-      sunglasses: { name: "Sunglasses", nameCn: "太阳镜" },
-    },
-  },
-  clothing: {
-    name: "Clothing",
-    nameCn: "服装",
-    subcategories: {
-      tops: { name: "Tops", nameCn: "上装" },
-      pants: { name: "Pants", nameCn: "裤装" },
-      dresses: { name: "Dresses", nameCn: "连衣裙" },
-      outerwear: { name: "Outerwear", nameCn: "外套" },
-    },
-  },
-  bags: {
-    name: "Bags & Luggage",
-    nameCn: "箱包",
-    subcategories: {
-      handbags: { name: "Handbags", nameCn: "手提包" },
-      crossbody: { name: "Crossbody", nameCn: "斜挎包" },
-      backpacks: { name: "Backpacks", nameCn: "双肩包" },
-      wallets: { name: "Wallets", nameCn: "钱包" },
-    },
-  },
-};
 
 function ensureDataDir() {
   const dir = path.dirname(PRODUCTS_FILE);
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 }
 
+function normalizeProduct(product: Partial<Product>): Product {
+  return {
+    ...product,
+    id: product.id || `bp_${Date.now()}`,
+    name: product.name || "NOREVA Backpack",
+    nameCn: product.nameCn,
+    brand: product.brand || "NOREVA",
+    category: "backpacks",
+    categoryName: product.categoryName || "Backpacks",
+    categoryNameCn: product.categoryNameCn || "双肩背包",
+    price: Number(product.price) || 0,
+    currency: product.currency || "USD",
+    description: product.description || "",
+    descriptionCn: product.descriptionCn,
+    mainImage: product.mainImage || "",
+    specs: product.specs || [],
+    detailImages: product.detailImages || [],
+    featured: Boolean(product.featured),
+    createdAt: product.createdAt || new Date().toISOString().split("T")[0],
+  };
+}
+
 function readLocal(): Product[] {
   try {
     if (!fs.existsSync(PRODUCTS_FILE)) return [];
     const data = JSON.parse(fs.readFileSync(PRODUCTS_FILE, "utf-8"));
-    return Array.isArray(data) ? data : [];
+    return Array.isArray(data) ? data.map(normalizeProduct) : [];
   } catch {
     return [];
   }
@@ -83,15 +76,14 @@ function readLocal(): Product[] {
 
 function writeLocal(products: Product[]) {
   ensureDataDir();
-  fs.writeFileSync(PRODUCTS_FILE, JSON.stringify(products, null, 2), "utf-8");
+  fs.writeFileSync(PRODUCTS_FILE, JSON.stringify(products.map(normalizeProduct), null, 2), "utf-8");
 }
 
 async function readProducts() {
   if (redis) {
     try {
-      const data = await redis.get("products");
-      const products = parseRedisList<Product>(data);
-      if (products.length > 0) return products;
+      const products = parseRedisList<Product>(await redis.get("products"));
+      if (products.length > 0) return products.map(normalizeProduct);
     } catch {}
   }
 
@@ -99,10 +91,11 @@ async function readProducts() {
 }
 
 async function writeProducts(products: Product[]) {
-  writeLocal(products);
+  const normalized = products.map(normalizeProduct);
+  writeLocal(normalized);
   if (redis) {
     try {
-      await redis.set("products", products);
+      await redis.set("products", normalized);
     } catch {}
   }
 }
@@ -127,25 +120,18 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const product = await request.json();
+    const product = normalizeProduct(await request.json());
     const products = await readProducts();
+    const index = products.findIndex((p) => p.id === product.id);
 
-    const normalizedProduct: Product = {
-      ...product,
-      specs: product.specs || [],
-      detailImages: product.detailImages || [],
-      createdAt: product.createdAt || new Date().toISOString().split("T")[0],
-    };
-
-    const index = products.findIndex((p) => p.id === normalizedProduct.id);
     if (index >= 0) {
-      products[index] = normalizedProduct;
+      products[index] = product;
     } else {
-      products.unshift(normalizedProduct);
+      products.unshift(product);
     }
 
     await writeProducts(products);
-    return NextResponse.json(normalizedProduct);
+    return NextResponse.json(product);
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

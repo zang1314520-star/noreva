@@ -37,6 +37,17 @@ export default function Navigation() {
           scrolled ? "bg-white/95 backdrop-blur-sm border-b border-[#E8E6E2]" : "bg-transparent"
         }`}
       >
+        <div className="h-9 bg-[#1A1A1A] text-white">
+          <div className="mx-auto flex h-full max-w-7xl items-center justify-center gap-5 overflow-hidden px-4 font-body text-[9px] uppercase tracking-[0.18em] md:gap-10 md:text-[10px]">
+            <span>Free Global Shipping</span>
+            <span className="hidden h-3 w-px bg-white/25 sm:block" />
+            <span>30-Day Returns</span>
+            <span className="hidden h-3 w-px bg-white/25 sm:block" />
+            <span>24-Month Warranty</span>
+            <span className="hidden h-3 w-px bg-white/25 lg:block" />
+            <span className="hidden lg:inline">Pack Finder Support</span>
+          </div>
+        </div>
         <nav className="px-8 md:px-16 h-16 flex items-center justify-between">
           <div className="hidden md:flex items-center gap-10">
             <Link href="/" className="nav-link">
@@ -140,6 +151,9 @@ export default function Navigation() {
                 </Link>
                 <Link href="/#journal" className="block font-body text-[13px] tracking-[0.15em] text-[#1A1A1A]" onClick={() => setMenuOpen(false)}>
                   {t(lang, "navJournal")}
+                </Link>
+                <Link href="/faq" className="block font-body text-[13px] tracking-[0.15em] text-[#1A1A1A]" onClick={() => setMenuOpen(false)}>
+                  FAQ
                 </Link>
                 <Link href="/about" className="block font-body text-[13px] tracking-[0.15em] text-[#1A1A1A]" onClick={() => setMenuOpen(false)}>
                   About

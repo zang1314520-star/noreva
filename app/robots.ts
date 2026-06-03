@@ -13,6 +13,6 @@ export default function robots(): MetadataRoute.Robots {
         allow: "/",
       },
     ],
-    sitemap: "https://www.noreva.cc/sitemap.xml",
+    sitemap: "https://noreva.cc/sitemap.xml",
   };
 }

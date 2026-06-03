@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { useLanguage } from "./LanguageContext";
@@ -15,9 +15,17 @@ interface Product {
   categoryName: string;
   categoryNameCn?: string;
   mainImage: string;
+  price?: number;
+  currency?: string;
+  featured?: boolean;
+  highlights?: string[];
 }
 
-// Always fetch fresh data, pick 8 with brand diversity
+function cdnThumb(url: string, w: number): string {
+  if (!url || !url.includes("res.cloudinary.com")) return url;
+  return url.replace("/upload/", `/upload/w_${w},c_limit,q_auto,f_auto/`);
+}
+
 export default function FeaturedProducts() {
   const { lang } = useLanguage();
   const isCn = lang === "zh";
@@ -25,23 +33,14 @@ export default function FeaturedProducts() {
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
-    fetch("/api/products")
-      .then(r => r.json())
+    fetch("/api/products", { cache: "no-store" })
+      .then((r) => r.json())
       .then((data: Product[]) => {
-        if (!data || data.length === 0) { setLoaded(true); return; }
-        // Brand diversity first, then fill
-        const brands = [...new Set(data.map(p => p.brand).filter(Boolean))];
-        const picked: Product[] = [];
-        for (const brand of brands) {
-          const bp = data.filter(p => p.brand === brand);
-          if (bp.length > 0) picked.push(bp[Math.floor(Math.random() * bp.length)]);
-          if (picked.length >= 8) break;
-        }
-        if (picked.length < 8) {
-          const rem = data.filter(p => !picked.find(x => x.id === p.id));
-          for (let i = 0; picked.length < 8 && i < rem.length; i++) picked.push(rem[i]);
-        }
-        setProducts(picked);
+        const backpacks = (data || []).filter((item) => item.category === "backpacks");
+        const featured = backpacks
+          .sort((a, b) => Number(Boolean(b.featured)) - Number(Boolean(a.featured)))
+          .slice(0, 4);
+        setProducts(featured);
         setLoaded(true);
       })
       .catch(() => setLoaded(true));
@@ -52,13 +51,13 @@ export default function FeaturedProducts() {
       <section className="py-[clamp(5rem,10vw,9rem)] bg-white">
         <div className="px-8 md:px-16">
           <div className="text-center mb-14">
-            <span className="label text-[#8A8A8A] block mb-3">{isCn ? "精选单品" : "Curated Selection"}</span>
+            <span className="label text-[#8A8A8A] block mb-3">Featured Backpacks</span>
             <h2 className="font-display text-[clamp(2rem,3.5vw,2.8rem)] font-light text-[#1A1A1A]">
-              {isCn ? "为您甄选" : "Selected for You"}
+              Built for real movement
             </h2>
           </div>
           <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-            {Array.from({ length: 8 }).map((_, i) => (
+            {Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className="space-y-2">
                 <div className="aspect-[4/5] bg-[#F5F4F2] animate-pulse rounded" />
                 <div className="h-3 w-16 bg-[#F5F4F2] animate-pulse rounded" />
@@ -83,10 +82,17 @@ export default function FeaturedProducts() {
           transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
           className="text-center mb-14"
         >
-          <span className="label text-[#8A8A8A] block mb-3">{isCn ? "精选单品" : "Curated Selection"}</span>
+          <span className="label text-[#8A8A8A] block mb-3">
+            {isCn ? "精选背包" : "Featured Backpacks"}
+          </span>
           <h2 className="font-display text-[clamp(2rem,3.5vw,2.8rem)] font-light text-[#1A1A1A]">
-            {isCn ? "为您甄选" : "Selected for You"}
+            {isCn ? "为真实移动生活打造" : "Built for real movement"}
           </h2>
+          <p className="mx-auto mt-4 max-w-xl font-body text-[13px] leading-[1.8] text-[#8A8A8A]">
+            {isCn
+              ? "从通勤、商务到短途旅行，按场景选择更省时间。"
+              : "Choose by commute, business, travel, and weather-ready carry needs."}
+          </p>
         </motion.div>
 
         <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
@@ -99,12 +105,12 @@ export default function FeaturedProducts() {
               transition={{ duration: 0.6, delay: index * 0.08, ease: [0.25, 0.46, 0.45, 0.94] }}
             >
               <Link href={`/products/${product.id}`} className="group block">
-                <div className="img-zoom overflow-hidden mb-3">
+                <div className="img-zoom overflow-hidden mb-3 rounded-[18px] bg-[#F7F5F1]">
                   <Image
-                    src={product.mainImage}
+                    src={cdnThumb(product.mainImage, 520)}
                     alt={product.name || ""}
-                    width={400}
-                    height={500}
+                    width={520}
+                    height={650}
                     className="w-full aspect-[4/5] object-cover"
                     sizes="(max-width: 768px) 50vw, 25vw"
                     loading="lazy"
@@ -114,8 +120,13 @@ export default function FeaturedProducts() {
                   <span className="text-[9px] tracking-widest uppercase text-[#C9A96E] block">{product.brand}</span>
                 )}
                 <h3 className="font-display text-sm font-light text-[#1A1A1A] group-hover:text-[#C9A96E] transition-colors line-clamp-1 mt-1">
-                  {isCn ? (product.nameCn || product.name) : product.name}
+                  {isCn ? product.nameCn || product.name : product.name}
                 </h3>
+                {product.highlights?.[0] ? (
+                  <p className="mt-2 font-body text-[11px] uppercase tracking-[0.12em] text-[#8A8A8A]">
+                    {product.highlights[0]}
+                  </p>
+                ) : null}
               </Link>
             </motion.div>
           ))}
@@ -125,11 +136,11 @@ export default function FeaturedProducts() {
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.6 }}
+          transition={{ duration: 0.6, delay: 0.5 }}
           className="text-center mt-12"
         >
           <Link href="/products" className="cta-link">
-            {isCn ? "查看全部" : "View All"} &rarr;
+            {isCn ? "查看全部背包" : "View All Backpacks"} &rarr;
           </Link>
         </motion.div>
       </div>

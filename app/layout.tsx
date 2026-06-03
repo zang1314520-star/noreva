@@ -106,7 +106,7 @@ export const metadata: Metadata = {
       "es-ES": `${SITE_URL}?lang=es`,
     },
   },
-  category: "Fashion",
+  category: "Bags & Luggage",
 };
 
 export default function RootLayout({
@@ -119,11 +119,43 @@ export default function RootLayout({
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#ffffff" />
-        <meta name="geo.region" content="CN-31,IT-25" />
-        <meta name="geo.placename" content="Shanghai, Milan" />
-        <link rel="preconnect" href="https://images.unsplash.com" />
-        <link rel="dns-prefetch" href="https://images.unsplash.com" />
+        <meta name="geo.region" content="CN-31" />
+        <meta name="geo.placename" content="Shanghai" />
         <link rel="icon" href="/favicon.ico" sizes="any" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: SITE_NAME,
+              url: SITE_URL,
+              logo: `${SITE_URL}/opengraph-image`,
+              contactPoint: {
+                "@type": "ContactPoint",
+                contactType: "customer support",
+                telephone: `+${WHATSAPP_NUMBER}`,
+                availableLanguage: ["English", "Chinese"],
+              },
+            }).replace(/</g, "\\u003c"),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              name: SITE_NAME,
+              url: SITE_URL,
+              potentialAction: {
+                "@type": "SearchAction",
+                target: `${SITE_URL}/products?search={search_term_string}`,
+                "query-input": "required name=search_term_string",
+              },
+            }).replace(/</g, "\\u003c"),
+          }}
+        />
       </head>
       <body
         className={`${playfair.variable} ${ebGaramond.variable} ${pinyonScript.variable} min-h-screen bg-white text-[#1A1A1A] antialiased`}

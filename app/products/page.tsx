@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
+import { Suspense, useDeferredValue, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -21,7 +21,6 @@ interface Product {
   currency: string;
   description: string;
   mainImage: string;
-  specs: any[];
   highlights?: string[];
   techSpecs?: Record<string, string>;
 }
@@ -43,12 +42,14 @@ function ProductGridSkeleton() {
   return (
     <main className="bg-white min-h-screen">
       <Navigation />
-      <section className="pt-32 pb-12 px-8 md:px-16">
+      <section className="pt-40 pb-12 px-8 md:px-16">
         <div className="max-w-6xl mx-auto">
           <div className="h-3 w-24 bg-[#F5F4F2] animate-pulse rounded mb-4" />
           <div className="h-12 w-72 bg-[#F5F4F2] animate-pulse rounded" />
           <div className="mt-8 flex gap-3">
-            {[1, 2, 3, 4].map((i) => <div key={i} className="h-9 w-24 bg-[#F5F4F2] animate-pulse rounded" />)}
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="h-9 w-24 bg-[#F5F4F2] animate-pulse rounded" />
+            ))}
           </div>
         </div>
       </section>
@@ -81,14 +82,14 @@ function ProductsContent() {
   const searchParams = useSearchParams();
   const isCn = lang === "zh";
   const wishlist = useWishlist();
-
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const deferredSearch = useDeferredValue(search);
   const [selectedUse, setSelectedUse] = useState("all");
 
   useEffect(() => {
-    fetch("/api/products")
+    fetch("/api/products", { cache: "no-store" })
       .then((r) => r.json())
       .then((data) => {
         setProducts((data || []).filter((item: Product) => item.category === "backpacks"));
@@ -99,16 +100,17 @@ function ProductsContent() {
 
   useEffect(() => {
     const use = searchParams.get("use");
-    const cat = searchParams.get("category");
+    const query = searchParams.get("search") || searchParams.get("q");
     const wl = searchParams.get("wishlist");
     if (use) setSelectedUse(use);
-    if (cat === "backpacks") setSelectedUse("all");
+    if (query) setSearch(query);
     if (wl === "1") setSelectedUse("wishlist");
   }, [searchParams]);
 
-  const useFilters = selectedUse === "wishlist"
-    ? [...USE_FILTERS, { key: "wishlist", name: "Wishlist", nameCn: "我的收藏" }]
-    : USE_FILTERS;
+  const useFilters =
+    selectedUse === "wishlist"
+      ? [...USE_FILTERS, { key: "wishlist", name: "Wishlist", nameCn: "我的收藏" }]
+      : USE_FILTERS;
 
   const filtered = products.filter((product) => {
     if (selectedUse === "wishlist") return wishlist.has(product.id);
@@ -119,14 +121,16 @@ function ProductsContent() {
       product.description,
       ...(product.highlights || []),
       ...Object.values(product.techSpecs || {}),
-    ].join(" ").toLowerCase();
+    ]
+      .join(" ")
+      .toLowerCase();
 
-    if (search && !text.includes(search.toLowerCase())) return false;
+    if (deferredSearch && !text.includes(deferredSearch.toLowerCase())) return false;
     if (selectedUse === "all") return true;
-    if (selectedUse === "commute") return /commute|daily|urban/.test(text);
-    if (selectedUse === "travel") return /travel|25l|weekend|suitcase|airport/.test(text);
-    if (selectedUse === "business") return /business|executive|meeting|office|document/.test(text);
-    if (selectedUse === "weather") return /weather|water-resistant|rain|rolltop/.test(text);
+    if (selectedUse === "commute") return /commute|daily|urban|18l/.test(text);
+    if (selectedUse === "travel") return /travel|25l|weekend|suitcase|airport|transit/.test(text);
+    if (selectedUse === "business") return /business|executive|meeting|office|document|20l/.test(text);
+    if (selectedUse === "weather") return /weather|water-resistant|rain|rolltop|22l/.test(text);
     return true;
   });
 
@@ -137,7 +141,7 @@ function ProductsContent() {
   return (
     <main className="bg-white min-h-screen">
       <Navigation />
-      <section className="pt-32 pb-12 px-8 md:px-16">
+      <section className="pt-40 pb-12 px-8 md:px-16">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
             <div>
@@ -166,7 +170,9 @@ function ProductsContent() {
                 key={item.key}
                 onClick={() => setSelectedUse(item.key)}
                 className={`px-4 py-2 text-xs tracking-widest uppercase transition-all ${
-                  selectedUse === item.key ? "bg-[#1A1A1A] text-white" : "bg-transparent text-[#8A8A8A] hover:text-[#1A1A1A]"
+                  selectedUse === item.key
+                    ? "bg-[#1A1A1A] text-white"
+                    : "bg-transparent text-[#8A8A8A] hover:text-[#1A1A1A]"
                 }`}
               >
                 {isCn ? item.nameCn : item.name}
@@ -194,7 +200,9 @@ function ProductsContent() {
         <div className="max-w-6xl mx-auto">
           {filtered.length === 0 ? (
             <div className="text-center py-20">
-              <p className="font-display text-xl text-[#8A8A8A] mb-2">{isCn ? "未找到匹配背包" : "No backpacks found"}</p>
+              <p className="font-display text-xl text-[#8A8A8A] mb-2">
+                {isCn ? "未找到匹配背包" : "No backpacks found"}
+              </p>
               <button onClick={() => { setSearch(""); setSelectedUse("all"); }} className="cta-link text-xs">
                 {isCn ? "清除筛选" : "Clear filters"}
               </button>
@@ -204,7 +212,7 @@ function ProductsContent() {
               {filtered.map((product) => (
                 <div key={product.id} className="group relative">
                   <Link href={`/products/${product.id}`} className="block">
-                    <div className="img-zoom overflow-hidden mb-4 relative bg-[#F7F5F1]">
+                    <div className="img-zoom overflow-hidden mb-4 relative bg-[#F7F5F1] rounded-[18px]">
                       <Image
                         src={cdnThumb(product.mainImage, 520)}
                         alt={product.name}
@@ -219,7 +227,11 @@ function ProductsContent() {
                       {isCn ? product.nameCn || product.name : product.name}
                     </h3>
                     <p className="font-body text-sm text-[#1A1A1A] mt-2">
-                      {new Intl.NumberFormat("en-US", { style: "currency", currency: product.currency, maximumFractionDigits: 0 }).format(product.price)}
+                      {new Intl.NumberFormat("en-US", {
+                        style: "currency",
+                        currency: product.currency,
+                        maximumFractionDigits: 0,
+                      }).format(product.price)}
                     </p>
                     <div className="mt-4 grid grid-cols-2 gap-1.5">
                       {(product.highlights || []).slice(0, 4).map((item) => (
@@ -230,7 +242,10 @@ function ProductsContent() {
                     </div>
                   </Link>
                   <button
-                    onClick={(event) => { event.preventDefault(); wishlist.toggle(product.id); }}
+                    onClick={(event) => {
+                      event.preventDefault();
+                      wishlist.toggle(product.id);
+                    }}
                     className="absolute top-3 right-3 z-10 p-2 rounded-full bg-white/85 backdrop-blur-sm"
                     aria-label="Toggle wishlist"
                   >

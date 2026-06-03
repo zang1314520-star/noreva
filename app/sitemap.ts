@@ -2,7 +2,7 @@ import { MetadataRoute } from "next";
 import products from "@/data/products.json";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://www.noreva.cc";
+  const baseUrl = "https://noreva.cc";
   
   const routes = [
     {

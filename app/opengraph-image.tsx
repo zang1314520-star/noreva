@@ -18,48 +18,51 @@ export default function OpenGraphImage() {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: "#ffffff",
+          background: "linear-gradient(135deg, #ffffff 0%, #f7f5f1 56%, #e8e1d2 100%)",
           fontFamily: "Georgia, serif",
+          padding: 72,
         }}
       >
         <div
           style={{
-            fontSize: 120,
+            fontSize: 116,
             fontWeight: 300,
             color: "#1A1A1A",
             letterSpacing: "0.3em",
-            marginBottom: 40,
+            marginBottom: 34,
           }}
         >
           NOREVA
         </div>
         <div
           style={{
-            fontSize: 24,
-            color: "#8A8A8A",
-            letterSpacing: "0.2em",
+            fontSize: 34,
+            color: "#1A1A1A",
+            letterSpacing: "0.08em",
             textTransform: "uppercase",
+            textAlign: "center",
           }}
         >
-          Premium Fashion House
+          Smart Backpacks for Work and Travel
         </div>
         <div
           style={{
-            width: 60,
-            height: 1,
+            width: 76,
+            height: 2,
             backgroundColor: "#C9A96E",
-            marginTop: 40,
+            marginTop: 38,
           }}
         />
         <div
           style={{
-            fontSize: 18,
-            color: "#8A8A8A",
-            marginTop: 40,
-            letterSpacing: "0.1em",
+            fontSize: 20,
+            color: "#6F6A64",
+            marginTop: 34,
+            letterSpacing: "0.12em",
+            textTransform: "uppercase",
           }}
         >
-          Shanghai — Milan
+          Free Global Shipping · 30-Day Returns · 24-Month Warranty
         </div>
       </div>
     ),

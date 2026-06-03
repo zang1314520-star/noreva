@@ -31,8 +31,25 @@ const FAQS = [
 ];
 
 export default function FAQPage() {
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: FAQS.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.answer,
+      },
+    })),
+  };
+
   return (
     <main className="bg-white min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, "\\u003c") }}
+      />
       <Navigation />
       <section className="pt-32 pb-20 px-8 md:px-16">
         <div className="max-w-3xl mx-auto">
