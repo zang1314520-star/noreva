@@ -6,7 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useTranslation } from "@/lib/useTranslation";
 
-const DEFAULT_HERO_IMAGE = "/images/placeholders/hero-clothing.svg";
+const DEFAULT_HERO_IMAGE = "/images/brand/hero-backpack-campaign.png";
 
 const itemVariants = {
   hidden: { opacity: 0, y: 18 },
@@ -90,7 +90,7 @@ export default function Hero() {
 
           <Image
             src={heroImage}
-            alt="NOREVA Collection SS 2026"
+            alt="NOREVA smart backpack campaign"
             fill
             priority
             className="object-cover"
@@ -115,6 +115,19 @@ export default function Hero() {
 
           {/* Subtle vignette */}
           <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-white/10 to-transparent" />
+
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.75 }}
+            className="absolute bottom-8 right-8 hidden lg:grid grid-cols-3 gap-3 rounded-[2px] border border-white/25 bg-white/70 p-4 backdrop-blur-md shadow-2xl shadow-black/10"
+          >
+            {["16 inch laptop", "Water-resistant", "30-day returns"].map((item) => (
+              <div key={item} className="min-w-28">
+                <p className="font-body text-[10px] uppercase tracking-[0.18em] text-[#8A8A8A]">{item}</p>
+              </div>
+            ))}
+          </motion.div>
         </motion.div>
       </motion.div>
 
@@ -175,9 +188,13 @@ export default function Hero() {
             variants={itemVariants}
             initial="hidden"
             animate="visible"
+            className="flex flex-col sm:flex-row gap-5 sm:items-center"
           >
-            <Link href="#objects" className="cta-link mt-8 inline-block">
-              {t("heroExplore")}
+            <Link href="/products" className="mt-8 inline-flex bg-[#1A1A1A] px-7 py-4 font-body text-[11px] uppercase tracking-[0.2em] text-white transition-colors hover:bg-[#C9A96E] hover:text-[#1A1A1A]">
+              Shop Backpacks
+            </Link>
+            <Link href="#objects" className="cta-link mt-0 sm:mt-8 inline-flex items-center gap-3">
+              Find Your Pack
               <svg width="20" height="1" viewBox="0 0 20 1" fill="none" aria-hidden="true">
                 <line x1="0" y1="0.5" x2="20" y2="0.5" stroke="#C9A96E" />
               </svg>

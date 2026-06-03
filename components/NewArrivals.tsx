@@ -6,8 +6,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { useTranslation } from "@/lib/useTranslation";
 
-const DEFAULT_LEFT = "/images/placeholders/hero-pants.svg";
-const DEFAULT_RIGHT = "/images/placeholders/hero-bag.svg";
+const DEFAULT_LEFT = "/images/brand/backpack-main-premium.png";
+const DEFAULT_RIGHT = "/images/brand/backpack-detail-organizer.png";
 
 interface SiteImages {
   newArrivals?: { left: string; right: string };
@@ -45,10 +45,10 @@ export default function NewArrivals() {
         >
           <span className="label block mb-4">SS 2026</span>
           <h2 className="font-display text-[clamp(2rem,4vw,3.5rem)] font-light text-[#1A1A1A] mb-4">
-            Upcoming New Arrivals
+            Engineered for Work, Travel and Daily Carry
           </h2>
           <p className="font-body text-[14px] text-[#8A8A8A] tracking-wide">
-            Quiet refinement. Uncompromised.
+            Premium organization, water-resistant materials, laptop protection.
           </p>
           <div className="flex justify-center mt-8">
             <span className="gold-rule" />
@@ -100,7 +100,7 @@ export default function NewArrivals() {
           className="text-center"
         >
           <Link href="/products" className="cta-link">
-            View All Products
+            Shop Backpacks
             <svg width="16" height="1" viewBox="0 0 16 1" fill="none">
               <line x1="0" y1="0.5" x2="16" y2="0.5" stroke="#C9A96E" />
             </svg>

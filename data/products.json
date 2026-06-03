@@ -12,11 +12,11 @@
     "description": "A slim everyday backpack designed for city commutes, laptop carry, and clean organization. Built with water-resistant fabric, quick-access pockets, and a luggage strap for short business trips.",
     "descriptionCn": "适合城市通勤、电脑携带和日常收纳的轻薄双肩包。采用防泼水面料，配备快取口袋和行李箱固定带，适合日常与短途商务出行。",
     "materials": "Water-resistant nylon shell, recycled polyester lining, padded breathable back panel, smooth YKK-style zippers.",
-    "mainImage": "/images/products/backpack-urban.svg",
-    "detailImages": ["/images/products/backpack-urban.svg", "/images/products/backpack-business.svg"],
+    "mainImage": "/images/brand/backpack-main-premium.png",
+    "detailImages": ["/images/brand/backpack-main-premium.png", "/images/brand/backpack-detail-organizer.png", "/images/brand/hero-backpack-campaign.png"],
     "specs": [
-      { "id": "black", "color": "Black", "size": "18L / fits 16 inch laptop", "image": "/images/products/backpack-urban.svg", "stock": 20 },
-      { "id": "olive", "color": "Olive", "size": "18L / fits 16 inch laptop", "image": "/images/products/backpack-urban.svg", "stock": 12 }
+      { "id": "black", "color": "Black", "size": "18L / fits 16 inch laptop", "image": "/images/brand/backpack-main-premium.png", "stock": 20 },
+      { "id": "olive", "color": "Olive", "size": "18L / fits 16 inch laptop", "image": "/images/brand/backpack-main-premium.png", "stock": 12 }
     ],
     "highlights": ["18L capacity", "Fits 16 inch laptop", "Water-resistant shell", "Luggage strap", "Quick-access front pocket", "Breathable back panel"],
     "techSpecs": {
@@ -43,11 +43,11 @@
     "description": "A travel-ready backpack with expanded storage, suitcase passthrough, separate laptop zone, and organized compartments for cables, documents, and weekend essentials.",
     "descriptionCn": "为短途旅行设计的扩容背包，带行李箱固定带、独立电脑层，以及适合线材、文件和周末出行物品的分区收纳。",
     "materials": "High-density nylon, water-resistant coating, reinforced handles, breathable padded shoulder straps.",
-    "mainImage": "/images/products/backpack-travel.svg",
-    "detailImages": ["/images/products/backpack-travel.svg", "/images/products/backpack-urban.svg"],
+    "mainImage": "/images/brand/hero-backpack-campaign.png",
+    "detailImages": ["/images/brand/hero-backpack-campaign.png", "/images/brand/backpack-detail-organizer.png", "/images/brand/backpack-main-premium.png"],
     "specs": [
-      { "id": "black", "color": "Black", "size": "25L / fits 17 inch laptop", "image": "/images/products/backpack-travel.svg", "stock": 16 },
-      { "id": "sand", "color": "Sand", "size": "25L / fits 17 inch laptop", "image": "/images/products/backpack-travel.svg", "stock": 9 }
+      { "id": "black", "color": "Black", "size": "25L / fits 17 inch laptop", "image": "/images/brand/hero-backpack-campaign.png", "stock": 16 },
+      { "id": "sand", "color": "Sand", "size": "25L / fits 17 inch laptop", "image": "/images/brand/hero-backpack-campaign.png", "stock": 9 }
     ],
     "highlights": ["25L capacity", "Fits 17 inch laptop", "Suitcase passthrough", "Document sleeve", "Side bottle pocket", "Travel organizer layout"],
     "techSpecs": {
@@ -74,10 +74,10 @@
     "description": "A structured business backpack with a minimal profile, protected laptop compartment, hidden rear pocket, and office-to-airport organization.",
     "descriptionCn": "外形简洁挺括的商务背包，带保护性电脑层、隐藏后袋，以及适合办公室到机场场景的分区收纳。",
     "materials": "Structured nylon twill, vegan leather trim, reinforced base, soft-touch interior lining.",
-    "mainImage": "/images/products/backpack-business.svg",
-    "detailImages": ["/images/products/backpack-business.svg", "/images/products/backpack-travel.svg"],
+    "mainImage": "/images/brand/backpack-detail-organizer.png",
+    "detailImages": ["/images/brand/backpack-detail-organizer.png", "/images/brand/backpack-main-premium.png", "/images/brand/hero-backpack-campaign.png"],
     "specs": [
-      { "id": "black", "color": "Black", "size": "20L / fits 16 inch laptop", "image": "/images/products/backpack-business.svg", "stock": 18 }
+      { "id": "black", "color": "Black", "size": "20L / fits 16 inch laptop", "image": "/images/brand/backpack-detail-organizer.png", "stock": 18 }
     ],
     "highlights": ["20L capacity", "Fits 16 inch laptop", "Hidden rear pocket", "Structured profile", "Document organizer", "Water-resistant finish"],
     "techSpecs": {
@@ -104,11 +104,11 @@
     "description": "A roll-top backpack for unpredictable days, built with a weather-resistant shell, adjustable capacity, and secure buckle closure.",
     "descriptionCn": "适合天气多变场景的卷盖背包，采用防泼水外壳，可调容量，并配备安全扣具闭合。",
     "materials": "Weather-resistant nylon, matte hardware, padded air-channel back panel.",
-    "mainImage": "/images/products/backpack-rolltop.svg",
-    "detailImages": ["/images/products/backpack-rolltop.svg", "/images/products/backpack-urban.svg"],
+    "mainImage": "/images/brand/backpack-main-premium.png",
+    "detailImages": ["/images/brand/backpack-main-premium.png", "/images/brand/backpack-detail-organizer.png", "/images/brand/hero-backpack-campaign.png"],
     "specs": [
-      { "id": "black", "color": "Black", "size": "22L / fits 16 inch laptop", "image": "/images/products/backpack-rolltop.svg", "stock": 14 },
-      { "id": "green", "color": "Forest Green", "size": "22L / fits 16 inch laptop", "image": "/images/products/backpack-rolltop.svg", "stock": 8 }
+      { "id": "black", "color": "Black", "size": "22L / fits 16 inch laptop", "image": "/images/brand/backpack-main-premium.png", "stock": 14 },
+      { "id": "green", "color": "Forest Green", "size": "22L / fits 16 inch laptop", "image": "/images/brand/backpack-main-premium.png", "stock": 8 }
     ],
     "highlights": ["22L flexible capacity", "Fits 16 inch laptop", "Roll-top closure", "Weather-resistant shell", "Side bottle pocket", "Secure rear pocket"],
     "techSpecs": {

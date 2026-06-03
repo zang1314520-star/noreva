@@ -5,12 +5,12 @@ const redis = getRedis();
 
 const DEFAULT_IMAGES = {
   hero: {
-    image: "/images/placeholders/hero-clothing.svg",
-    title: "The New Collection",
+    image: "/images/brand/hero-backpack-campaign.png",
+    title: "Smart Backpacks for Work and Travel",
   },
   newArrivals: {
-    left: "/images/placeholders/hero-pants.svg",
-    right: "/images/placeholders/hero-bag.svg",
+    left: "/images/brand/backpack-main-premium.png",
+    right: "/images/brand/backpack-detail-organizer.png",
   },
   womenswear: {
     main: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=800&q=80",
