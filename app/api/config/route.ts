@@ -1,48 +1,58 @@
 import { NextResponse } from "next/server";
-import { Redis } from "@upstash/redis";
+import { getRedis } from "@/lib/redis";
 
-const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL!,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
-});
+const redis = getRedis();
 
 const DEFAULT_CONFIG = {
-  site: { brand: "NOREVA", tagline: "Maison NOREVA", description: "Quiet refinement. Timeless objects." },
-  whatsapp: { number: "8617338700032" },
-  hero: { headline: "SS 2026", subtitle: "新 系列", cta: "探索" },
-  manifesto: { headline: "我们生产经久耐用的产品。", text: "服装不是潮流，而是一种选择。NOREVA专为那些精心挑选、用心穿着的人士而打造。" },
-  collections: {
-    womenswear: { season: "SS 2026", category: "Womenswear", name: "工作室系列", tagline: "静谧的精致。", description: "十二件。仅此而已。" },
-    menswear: { season: "SS 2026", category: "Menswear", name: "暗黑音量", tagline: "无力结构。", description: "八个轮廓。毫不妥协。" }
+  site: {
+    brand: "NOREVA",
+    tagline: "Maison NOREVA",
+    description: "Curated luxury fashion with personal shopping support.",
   },
-  products: [
-    { id: "01", name: "Le Sac Nerveux", tagline: "The everyday carry.", category: "Bags", inquiry: "I am interested in Le Sac Nerveux by NOREVA." },
-    { id: "02", name: "Calibre 01", tagline: "Time, reconsidered.", category: "Watches", inquiry: "I am interested in Calibre 01 by NOREVA." },
-    { id: "03", name: "La Marche", tagline: "Crafted in Florence.", category: "Shoes", inquiry: "I am interested in La Marche by NOREVA." },
-    { id: "04", name: "L'Anneau", tagline: "A single, quiet statement.", category: "Accessories", inquiry: "I am interested in L'Anneau by NOREVA." }
-  ],
-  personalShopper: { headline: "您的专属造型师", subheadline: "随时恭候您的垂询。", description: "我们不相信购物车，我们相信对话。告诉我们您在寻找什么——一套衣服、一份礼物、一件单品——我们将为您提供指导。", responseTime: "我们会在24小时内回复（欧洲时间）。", quote: "每一件作品都始于一次对话。" }
+  whatsapp: { number: "8617338700032" },
+  hero: {
+    headline: "Curated Luxury, Personally Sourced",
+    subtitle: "Clothing, bags, watches and accessories selected with a private-client mindset.",
+    cta: "Explore the Collection",
+  },
+  manifesto: {
+    headline: "A slower, more considered way to shop luxury.",
+    text: "NOREVA focuses on trust, clarity and personal guidance instead of endless catalog browsing.",
+  },
+  personalShopper: {
+    headline: "Your Private Shopping Desk",
+    subheadline: "Tell us what you are looking for.",
+    description: "We help source, compare and coordinate luxury pieces through a direct conversation.",
+    responseTime: "We usually reply within 24 hours.",
+    quote: "Every good piece starts with a conversation.",
+  },
 };
 
 export async function GET() {
+  if (!redis) return NextResponse.json(DEFAULT_CONFIG);
+
   try {
     const data = await redis.get("site-config");
     if (!data) {
-      await redis.set("site-config", JSON.stringify(DEFAULT_CONFIG));
+      await redis.set("site-config", DEFAULT_CONFIG);
       return NextResponse.json(DEFAULT_CONFIG);
     }
-    return NextResponse.json(data);
-  } catch (error) {
+    return NextResponse.json(typeof data === "string" ? JSON.parse(data) : data);
+  } catch {
     return NextResponse.json(DEFAULT_CONFIG);
   }
 }
 
 export async function POST(request: Request) {
+  if (!redis) {
+    return NextResponse.json({ error: "Redis is not configured" }, { status: 503 });
+  }
+
   try {
     const config = await request.json();
-    await redis.set("site-config", JSON.stringify(config));
+    await redis.set("site-config", config);
     return NextResponse.json({ success: true });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Failed to save" }, { status: 500 });
   }
 }

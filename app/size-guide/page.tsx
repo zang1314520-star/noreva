@@ -1,10 +1,9 @@
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-import CookieConsent from "@/components/CookieConsent";
-import WhatsAppButton from "@/components/WhatsAppButton";
+import { CONTACT_EMAIL } from "@/lib/site";
 
 export const metadata = {
-  title: "Size Guide — NOREVA",
+  title: "Size Guide - NOREVA",
   description: "NOREVA size guide. Find your perfect fit.",
 };
 
@@ -12,17 +11,17 @@ export default function SizeGuidePage() {
   return (
     <main className="bg-white min-h-screen">
       <Navigation />
-      
+
       <div className="pt-32 pb-20 px-8 md:px-16">
         <div className="max-w-4xl mx-auto">
           <h1 className="font-display text-4xl md:text-5xl font-light text-[#1A1A1A] mb-4">
             Size Guide
           </h1>
           <p className="font-body text-[#8A8A8A] mb-12 max-w-xl">
-            All measurements are in centimeters. If between sizes, we recommend sizing up 
+            All measurements are in centimeters. If between sizes, we recommend sizing up
             for a relaxed fit or sizing down for a more tailored look.
           </p>
-          
+
           <div className="space-y-16">
             <section>
               <h2 className="font-display text-2xl text-[#1A1A1A] mb-6">Women</h2>
@@ -137,7 +136,7 @@ export default function SizeGuidePage() {
                 <p><strong className="text-[#1A1A1A]">Hips:</strong> Measure around the fullest part of your hips.</p>
               </div>
               <p className="mt-6 font-body text-[13px] text-[#A8A4A0] italic">
-                Need help? Contact us via WhatsApp for personal styling advice.
+                Need help? Contact us via WhatsApp or {CONTACT_EMAIL} for personal styling advice.
               </p>
             </section>
           </div>
@@ -145,8 +144,6 @@ export default function SizeGuidePage() {
       </div>
 
       <Footer />
-      <CookieConsent />
-      <WhatsAppButton phoneNumber="8617338700032" />
     </main>
   );
 }

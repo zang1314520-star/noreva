@@ -10,7 +10,7 @@ const CATEGORIES = [
   {
     key: "clothing",
     nameEn: "Clothing",
-    image: "https://images.unsplash.com/photo-1485462537746-965f33f7f6a7?w=600&q=80",
+    image: "/images/placeholders/hero-clothing.svg",
     subcategories: [
       { nameEn: "T-Shirts", slug: "tshirts", brands: ["LV", "Dior", "Gucci", "Prada", "Burberry", "Fendi", "Hermes", "Balenciaga", "Chanel", "Versace", "Off-White", "Stone Island"] },
       { nameEn: "Hoodies", slug: "hoodies", brands: ["LV", "Dior", "Gucci", "Prada", "Burberry", "Hermes", "Balenciaga", "Moncler", "Off-White", "Stone Island", "Chrome Hearts"] },
@@ -24,7 +24,7 @@ const CATEGORIES = [
   {
     key: "shoesbags",
     nameEn: "Shoes & Bags",
-    image: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=600&q=80",
+    image: "/images/placeholders/hero-bag.svg",
     subcategories: [
       { nameEn: "Sneakers", slug: "sneakers", brands: ["Nike", "Jordan", "LV", "Balenciaga", "Gucci", "Dior", "Prada", "Off-White", "Golden Goose", "McQueen"] },
       { nameEn: "Luxury Shoes", slug: "luxury-shoes", brands: ["LV", "Dior", "Gucci", "Prada", "Hermes", "Chanel", "Fendi", "Valentino", "Jimmy Choo"] },
@@ -37,7 +37,7 @@ const CATEGORIES = [
   {
     key: "accessories",
     nameEn: "Accessories",
-    image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&q=80",
+    image: "/images/placeholders/hero-watch.svg",
     subcategories: [
       { nameEn: "Watches", slug: "watches", brands: ["Rolex", "Omega", "Cartier", "Patek Philippe", "Audemars Piguet", "Richard Mille", "Breitling", "IWC"] },
       { nameEn: "Belts", slug: "belts", brands: ["LV", "Hermes", "Gucci", "Dior", "Prada", "Balenciaga", "Burberry", "Celine"] },

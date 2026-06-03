@@ -1,76 +1,70 @@
 import { NextResponse } from "next/server";
-import { Redis } from "@upstash/redis";
+import { getRedis, parseRedisList } from "@/lib/redis";
 
-const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL!,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN!,
-});
+const redis = getRedis();
 
-function autoCategorizeCn(tag: string, desc: string): { category: string; categoryName: string; categoryNameCn: string; brand: string } {
-  let brand = "Unknown";
-  const brandText = (tag + " " + desc);
-  if (/ferragamo|菲拉格慕/i.test(brandText)) brand = "Ferragamo";
-  else if (/gucci|古驰/i.test(brandText)) brand = "Gucci";
-  else if (/louis\s*vuitton|\blv\b/i.test(brandText)) brand = "Louis Vuitton";
-  else if (/hermes|hermès|爱马仕/i.test(brandText)) brand = "Hermès";
-  else if (/chanel|香奈儿/i.test(brandText)) brand = "Chanel";
-  else if (/dior|迪奥/i.test(brandText)) brand = "Dior";
-  else if (/prada|普拉达/i.test(brandText)) brand = "Prada";
-  else if (/burberry|巴宝莉/i.test(brandText)) brand = "Burberry";
-  else if (/versace|范思哲/i.test(brandText)) brand = "Versace";
-  else if (/fendi|芬迪/i.test(brandText)) brand = "Fendi";
-  else if (/celine|赛琳/i.test(brandText)) brand = "Celine";
-  else if (/bottega|葆蝶家/i.test(brandText)) brand = "Bottega Veneta";
-  else if (/valentino|华伦天奴/i.test(brandText)) brand = "Valentino";
-  else if (/armani|阿玛尼/i.test(brandText)) brand = "Armani";
-  else if (/coach|蔻驰/i.test(brandText)) brand = "Coach";
+function detectBrand(text: string) {
+  const normalized = text.toLowerCase();
+  const brands = [
+    "Bottega Veneta",
+    "Louis Vuitton",
+    "Ferragamo",
+    "Burberry",
+    "Valentino",
+    "Versace",
+    "Hermes",
+    "Chanel",
+    "Celine",
+    "Prada",
+    "Gucci",
+    "Dior",
+    "Fendi",
+    "Coach",
+    "Armani",
+  ];
 
-  const text = (tag + " " + desc).toLowerCase();
-  if (/丝巾|围巾|twilly|scarf|shawl/i.test(text)) {
-    return { category: "scarves", categoryName: "Scarves", categoryNameCn: "丝巾/围巾", brand };
+  return brands.find((brand) => normalized.includes(brand.toLowerCase())) || "Unknown";
+}
+
+function autoCategorize(tag: string, desc: string) {
+  const text = `${tag} ${desc}`.toLowerCase();
+  const brand = detectBrand(text);
+
+  if (/watch|timepiece|腕表|手表/.test(text)) {
+    return { category: "watches", categoryName: "Watches", categoryNameCn: "腕表", brand };
   }
-  if (/手表|腕表|watch/i.test(text)) {
-    return { category: "watches", categoryName: "Watches", categoryNameCn: "手表", brand };
-  }
-  if (/珠宝|首饰|jewelry|ring|necklace/i.test(text)) {
+  if (/jewelry|ring|necklace|bracelet|珠宝|戒指|项链/.test(text)) {
     return { category: "jewelry", categoryName: "Jewelry", categoryNameCn: "珠宝", brand };
   }
-  if (/眼镜|太阳镜|sunglasses/i.test(text)) {
+  if (/scarf|shawl|twilly|丝巾|围巾/.test(text)) {
+    return { category: "scarves", categoryName: "Scarves", categoryNameCn: "丝巾/围巾", brand };
+  }
+  if (/sunglasses|eyewear|太阳镜|眼镜/.test(text)) {
     return { category: "sunglasses", categoryName: "Sunglasses", categoryNameCn: "太阳镜", brand };
   }
-  // 鞋类检测 - 优先于包检测
-  if (/鞋|靴|shoe|sneaker|运动鞋|皮鞋|凉鞋|拖鞋|休闲鞋|正装鞋|马丁靴|切尔西靴/i.test(text)) {
-    if (/运动鞋|sneaker|跑步鞋/i.test(text)) {
-      return { category: "sneakers", categoryName: "Sneakers", categoryNameCn: "运动鞋", brand };
-    }
-    if (/靴|boot|马丁|切尔西/i.test(text)) {
-      return { category: "boots", categoryName: "Boots", categoryNameCn: "靴子", brand };
-    }
-    if (/凉鞋|拖鞋|sandal|沙滩鞋/i.test(text)) {
-      return { category: "sandals", categoryName: "Sandals", categoryNameCn: "凉鞋/拖鞋", brand };
-    }
-    if (/皮鞋|正装鞋|loafer|牛津鞋|德比鞋/i.test(text)) {
-      return { category: "leather Shoes", categoryName: "Leather Shoes", categoryNameCn: "皮鞋", brand };
-    }
-    // 默认鞋类
-    return { category: "sneakers", categoryName: "Sneakers", categoryNameCn: "运动鞋", brand };
-  }
-  if (/皮带|腰带|belt/i.test(text)) {
-    return { category: "belts", categoryName: "Belts", categoryNameCn: "皮带", brand };
-  }
-  if (/手提包|bag(?!\w)|handbag|钱包|wallet/i.test(text)) {
-    if (/钱包|wallet/i.test(text)) {
+  if (/bag|handbag|wallet|tote|pouch|包|钱包/.test(text)) {
+    if (/wallet|钱包/.test(text)) {
       return { category: "wallets", categoryName: "Wallets", categoryNameCn: "钱包", brand };
     }
     return { category: "handbags", categoryName: "Handbags", categoryNameCn: "手提包", brand };
   }
-  return { category: "belts", categoryName: "Belts", categoryNameCn: "皮带", brand };
+  if (/shoe|sneaker|boot|sandal|loafer|鞋|靴|凉鞋/.test(text)) {
+    if (/boot|靴/.test(text)) return { category: "boots", categoryName: "Boots", categoryNameCn: "靴子", brand };
+    if (/sandal|凉鞋/.test(text)) return { category: "sandals", categoryName: "Sandals", categoryNameCn: "凉鞋", brand };
+    if (/loafer|leather/.test(text)) return { category: "leather-shoes", categoryName: "Leather Shoes", categoryNameCn: "皮鞋", brand };
+    return { category: "sneakers", categoryName: "Sneakers", categoryNameCn: "运动鞋", brand };
+  }
+
+  return { category: "belts", categoryName: "Belts", categoryNameCn: "腰带", brand };
 }
 
 export async function POST() {
-  try {
-    const products: any[] = (await redis.get("products")) || [];
+  if (!redis) {
+    return NextResponse.json({ error: "Redis is not configured" }, { status: 503 });
+  }
 
+  try {
+    const products = parseRedisList<any>(await redis.get("products"));
     if (products.length === 0) {
       return NextResponse.json({ success: true, updated: 0, message: "No products to recategorize" });
     }
@@ -79,13 +73,8 @@ export async function POST() {
     const changes: { id: string; name: string; oldCategory: string; newCategory: string; oldBrand: string; newBrand: string }[] = [];
 
     for (const product of products) {
-      const tag = product.sourceTag || "";
-      const desc = product.descriptionCn || product.description || "";
-      const catInfo = autoCategorizeCn(tag, desc);
-
-      const changed =
-        product.category !== catInfo.category ||
-        product.brand !== catInfo.brand;
+      const catInfo = autoCategorize(product.sourceTag || "", product.descriptionCn || product.description || product.name || "");
+      const changed = product.category !== catInfo.category || product.brand !== catInfo.brand;
 
       if (changed) {
         changes.push({
@@ -97,10 +86,7 @@ export async function POST() {
           newBrand: catInfo.brand,
         });
 
-        product.category = catInfo.category;
-        product.categoryName = catInfo.categoryName;
-        product.categoryNameCn = catInfo.categoryNameCn;
-        product.brand = catInfo.brand;
+        Object.assign(product, catInfo);
         updated++;
       }
     }
@@ -114,7 +100,6 @@ export async function POST() {
       changes: changes.slice(0, 20),
     });
   } catch (error: any) {
-    console.error("Recategorize error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

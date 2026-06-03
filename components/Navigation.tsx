@@ -24,7 +24,6 @@ export default function Navigation() {
   const handleLangChange = (newLang: Language) => {
     setLang(newLang);
     setLangMenuOpen(false);
-    // 触发页面刷新以应用新语言
     window.location.reload();
   };
 
@@ -39,17 +38,15 @@ export default function Navigation() {
         }`}
       >
         <nav className="px-8 md:px-16 h-16 flex items-center justify-between">
-          {/* Left links */}
           <div className="hidden md:flex items-center gap-10">
             <Link href="/" className="nav-link">
               {t(lang, "navHome") || "Home"}
             </Link>
-            <Link href="#testimonials" className="nav-link">
+            <Link href="/#testimonials" className="nav-link">
               {t(lang, "navWorld")}
             </Link>
           </div>
 
-          {/* Center logo */}
           <Link
             href="/"
             className="absolute left-1/2 -translate-x-1/2 font-body text-[13px] tracking-[0.3em] uppercase text-[#1A1A1A] hover:text-[#C9A96E] transition-colors duration-300"
@@ -57,9 +54,7 @@ export default function Navigation() {
             NOREVA
           </Link>
 
-          {/* Right side: Language + Links */}
           <div className="hidden md:flex items-center gap-8 ml-auto">
-            {/* Language Switcher */}
             <div className="relative">
               <button
                 onClick={() => setLangMenuOpen(!langMenuOpen)}
@@ -67,10 +62,10 @@ export default function Navigation() {
               >
                 {currentLangName}
                 <svg width="8" height="5" viewBox="0 0 8 5" fill="none" className={`transition-transform ${langMenuOpen ? "rotate-180" : ""}`}>
-                  <path d="M1 1L4 4L7 1" stroke="currentColor" strokeWidth="1.5"/>
+                  <path d="M1 1L4 4L7 1" stroke="currentColor" strokeWidth="1.5" />
                 </svg>
               </button>
-              
+
               <AnimatePresence>
                 {langMenuOpen && (
                   <>
@@ -89,21 +84,16 @@ export default function Navigation() {
                             lang === language.code ? "text-[#C9A96E]" : "text-[#8A8A8A]"
                           }`}
                         >
-                          {language.name} — {language.native}
+                          {language.name} - {language.native}
                         </button>
                       ))}
                     </motion.div>
-                    {/* Overlay */}
-                    <div 
-                      className="fixed inset-0 z-[-1]" 
-                      onClick={() => setLangMenuOpen(false)}
-                    />
+                    <div className="fixed inset-0 z-[-1]" onClick={() => setLangMenuOpen(false)} />
                   </>
                 )}
               </AnimatePresence>
             </div>
 
-            {/* Right links */}
             <Link href="/products" className="nav-link">
               {t(lang, "navCollections")}
             </Link>
@@ -117,7 +107,6 @@ export default function Navigation() {
             </Link>
           </div>
 
-          {/* Mobile menu button */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             className="md:hidden flex flex-col gap-1.5 p-2"
@@ -128,7 +117,6 @@ export default function Navigation() {
           </button>
         </nav>
 
-        {/* Mobile menu */}
         <AnimatePresence>
           {menuOpen && (
             <motion.div
@@ -142,11 +130,19 @@ export default function Navigation() {
                   {t(lang, "navCollections")}
                 </Link>
                 <Link href="/products?wishlist=1" className="flex items-center gap-2 font-body text-[13px] tracking-[0.15em] text-[#1A1A1A]" onClick={() => setMenuOpen(false)}>
-                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" /></svg>
-                  {lang === "zh" ? "我的收藏" : "Wishlist"} {wishlist.count > 0 && `(${wishlist.count})`}
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                  </svg>
+                  {lang === "zh" ? "鎴戠殑鏀惰棌" : "Wishlist"} {wishlist.count > 0 && `(${wishlist.count})`}
                 </Link>
-                <Link href="#journal" className="block font-body text-[13px] tracking-[0.15em] text-[#1A1A1A]" onClick={() => setMenuOpen(false)}>
+                <Link href="/#journal" className="block font-body text-[13px] tracking-[0.15em] text-[#1A1A1A]" onClick={() => setMenuOpen(false)}>
                   {t(lang, "navJournal")}
+                </Link>
+                <Link href="/about" className="block font-body text-[13px] tracking-[0.15em] text-[#1A1A1A]" onClick={() => setMenuOpen(false)}>
+                  About
+                </Link>
+                <Link href="/contact" className="block font-body text-[13px] tracking-[0.15em] text-[#1A1A1A]" onClick={() => setMenuOpen(false)}>
+                  Contact
                 </Link>
                 <div className="pt-4 border-t border-[#E8E6E2]">
                   <p className="text-[11px] tracking-[0.2em] text-[#8A8A8A] mb-3">LANGUAGE</p>

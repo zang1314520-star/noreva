@@ -253,6 +253,27 @@ function ProductsContent() {
               ))}
             </div>
           )}
+
+          <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4 border-y border-[#E8E6E2] py-5">
+            <div>
+              <p className="label text-[#1A1A1A] mb-1">{isCn ? "私人选品支持" : "Private styling support"}</p>
+              <p className="font-body text-xs leading-[1.7] text-[#8A8A8A]">
+                {isCn ? "通过 WhatsApp 咨询尺码、搭配和库存。" : "Ask about sizing, styling, and availability over WhatsApp."}
+              </p>
+            </div>
+            <div>
+              <p className="label text-[#1A1A1A] mb-1">{isCn ? "全球配送" : "Worldwide delivery"}</p>
+              <p className="font-body text-xs leading-[1.7] text-[#8A8A8A]">
+                {isCn ? "付款前确认配送方式与时效。" : "Shipping method and timing confirmed before payment."}
+              </p>
+            </div>
+            <div>
+              <p className="label text-[#1A1A1A] mb-1">{isCn ? "清晰退换" : "Clear returns"}</p>
+              <p className="font-body text-xs leading-[1.7] text-[#8A8A8A]">
+                {isCn ? "符合条件商品支持 14 天退换说明。" : "Eligible items include a clear 14-day return window."}
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 

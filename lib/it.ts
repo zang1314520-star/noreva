@@ -1,4 +1,5 @@
 export default {
+  navHome: "Home",
   navShop: "Negozio",
   navCollections: "Collezioni",
   navWorld: "Mondo",

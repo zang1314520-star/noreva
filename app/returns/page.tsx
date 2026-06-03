@@ -1,18 +1,17 @@
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
-import CookieConsent from "@/components/CookieConsent";
-import WhatsAppButton from "@/components/WhatsAppButton";
+import { CONTACT_EMAIL, CONTACT_EMAIL_HREF } from "@/lib/site";
 
 export const metadata = {
-  title: "Shipping & Returns — NOREVA",
-  description: "NOREVA shipping and returns policy. Complimentary worldwide shipping, 14-day returns.",
+  title: "Shipping and Returns - NOREVA",
+  description: "NOREVA shipping and returns policy. Complimentary worldwide shipping and 14-day returns.",
 };
 
 export default function ReturnsPage() {
   return (
     <main className="bg-white min-h-screen">
       <Navigation />
-      
+
       <div className="pt-32 pb-20 px-8 md:px-16">
         <div className="max-w-3xl mx-auto">
           <h1 className="font-display text-4xl md:text-5xl font-light text-[#1A1A1A] mb-4">
@@ -21,7 +20,7 @@ export default function ReturnsPage() {
           <p className="font-body text-[#8A8A8A] mb-12">
             Complimentary worldwide shipping on all orders.
           </p>
-          
+
           <div className="space-y-12">
             <section>
               <h2 className="font-display text-xl text-[#1A1A1A] mb-4">Shipping</h2>
@@ -54,11 +53,11 @@ export default function ReturnsPage() {
               <h2 className="font-display text-xl text-[#1A1A1A] mb-4">Returns</h2>
               <div className="space-y-4 font-body text-[#8A8A8A] leading-relaxed">
                 <p>
-                  We offer complimentary returns within 14 days of delivery. Items must be in 
+                  We offer complimentary returns within 14 days of delivery. Items must be in
                   original condition with all tags attached.
                 </p>
                 <p>
-                  To initiate a return, please contact us via WhatsApp or email with your 
+                  To initiate a return, please contact us via WhatsApp or email with your
                   order number and reason for return.
                 </p>
                 <p>
@@ -80,8 +79,8 @@ export default function ReturnsPage() {
               <h2 className="font-display text-xl text-[#1A1A1A] mb-4">Contact</h2>
               <p className="font-body text-[#8A8A8A]">
                 For any questions about shipping or returns, please contact us at{" "}
-                <a href="mailto:contact@noreva.com" className="text-[#C9A96E] hover:underline">
-                  contact@noreva.cc
+                <a href={CONTACT_EMAIL_HREF} className="text-[#C9A96E] hover:underline">
+                  {CONTACT_EMAIL}
                 </a>
               </p>
             </section>
@@ -90,8 +89,6 @@ export default function ReturnsPage() {
       </div>
 
       <Footer />
-      <CookieConsent />
-      <WhatsAppButton phoneNumber="8617338700032" />
     </main>
   );
 }

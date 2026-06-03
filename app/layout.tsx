@@ -5,8 +5,9 @@ import { LanguageProvider } from "@/components/LanguageContext";
 import Providers from "@/components/Providers";
 import FloatingButtons from "@/components/FloatingButtons";
 import CookieConsent from "@/components/CookieConsent";
+import AnalyticsScripts from "@/components/AnalyticsScripts";
+import { SITE_NAME, SITE_URL, WHATSAPP_NUMBER } from "@/lib/site";
 
-// 欧式艺术风格字体
 const playfair = Playfair_Display({
   variable: "--font-playfair",
   subsets: ["latin"],
@@ -36,32 +37,29 @@ const pinyonScript = Pinyon_Script({
   fallback: ["cursive"],
 });
 
-// 完整的 SEO Metadata
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.noreva.cc"),
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: "NOREVA — Premium Fashion House | Quiet Luxury",
+    default: "NOREVA | Curated Luxury Fashion and Personal Shopping",
     template: "%s | NOREVA",
   },
-  description: "NOREVA is a premium fashion house offering carefully chosen clothing, bags, watches, and accessories. Experience quiet luxury crafted in Shanghai and Milan. Free worldwide shipping.",
+  description:
+    "Curated luxury clothing, bags, watches, and accessories with personal shopping support from NOREVA. Worldwide delivery and direct WhatsApp assistance.",
   keywords: [
     "luxury fashion",
-    "premium clothing",
+    "curated fashion",
     "designer bags",
     "watches",
     "accessories",
-    "quiet luxury",
+    "personal shopping",
+    "private styling",
     "Shanghai",
     "Milan",
-    "fashion house",
-    "high-end fashion",
-    "luxury brand",
-    "men's fashion",
-    "women's fashion",
+    "quiet luxury",
   ],
-  authors: [{ name: "NOREVA" }],
-  creator: "NOREVA",
-  publisher: "NOREVA",
+  authors: [{ name: SITE_NAME }],
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
   robots: {
     index: true,
     follow: true,
@@ -77,34 +75,36 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     alternateLocale: ["fr_FR", "it_IT", "de_DE", "es_ES"],
-    url: "https://www.noreva.cc",
-    siteName: "NOREVA",
-    title: "NOREVA — Premium Fashion House | Quiet Luxury",
-    description: "NOREVA is a premium fashion house offering carefully chosen clothing, bags, watches, and accessories. Experience quiet luxury crafted in Shanghai and Milan.",
+    url: SITE_URL,
+    siteName: SITE_NAME,
+    title: "NOREVA | Curated Luxury Fashion and Personal Shopping",
+    description:
+      "Curated luxury clothing, bags, watches, and accessories with personal shopping support from NOREVA.",
     images: [
       {
         url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "NOREVA - Premium Fashion House",
+        alt: "NOREVA",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "NOREVA — Premium Fashion House | Quiet Luxury",
-    description: "Experience quiet luxury crafted in Shanghai and Milan.",
+    title: "NOREVA | Curated Luxury Fashion and Personal Shopping",
+    description:
+      "Curated luxury clothing, bags, watches, and accessories with direct WhatsApp assistance.",
     images: ["/twitter-image"],
     creator: "@noreva",
   },
   alternates: {
-    canonical: "https://www.noreva.cc",
+    canonical: SITE_URL,
     languages: {
-      "en-US": "https://www.noreva.cc",
-      "fr-FR": "https://www.noreva.cc?lang=fr",
-      "it-IT": "https://www.noreva.cc?lang=it",
-      "de-DE": "https://www.noreva.cc?lang=de",
-      "es-ES": "https://www.noreva.cc?lang=es",
+      "en-US": SITE_URL,
+      "fr-FR": `${SITE_URL}?lang=fr`,
+      "it-IT": `${SITE_URL}?lang=it`,
+      "de-DE": `${SITE_URL}?lang=de`,
+      "es-ES": `${SITE_URL}?lang=es`,
     },
   },
   category: "Fashion",
@@ -126,16 +126,18 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
         <link rel="icon" href="/favicon.ico" sizes="any" />
       </head>
-      <body className="min-h-screen bg-white text-[#1A1A1A] antialiased">
+      <body
+        className={`${playfair.variable} ${ebGaramond.variable} ${pinyonScript.variable} min-h-screen bg-white text-[#1A1A1A] antialiased`}
+      >
+        <AnalyticsScripts />
         <LanguageProvider>
           <Providers>
             {children}
             <CookieConsent />
-            <FloatingButtons phoneNumber="8617338700032" />
+            <FloatingButtons phoneNumber={WHATSAPP_NUMBER} />
           </Providers>
         </LanguageProvider>
       </body>
-    
-</html>
+    </html>
   );
 }

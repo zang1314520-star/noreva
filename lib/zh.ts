@@ -1,4 +1,5 @@
 export default {
+  navHome: "首页",
   navShop: "商店",
   navCollections: "系列",
   navWorld: "世界",

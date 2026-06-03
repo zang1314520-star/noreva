@@ -3,8 +3,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useTranslation } from "@/lib/useTranslation";
-
-const WHATSAPP_NUMBER = "8617338700032";
+import { CONTACT_EMAIL, CONTACT_EMAIL_HREF, INSTAGRAM_URL, WHATSAPP_NUMBER } from "@/lib/site";
 
 export default function Footer() {
   const { t } = useTranslation();
@@ -13,7 +12,6 @@ export default function Footer() {
     <footer className="bg-white border-t border-[#E8E6E2] pt-20 pb-12 px-8 md:px-16">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-8 mb-20">
-          {/* Brand */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -25,14 +23,13 @@ export default function Footer() {
               NOREVA
             </span>
             <p className="font-body text-[13px] text-[#8A8A8A] leading-[1.9] mb-4">
-              Shanghai — Milan
+              {t("footerShanghaiMilan")}
             </p>
             <p className="font-body text-[13px] text-[#8A8A8A] leading-[1.9]">
-              Est. 2026
+              {t("footerEst")}
             </p>
           </motion.div>
 
-          {/* Collections */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -56,7 +53,6 @@ export default function Footer() {
             </nav>
           </motion.div>
 
-          {/* Information */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -74,13 +70,12 @@ export default function Footer() {
               <Link href="/size-guide" className="block font-body text-[13px] text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors duration-200">
                 Size Guide
               </Link>
-              <Link href="#journal" className="block font-body text-[13px] text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors duration-200">
-                {t("footerJournal")}
+              <Link href="/about" className="block font-body text-[13px] text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors duration-200">
+                About
               </Link>
             </nav>
           </motion.div>
 
-          {/* Contact */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -98,17 +93,24 @@ export default function Footer() {
                 {t("footerWhatsApp")}
               </a>
               <a
-                href="mailto:contact@noreva.com"
+                href={CONTACT_EMAIL_HREF}
                 className="block font-body text-[13px] text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors duration-200"
               >
-                contact@noreva.com
+                {CONTACT_EMAIL}
               </a>
-              <a
-                href="#"
-                className="block font-body text-[13px] text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors duration-200"
-              >
-                {t("footerInstagram")}
-              </a>
+              <Link href="/contact" className="block font-body text-[13px] text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors duration-200">
+                Contact Page
+              </Link>
+              {INSTAGRAM_URL ? (
+                <a
+                  href={INSTAGRAM_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block font-body text-[13px] text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors duration-200"
+                >
+                  {t("footerInstagram")}
+                </a>
+              ) : null}
             </nav>
           </motion.div>
         </div>

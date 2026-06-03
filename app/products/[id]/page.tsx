@@ -9,8 +9,8 @@ import Footer from "@/components/Footer";
 import { useLanguage } from "@/components/LanguageContext";
 import { useWishlist, useRecentlyViewed } from "@/lib/useWishlist";
 import { useCart } from "@/context/CartContext";
-
-const WHATSAPP_NUMBER = "8617338700032";
+import { SITE_NAME, SITE_URL, WHATSAPP_NUMBER } from "@/lib/site";
+import { trackEvent } from "@/lib/analytics";
 
 const shimmer = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAUH/8QAIhAAAQMDAwUAAAAAAAAAAAAAAQACAwQFEQYSIQcTMUGB/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAH/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBEQIRAxEAPwBc3dLitjuFLSUtPQsdDHRsjYxkbQGta1rQjyoiri7ucTioiq5/2Q==";
 
@@ -39,6 +39,7 @@ interface Product {
   mainImage: string;
   images?: string[];
   detailImages?: string[];
+  specs?: Array<{ id: string; color: string; size: string; image?: string; stock: number }>;
 }
 
 // Cloudinary optimized URL helper
@@ -237,6 +238,39 @@ function DetailSkeleton() {
   );
 }
 
+function ProductJsonLd({ product, images }: { product: Product; images: string[] }) {
+  const productUrl = `${SITE_URL}/products/${product.id}`;
+  const totalStock = product.specs?.reduce((sum, spec) => sum + (Number(spec.stock) || 0), 0) ?? 0;
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    brand: product.brand ? { "@type": "Brand", name: product.brand } : undefined,
+    category: product.categoryName || product.category,
+    description: product.description,
+    image: images.map((image) => (image.startsWith("http") ? image : `${SITE_URL}${image}`)),
+    sku: product.id,
+    url: productUrl,
+    offers: product.price
+      ? {
+          "@type": "Offer",
+          price: product.price,
+          priceCurrency: product.currency || "EUR",
+          availability: totalStock > 0 ? "https://schema.org/InStock" : "https://schema.org/PreOrder",
+          url: productUrl,
+          seller: { "@type": "Organization", name: SITE_NAME },
+        }
+      : undefined,
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, "\\u003c") }}
+    />
+  );
+}
+
 export default function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const [product, setProduct] = useState<Product | null>(null);
   const [allProducts, setAllProducts] = useState<Product[]>([]);
@@ -259,6 +293,13 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
         if (detail.id) {
           setProduct(detail);
           recentlyViewed.add(detail.id);
+          trackEvent("view_product", {
+            product_id: detail.id,
+            brand: detail.brand,
+            category: detail.category,
+            value: detail.price || 0,
+            currency: detail.currency || "EUR",
+          });
         }
         setAllProducts(all || []);
         setLoading(false);
@@ -272,6 +313,15 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   const allImages = [product.mainImage, ...(product.detailImages || product.images || [])].filter(Boolean);
   const displayName = isCn ? (product.nameCn || product.name) : product.name;
   const displayDesc = isCn ? (product.descriptionCn || product.description) : product.description;
+  const totalStock = product.specs?.reduce((sum, spec) => sum + (Number(spec.stock) || 0), 0) ?? 0;
+  const hasStock = totalStock > 0;
+  const formattedPrice = product.price
+    ? new Intl.NumberFormat(isCn ? "zh-CN" : "en-US", {
+        style: "currency",
+        currency: product.currency || "EUR",
+        maximumFractionDigits: 0,
+      }).format(product.price)
+    : null;
   const whatsappMessage = encodeURIComponent(
     isCn
       ? `您好，我对这款 ${product.brand ? product.brand + " " : ""}${product.nameCn || product.name} 感兴趣，请问可以提供更多信息吗？\n商品链接：${typeof window !== "undefined" ? window.location.href : ""}`
@@ -290,6 +340,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
   return (
     <main className="bg-white min-h-screen">
+      <ProductJsonLd product={product} images={allImages} />
       <Navigation />
 
       {/* Lightbox */}
@@ -347,6 +398,14 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 {product.nameCn && product.name && isCn && (
                   <p className="font-body text-sm text-[#A8A4A0] mb-4">{product.name}</p>
                 )}
+                <div className="mt-5 flex flex-wrap items-center gap-4">
+                  {formattedPrice ? (
+                    <p className="font-body text-xl text-[#1A1A1A]">{formattedPrice}</p>
+                  ) : null}
+                  <span className={`font-body text-xs tracking-[0.12em] uppercase ${hasStock ? "text-[#5F7A52]" : "text-[#C9A96E]"}`}>
+                    {hasStock ? (isCn ? "可咨询库存" : "Available to inquire") : (isCn ? "可预订咨询" : "Available by request")}
+                  </span>
+                </div>
               </div>
 
               <div className="mb-10">
@@ -362,7 +421,28 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 </div>
               )}
 
-              <a href={`https://wa.me/${WHATSAPP_NUMBER}?text=${whatsappMessage}`} target="_blank" rel="noopener noreferrer" className="block w-full bg-[#1A1A1A] text-white text-center py-4 font-body text-[11px] tracking-[0.22em] uppercase hover:bg-[#C9A96E] transition-colors duration-300">
+              <div className="mb-8 grid grid-cols-1 sm:grid-cols-3 gap-3 border-y border-[#E8E6E2] py-5">
+                <div>
+                  <p className="label text-[#1A1A1A] mb-1">Personal sourcing</p>
+                  <p className="font-body text-xs leading-[1.7] text-[#8A8A8A]">Styling and availability support by WhatsApp.</p>
+                </div>
+                <div>
+                  <p className="label text-[#1A1A1A] mb-1">Worldwide delivery</p>
+                  <p className="font-body text-xs leading-[1.7] text-[#8A8A8A]">Shipping options confirmed before payment.</p>
+                </div>
+                <div>
+                  <p className="label text-[#1A1A1A] mb-1">14-day returns</p>
+                  <p className="font-body text-xs leading-[1.7] text-[#8A8A8A]">Clear return window on eligible items.</p>
+                </div>
+              </div>
+
+              <a
+                href={`https://wa.me/${WHATSAPP_NUMBER}?text=${whatsappMessage}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => trackEvent("whatsapp_product_inquiry", { product_id: product.id, brand: product.brand, category: product.category })}
+                className="block w-full bg-[#1A1A1A] text-white text-center py-4 font-body text-[11px] tracking-[0.22em] uppercase hover:bg-[#C9A96E] transition-colors duration-300"
+              >
                 {c.inquiry} &rarr;
               </a>
 
@@ -377,6 +457,12 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                     price: product.price || 0,
                     currency: product.currency || "EUR",
                     image: product.mainImage || "",
+                  });
+                  trackEvent("add_to_bag", {
+                    product_id: product.id,
+                    brand: product.brand,
+                    value: product.price || 0,
+                    currency: product.currency || "EUR",
                   });
                 }}
                 className="mt-3 block w-full bg-[#C9A96E] text-white text-center py-4 font-body text-[11px] tracking-[0.22em] uppercase hover:bg-amber-700 transition-colors duration-300"

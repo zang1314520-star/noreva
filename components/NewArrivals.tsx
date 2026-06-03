@@ -6,8 +6,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { useTranslation } from "@/lib/useTranslation";
 
-const DEFAULT_LEFT = "https://images.unsplash.com/photo-1509631179647-0177331693ae?w=1200&q=90";
-const DEFAULT_RIGHT = "https://images.unsplash.com/photo-1617137968427-85924c800a22?w=1200&q=90";
+const DEFAULT_LEFT = "/images/placeholders/hero-pants.svg";
+const DEFAULT_RIGHT = "/images/placeholders/hero-bag.svg";
 
 interface SiteImages {
   newArrivals?: { left: string; right: string };

@@ -6,7 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useTranslation } from "@/lib/useTranslation";
 
-const DEFAULT_HERO_IMAGE = "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1920&q=80";
+const DEFAULT_HERO_IMAGE = "/images/placeholders/hero-clothing.svg";
 
 const itemVariants = {
   hidden: { opacity: 0, y: 18 },
