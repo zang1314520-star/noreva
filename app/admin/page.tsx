@@ -140,7 +140,7 @@ export default function Admin() {
   if (!authed) return (
     <div className="min-h-screen bg-[#F5F4F2] flex items-center justify-center">
       <div className="bg-white p-8 rounded-2xl shadow-sm max-w-sm w-full">
-        <h1 className="text-2xl font-serif text-center mb-6">NOREVA Admin</h1>
+        <h1 className="text-2xl font-serif text-center mb-6">Nayo Smart Admin</h1>
         <input type="password" value={pw} onChange={e => setPw(e.target.value)} onKeyDown={e => e.key === 'Enter' && login()}
           placeholder="密码" className="w-full px-4 py-3 border rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-[#C9A96E]" />
         <button onClick={login} className="w-full bg-[#C9A96E] text-white py-3 rounded-lg font-medium hover:bg-amber-700 transition-colors">登录</button>
@@ -155,7 +155,7 @@ export default function Admin() {
       {/* Header */}
       <header className="bg-white border-b px-6 py-4 flex items-center justify-between sticky top-0 z-10">
         <div className="flex items-center gap-6">
-          <h1 className="text-lg font-serif font-bold">NOREVA Admin</h1>
+          <h1 className="text-lg font-serif font-bold">Nayo Smart Admin</h1>
           <nav className="flex gap-1">
             {[
               { key: 'products' as const, icon: Package, label: '产品' },

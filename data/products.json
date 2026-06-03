@@ -1,122 +1,202 @@
 [
   {
-    "id": "bp_urban_18",
-    "name": "NOREVA Urban 18L Commuter Backpack",
-    "nameCn": "NOREVA Urban 18L 通勤背包",
-    "brand": "NOREVA",
-    "category": "backpacks",
-    "categoryName": "Backpacks",
-    "categoryNameCn": "双肩背包",
-    "price": 129,
-    "currency": "USD",
-    "description": "A slim everyday backpack designed for city commutes, laptop carry, and clean organization. Built with water-resistant fabric, quick-access pockets, and a luggage strap for short business trips.",
-    "descriptionCn": "适合城市通勤、电脑携带和日常收纳的轻薄双肩包。采用防泼水面料，配备快取口袋和行李箱固定带，适合日常与短途商务出行。",
-    "materials": "Water-resistant nylon shell, recycled polyester lining, padded breathable back panel, smooth YKK-style zippers.",
-    "mainImage": "/images/brand/backpack-main-premium.png",
-    "detailImages": ["/images/brand/backpack-main-premium.png", "/images/brand/backpack-detail-organizer.png", "/images/brand/hero-backpack-campaign.png"],
-    "specs": [
-      { "id": "black", "color": "Black", "size": "18L / fits 16 inch laptop", "image": "/images/brand/backpack-main-premium.png", "stock": 20 },
-      { "id": "olive", "color": "Olive", "size": "18L / fits 16 inch laptop", "image": "/images/brand/backpack-main-premium.png", "stock": 12 }
-    ],
-    "highlights": ["18L capacity", "Fits 16 inch laptop", "Water-resistant shell", "Luggage strap", "Quick-access front pocket", "Breathable back panel"],
-    "techSpecs": {
-      "Capacity": "18L",
-      "Laptop": "Up to 16 inch",
-      "Weight": "890g",
-      "Fabric": "Water-resistant nylon",
-      "Use Case": "Daily commute"
-    },
-    "warranty": "24-month warranty and 30-day easy returns.",
-    "featured": true,
-    "createdAt": "2026-06-03"
-  },
-  {
-    "id": "bp_travel_25",
-    "name": "NOREVA Transit 25L Travel Backpack",
-    "nameCn": "NOREVA Transit 25L 旅行背包",
-    "brand": "NOREVA",
-    "category": "backpacks",
-    "categoryName": "Backpacks",
-    "categoryNameCn": "双肩背包",
-    "price": 169,
-    "currency": "USD",
-    "description": "A travel-ready backpack with expanded storage, suitcase passthrough, separate laptop zone, and organized compartments for cables, documents, and weekend essentials.",
-    "descriptionCn": "为短途旅行设计的扩容背包，带行李箱固定带、独立电脑层，以及适合线材、文件和周末出行物品的分区收纳。",
-    "materials": "High-density nylon, water-resistant coating, reinforced handles, breathable padded shoulder straps.",
-    "mainImage": "/images/brand/hero-backpack-campaign.png",
-    "detailImages": ["/images/brand/hero-backpack-campaign.png", "/images/brand/backpack-detail-organizer.png", "/images/brand/backpack-main-premium.png"],
-    "specs": [
-      { "id": "black", "color": "Black", "size": "25L / fits 17 inch laptop", "image": "/images/brand/hero-backpack-campaign.png", "stock": 16 },
-      { "id": "sand", "color": "Sand", "size": "25L / fits 17 inch laptop", "image": "/images/brand/hero-backpack-campaign.png", "stock": 9 }
-    ],
-    "highlights": ["25L capacity", "Fits 17 inch laptop", "Suitcase passthrough", "Document sleeve", "Side bottle pocket", "Travel organizer layout"],
-    "techSpecs": {
-      "Capacity": "25L",
-      "Laptop": "Up to 17 inch",
-      "Weight": "1180g",
-      "Fabric": "Water-resistant nylon",
-      "Use Case": "Travel and business trips"
-    },
-    "warranty": "24-month warranty and 30-day easy returns.",
-    "featured": true,
-    "createdAt": "2026-06-03"
-  },
-  {
-    "id": "bp_business_20",
-    "name": "NOREVA Executive 20L Business Backpack",
-    "nameCn": "NOREVA Executive 20L 商务背包",
-    "brand": "NOREVA",
+    "id": "urban_u7_olive",
+    "name": "Urban U7 Backpack-Olive Green",
+    "nameCn": "Urban U7 Olive Green 通勤背包",
+    "brand": "Nayo Smart",
     "category": "backpacks",
     "categoryName": "Backpacks",
     "categoryNameCn": "双肩背包",
     "price": 149,
     "currency": "USD",
-    "description": "A structured business backpack with a minimal profile, protected laptop compartment, hidden rear pocket, and office-to-airport organization.",
-    "descriptionCn": "外形简洁挺括的商务背包，带保护性电脑层、隐藏后袋，以及适合办公室到机场场景的分区收纳。",
-    "materials": "Structured nylon twill, vegan leather trim, reinforced base, soft-touch interior lining.",
-    "mainImage": "/images/brand/backpack-detail-organizer.png",
-    "detailImages": ["/images/brand/backpack-detail-organizer.png", "/images/brand/backpack-main-premium.png", "/images/brand/hero-backpack-campaign.png"],
-    "specs": [
-      { "id": "black", "color": "Black", "size": "20L / fits 16 inch laptop", "image": "/images/brand/backpack-detail-organizer.png", "stock": 18 }
+    "description": "The Urban U7 Backpack in Olive Green is designed for modern commuters, travelers, and everyday explorers who value clean aesthetics with practical performance. Lightweight yet durable, the U7 combines streamlined organization with quick-access functionality for life on the move.",
+    "descriptionCn": "Urban U7 Olive Green 为现代通勤、旅行和日常出行设计，兼顾简洁外观与实用性能，轻量耐用，适合高频移动生活。",
+    "materials": "Durable 200D nylon exterior, water-resistant and stain-resistant finish, textured 230T polyester lining, Duraflex hardware and SBS zippers.",
+    "mainImage": "https://cdn.shopify.com/s/files/1/0095/3519/3135/files/nayo-smart-urban-u7-backpack-olive-green-front-view.jpg?v=1776826645",
+    "detailImages": [
+      "https://cdn.shopify.com/s/files/1/0095/3519/3135/files/nayo-smart-urban-u7-backpack-olive-green-model-carry.gif?v=1776826706",
+      "https://cdn.shopify.com/s/files/1/0095/3519/3135/files/nayo-smart-urban-u7-backpack-olive-green-inside-view-open.jpg?v=1776827142",
+      "https://cdn.shopify.com/s/files/1/0095/3519/3135/files/nayo-smart-urban-u7-backpack-olive-green-large-capacity-storage-1.jpg?v=1776827046",
+      "https://cdn.shopify.com/s/files/1/0095/3519/3135/files/nayo-smart-urban-u7-backpack-olive-green-breathable-shoulder-straps.jpg?v=1776827600"
     ],
-    "highlights": ["20L capacity", "Fits 16 inch laptop", "Hidden rear pocket", "Structured profile", "Document organizer", "Water-resistant finish"],
+    "specs": [
+      {
+        "id": "default",
+        "color": "Olive Green",
+        "size": "18L / fits up to 16 inch laptop",
+        "image": "https://cdn.shopify.com/s/files/1/0095/3519/3135/files/nayo-smart-urban-u7-backpack-olive-green-front-view.jpg?v=1776826645",
+        "stock": 20
+      }
+    ],
+    "highlights": [
+      "18L capacity",
+      "Fits up to 16 inch laptop",
+      "Water-resistant exterior",
+      "Wide-opening top access",
+      "Luggage strap",
+      "Duraflex buckles"
+    ],
     "techSpecs": {
-      "Capacity": "20L",
+      "Capacity": "18L",
       "Laptop": "Up to 16 inch",
-      "Weight": "1020g",
-      "Fabric": "Structured nylon twill",
-      "Use Case": "Work and meetings"
+      "Weight": "962g",
+      "Dimensions": "37cm x 32cm x 16cm",
+      "Fabric": "200D nylon",
+      "Use Case": "Urban commute and short travel"
     },
     "warranty": "24-month warranty and 30-day easy returns.",
     "featured": true,
     "createdAt": "2026-06-03"
   },
   {
-    "id": "bp_rolltop_22",
-    "name": "NOREVA Rolltop 22L Weather Backpack",
-    "nameCn": "NOREVA Rolltop 22L 防泼水卷盖背包",
-    "brand": "NOREVA",
+    "id": "herman_h6_black",
+    "name": "Herman H6 Half-Roll Top Backpack",
+    "nameCn": "Herman H6 半卷盖背包",
+    "brand": "Nayo Smart",
     "category": "backpacks",
     "categoryName": "Backpacks",
     "categoryNameCn": "双肩背包",
-    "price": 159,
+    "price": 169,
     "currency": "USD",
-    "description": "A roll-top backpack for unpredictable days, built with a weather-resistant shell, adjustable capacity, and secure buckle closure.",
-    "descriptionCn": "适合天气多变场景的卷盖背包，采用防泼水外壳，可调容量，并配备安全扣具闭合。",
-    "materials": "Weather-resistant nylon, matte hardware, padded air-channel back panel.",
-    "mainImage": "/images/brand/backpack-main-premium.png",
-    "detailImages": ["/images/brand/backpack-main-premium.png", "/images/brand/backpack-detail-organizer.png", "/images/brand/hero-backpack-campaign.png"],
-    "specs": [
-      { "id": "black", "color": "Black", "size": "22L / fits 16 inch laptop", "image": "/images/brand/backpack-main-premium.png", "stock": 14 },
-      { "id": "green", "color": "Forest Green", "size": "22L / fits 16 inch laptop", "image": "/images/brand/backpack-main-premium.png", "stock": 8 }
+    "description": "The Herman H6 Half-Roll Top Backpack combines clean urban aesthetics with practical everyday functionality. Designed for commuting, travel, and daily organization, its structured silhouette and weather-resistant construction make it a reliable carry companion wherever the day takes you.",
+    "descriptionCn": "Herman H6 半卷盖背包结合简洁都市外观与高频日用功能，适合通勤、旅行与日常收纳，结构利落，防泼水材质更适合全天移动场景。",
+    "materials": "Water-resistant NA-TEX fabric made from nylon and spandex, vegan leather detailing, 210T PU-embossed polyester lining, Duraflex hardware and SBS zippers.",
+    "mainImage": "https://cdn.shopify.com/s/files/1/0095/3519/3135/files/1_b055ce8a-77e2-4643-91d2-4cac6c472417.jpg?v=1761274758",
+    "detailImages": [
+      "https://cdn.shopify.com/s/files/1/0095/3519/3135/files/H6.gif?v=1762485616",
+      "https://cdn.shopify.com/s/files/1/0095/3519/3135/files/7_9af4575c-33b8-44be-94df-fa620f621a64.jpg?v=1762505351",
+      "https://cdn.shopify.com/s/files/1/0095/3519/3135/files/5_bb273773-3cf5-433d-82b6-3b95da2245c8.jpg?v=1762505351",
+      "https://cdn.shopify.com/s/files/1/0095/3519/3135/files/11_3115488a-6fd7-4d96-bafd-c5930bb70b41.jpg?v=1762505351"
     ],
-    "highlights": ["22L flexible capacity", "Fits 16 inch laptop", "Roll-top closure", "Weather-resistant shell", "Side bottle pocket", "Secure rear pocket"],
+    "specs": [
+      {
+        "id": "default",
+        "color": "Black",
+        "size": "16L / fits up to 16 inch laptop",
+        "image": "https://cdn.shopify.com/s/files/1/0095/3519/3135/files/1_b055ce8a-77e2-4643-91d2-4cac6c472417.jpg?v=1761274758",
+        "stock": 18
+      }
+    ],
+    "highlights": [
+      "16L capacity",
+      "Fits up to 16 inch laptop",
+      "NA-TEX water-resistant fabric",
+      "Half-roll top access",
+      "Built-in luggage strap",
+      "Duraflex aluminum alloy buckle"
+    ],
     "techSpecs": {
-      "Capacity": "22L",
+      "Capacity": "16L",
       "Laptop": "Up to 16 inch",
-      "Weight": "980g",
-      "Fabric": "Weather-resistant nylon",
-      "Use Case": "Commute and light travel"
+      "Weight": "1200g",
+      "Dimensions": "42cm x 30cm x 11cm",
+      "Fabric": "NA-TEX nylon blend",
+      "Use Case": "Commuting and modern travel"
+    },
+    "warranty": "24-month warranty and 30-day easy returns.",
+    "featured": true,
+    "createdAt": "2026-06-03"
+  },
+  {
+    "id": "herman_h8_black",
+    "name": "Herman H8 Multifunctional Backpack",
+    "nameCn": "Herman H8 多功能背包",
+    "brand": "Nayo Smart",
+    "category": "backpacks",
+    "categoryName": "Backpacks",
+    "categoryNameCn": "双肩背包",
+    "price": 219,
+    "currency": "USD",
+    "description": "The Herman H8 Multifunctional Backpack is designed for professionals, travelers, and everyday commuters who need adaptable storage without compromising style. Featuring a versatile 3-in-1 carry system, the H8 transitions effortlessly between backpack, handbag, and crossbody modes.",
+    "descriptionCn": "Herman H8 多功能背包为商务、旅行和日常通勤设计，主打 3 合 1 携带方式，可在双肩、手提和斜挎之间切换，同时保持高效分区收纳。",
+    "materials": "1680D ballistic nylon exterior, vegan leather and hypalon detailing, 210T polyester lining with Si BAC-PURE antimicrobial technology, YKK waterproof zippers.",
+    "mainImage": "https://cdn.shopify.com/s/files/1/0095/3519/3135/files/13_50e7afff-6ac3-48b7-b59b-660318fbc9af.jpg?v=1763091547",
+    "detailImages": [
+      "https://cdn.shopify.com/s/files/1/0095/3519/3135/files/H8.gif?v=1763091547",
+      "https://cdn.shopify.com/s/files/1/0095/3519/3135/files/3_832df11f-8875-490d-8b41-caac3e877600.jpg?v=1763106254",
+      "https://cdn.shopify.com/s/files/1/0095/3519/3135/files/4_c7f395e6-dd3c-4224-9049-d3f33d22f95f.jpg?v=1763106254",
+      "https://cdn.shopify.com/s/files/1/0095/3519/3135/files/H8-4.jpg?v=1763106254"
+    ],
+    "specs": [
+      {
+        "id": "default",
+        "color": "Black",
+        "size": "18L / fits up to 16 inch laptop",
+        "image": "https://cdn.shopify.com/s/files/1/0095/3519/3135/files/13_50e7afff-6ac3-48b7-b59b-660318fbc9af.jpg?v=1763091547",
+        "stock": 12
+      }
+    ],
+    "highlights": [
+      "3-in-1 carry design",
+      "18L capacity",
+      "20 functional pockets",
+      "RFID blocking pocket",
+      "YKK waterproof zippers",
+      "Airline-approved size"
+    ],
+    "techSpecs": {
+      "Capacity": "18L",
+      "Laptop": "Up to 16 inch",
+      "Weight": "1280g",
+      "Dimensions": "43cm x 30cm x 14cm",
+      "Fabric": "1680D ballistic nylon",
+      "Use Case": "Work, travel and daily organization"
+    },
+    "warranty": "24-month warranty and 30-day easy returns.",
+    "featured": true,
+    "createdAt": "2026-06-03"
+  },
+  {
+    "id": "herman_pro_green",
+    "name": "Herman Pro Half-Roll Top Backpack-Green",
+    "nameCn": "Herman Pro Green 半卷盖背包",
+    "brand": "Nayo Smart",
+    "category": "backpacks",
+    "categoryName": "Backpacks",
+    "categoryNameCn": "双肩背包",
+    "price": 169,
+    "currency": "USD",
+    "description": "The Herman Pro is a waterproof backpack that fluidly adapts to the dynamic demands of active lifestyles. It transitions from office to gym to outdoors with an expandable main compartment, hidden anti-theft pockets, and dedicated laptop storage.",
+    "descriptionCn": "Herman Pro 是一款可适应多场景的防水背包，从办公、健身到户外都能顺畅切换，拥有可扩展主仓、隐藏防盗口袋和独立电脑区。",
+    "materials": "Water-repellent nylon exterior, magnetic quick-release closure, padded adjustable straps, cushioned shock-absorbing back panel.",
+    "mainImage": "https://cdn.shopify.com/s/files/1/0095/3519/3135/files/13_28bdaf8e-8e29-42aa-8f44-5c13b25953c0.jpg?v=1737600556",
+    "detailImages": [
+      "https://cdn.shopify.com/s/files/1/0095/3519/3135/files/HMG.gif?v=1762918969",
+      "https://cdn.shopify.com/s/files/1/0095/3519/3135/files/11_b4041bc5-dcf6-48a9-8c06-c5a95101d44d.jpg?v=1762928689",
+      "https://cdn.shopify.com/s/files/1/0095/3519/3135/files/5_7b2a6b79-f388-4501-9e41-39501dcaea0c.jpg?v=1762928689",
+      "https://cdn.shopify.com/s/files/1/0095/3519/3135/files/6_f38448ef-4e8b-47b7-9717-91ed7533f883.jpg?v=1762928689"
+    ],
+    "specs": [
+      {
+        "id": "20l",
+        "color": "Green",
+        "size": "20L-25L / 16.3 inch laptop",
+        "image": "https://cdn.shopify.com/s/files/1/0095/3519/3135/files/13_28bdaf8e-8e29-42aa-8f44-5c13b25953c0.jpg?v=1737600556",
+        "stock": 14
+      },
+      {
+        "id": "25l",
+        "color": "Green",
+        "size": "25L-30L / 18 inch laptop",
+        "image": "https://cdn.shopify.com/s/files/1/0095/3519/3135/files/13_28bdaf8e-8e29-42aa-8f44-5c13b25953c0.jpg?v=1737600556",
+        "stock": 8
+      }
+    ],
+    "highlights": [
+      "Expandable 20L-30L carry",
+      "Waterproof fabric",
+      "Magnetic quick-release button",
+      "Hidden anti-theft pockets",
+      "Trolley strap",
+      "Shock-absorbing back panel"
+    ],
+    "techSpecs": {
+      "Capacity": "20L-30L",
+      "Laptop": "16.3 inch or 18 inch by size",
+      "Weight": "1190g to 1350g",
+      "Closure": "Magnetic quick release",
+      "Fabric": "Water-repellent nylon",
+      "Use Case": "Travel, commute and active daily carry"
     },
     "warranty": "24-month warranty and 30-day easy returns.",
     "featured": true,

@@ -3,12 +3,12 @@ import Footer from "@/components/Footer";
 import { CONTACT_EMAIL, CONTACT_EMAIL_HREF, WHATSAPP_NUMBER } from "@/lib/site";
 
 const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-  "Hello, I would like help from the NOREVA team."
+  "Hello, I would like help from the Nayo Smart team."
 )}`;
 
 export const metadata = {
-  title: "Contact - NOREVA",
-  description: "Contact NOREVA for private styling, sourcing help, shipping questions, or order support.",
+  title: "Contact - Nayo Smart",
+  description: "Contact Nayo Smart for backpack recommendations, shipping questions, order support, or returns help.",
 };
 
 export default function ContactPage() {
@@ -20,11 +20,10 @@ export default function ContactPage() {
         <div className="max-w-4xl mx-auto">
           <p className="label text-[#8A8A8A] mb-4">Contact</p>
           <h1 className="font-display text-4xl md:text-5xl font-light text-[#1A1A1A] mb-6">
-            Start with a message. We will take it from there.
+            Start with a message. We will help from there.
           </h1>
           <p className="max-w-2xl font-body text-[15px] leading-[1.9] text-[#8A8A8A] mb-12">
-            Reach out for private styling, gifting help, product questions,
-            sizing guidance, shipping support, or a specific sourcing request.
+            Reach out for model recommendations, laptop-fit questions, shipping support, returns help, or product details.
           </p>
 
           <div className="grid gap-8 md:grid-cols-2">
@@ -33,8 +32,7 @@ export default function ContactPage() {
                 WhatsApp
               </h2>
               <p className="font-body text-[14px] leading-[1.8] text-[#8A8A8A] mb-6">
-                Best for quick questions, product recommendations, and direct
-                shopping support.
+                Best for quick questions, product recommendations, and direct shopping support.
               </p>
               <a
                 href={WHATSAPP_URL}
@@ -51,7 +49,7 @@ export default function ContactPage() {
                 Email
               </h2>
               <p className="font-body text-[14px] leading-[1.8] text-[#8A8A8A] mb-4">
-                Best for order support, returns, and more detailed sourcing requests.
+                Best for order support, returns, and detailed product or wholesale requests.
               </p>
               <a
                 href={CONTACT_EMAIL_HREF}

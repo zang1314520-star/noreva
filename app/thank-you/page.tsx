@@ -5,8 +5,8 @@ import Footer from "@/components/Footer";
 import { CONTACT_EMAIL, CONTACT_EMAIL_HREF, WHATSAPP_NUMBER } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Thank You - NOREVA",
-  description: "Your NOREVA backpack order has been received.",
+  title: "Thank You - Nayo Smart",
+  description: "Your Nayo Smart backpack order has been received.",
   robots: {
     index: false,
     follow: false,
@@ -21,7 +21,7 @@ export default function ThankYouPage() {
         <div className="mx-auto max-w-3xl rounded-[28px] bg-[#F7F5F1] p-8 text-center md:p-14">
           <p className="label mb-4 text-[#8A8A8A]">Order received</p>
           <h1 className="font-display text-4xl font-light leading-tight text-[#1A1A1A] md:text-5xl">
-            Thank you for choosing NOREVA.
+            Thank you for choosing Nayo Smart.
           </h1>
           <p className="mx-auto mt-6 max-w-xl font-body text-[15px] leading-[1.9] text-[#8A8A8A]">
             We are preparing your backpack order. You will receive payment and shipping updates by email. If you need to adjust delivery details, contact us as soon as possible.

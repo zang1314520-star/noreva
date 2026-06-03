@@ -5,13 +5,13 @@ import path from "path";
 const SETTINGS_FILE = path.join(process.cwd(), "data", "settings.json");
 
 const defaults = {
-  siteName: "NOREVA",
-  siteNameCn: "NOREVA",
+  siteName: "Nayo Smart",
+  siteNameCn: "Nayo Smart",
   email: "hello@noreva.cc",
   phone: "8617338700032",
   trackingCode: "",
-  heroTitle: "Quiet Luxury, Curated",
-  heroTitleCn: "静奢精选",
+  heroTitle: "Organized Carry, Officially Refined",
+  heroTitleCn: "有序收纳，官方升级",
 };
 
 export async function GET() {

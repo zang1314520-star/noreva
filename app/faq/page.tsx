@@ -3,26 +3,26 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "FAQ - NOREVA Backpacks",
-  description: "Frequently asked questions about NOREVA smart backpacks, laptop fit, shipping, returns, warranty, and materials.",
+  title: "FAQ - Nayo Smart Backpacks",
+  description: "Frequently asked questions about Nayo Smart backpacks, laptop fit, shipping, returns, warranty, and materials.",
 };
 
 const FAQS = [
   {
-    question: "Which backpack should I choose?",
-    answer: "Choose Urban 18L for daily commuting, Executive 20L for work and meetings, Transit 25L for travel, and Rolltop 22L if you want flexible capacity and stronger weather coverage.",
+    question: "Which Nayo Smart backpack should I choose?",
+    answer: "Choose Urban U7 for lightweight commuting, Herman H6 for a structured half-roll top profile, Herman H8 for deep organization and 3-in-1 carry, and Herman Pro when you want expandable capacity and more rugged daily flexibility.",
   },
   {
     question: "Will my laptop fit?",
-    answer: "Each product page lists laptop compatibility. Most NOREVA backpacks fit 16 inch laptops, while the Transit 25L is designed for up to 17 inch devices.",
+    answer: "Each product page lists device compatibility. Most models fit up to 16 inch laptops, while some Herman Pro sizes support larger devices.",
   },
   {
     question: "Are the backpacks waterproof?",
-    answer: "The backpacks use water-resistant fabrics for rain and daily splashes. They are not designed for full submersion.",
+    answer: "Nayo Smart backpacks use water-resistant or waterproof materials depending on model. They are built for rain and daily weather exposure, but not for full submersion.",
   },
   {
     question: "Do you ship internationally?",
-    answer: "Yes. Shipping options and timing are confirmed before payment. For urgent orders, contact us on WhatsApp first.",
+    answer: "Yes. We ship internationally and confirm timing by region before or during checkout. Many regions receive delivery within 5 to 15 business days.",
   },
   {
     question: "What is the return and warranty policy?",
@@ -55,7 +55,7 @@ export default function FAQPage() {
         <div className="max-w-3xl mx-auto">
           <p className="label text-[#8A8A8A] mb-4">Support</p>
           <h1 className="font-display text-4xl md:text-5xl font-light text-[#1A1A1A] mb-10">
-            Backpack FAQ
+            Nayo Smart FAQ
           </h1>
           <div className="divide-y divide-[#E8E6E2] border-y border-[#E8E6E2]">
             {FAQS.map((item) => (

@@ -20,7 +20,7 @@ export default function Footer() {
             className="md:col-span-1"
           >
             <span className="label text-[#1A1A1A] block mb-5 text-[13px] tracking-[0.25em]">
-              NOREVA
+              Nayo Smart
             </span>
             <p className="font-body text-[13px] text-[#8A8A8A] leading-[1.9] mb-4">
               {t("footerShanghaiMilan")}

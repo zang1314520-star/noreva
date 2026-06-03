@@ -6,7 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useTranslation } from "@/lib/useTranslation";
 
-const DEFAULT_HERO_IMAGE = "/images/brand/hero-backpack-campaign.png";
+const DEFAULT_HERO_IMAGE = "https://cdn.shopify.com/s/files/1/0095/3519/3135/files/H8-7.jpg?v=1763092998";
 
 const itemVariants = {
   hidden: { opacity: 0, y: 18 },
@@ -90,7 +90,7 @@ export default function Hero() {
 
           <Image
             src={heroImage}
-            alt="NOREVA smart backpack campaign"
+            alt="Nayo Smart backpack campaign"
             fill
             priority
             className="object-cover"
@@ -190,7 +190,7 @@ export default function Hero() {
             animate="visible"
             className="flex flex-col sm:flex-row gap-5 sm:items-center"
           >
-            <Link href="/products" className="mt-8 inline-flex bg-[#1A1A1A] px-7 py-4 font-body text-[11px] uppercase tracking-[0.2em] text-white transition-colors hover:bg-[#C9A96E] hover:text-[#1A1A1A]">
+            <Link href="/products" className="mt-8 inline-flex bg-[#232933] px-7 py-4 font-body text-[11px] uppercase tracking-[0.2em] text-white transition-colors hover:bg-[#d8b36a] hover:text-[#1A1A1A]">
               Shop Backpacks
             </Link>
             <Link href="#objects" className="cta-link mt-0 sm:mt-8 inline-flex items-center gap-3">

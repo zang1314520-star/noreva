@@ -1,4 +1,4 @@
-export const SITE_NAME = "NOREVA";
+export const SITE_NAME = "Nayo Smart";
 export const SITE_URL = "https://noreva.cc";
 export const WHATSAPP_NUMBER = "8617338700032";
 export const CONTACT_EMAIL = "hello@noreva.cc";

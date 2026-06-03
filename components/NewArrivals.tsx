@@ -6,8 +6,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { useTranslation } from "@/lib/useTranslation";
 
-const DEFAULT_LEFT = "/images/brand/backpack-main-premium.png";
-const DEFAULT_RIGHT = "/images/brand/backpack-detail-organizer.png";
+const DEFAULT_LEFT = "https://cdn.shopify.com/s/files/1/0095/3519/3135/files/13_50e7afff-6ac3-48b7-b59b-660318fbc9af.jpg?v=1763091547";
+const DEFAULT_RIGHT = "https://cdn.shopify.com/s/files/1/0095/3519/3135/files/nayo-smart-urban-u7-backpack-olive-green-inside-view-open.jpg?v=1776827142";
 
 interface SiteImages {
   newArrivals?: { left: string; right: string };
@@ -43,12 +43,12 @@ export default function NewArrivals() {
           transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
           className="text-center mb-16"
         >
-          <span className="label block mb-4">New Backpack Drop</span>
+          <span className="label block mb-4">Official Picks</span>
           <h2 className="font-display text-[clamp(2rem,4vw,3.5rem)] font-light text-[#1A1A1A] mb-4">
-            Engineered for Work, Travel and Daily Carry
+            Built for daily carry, commuting and modern travel
           </h2>
           <p className="font-body text-[14px] text-[#8A8A8A] tracking-wide">
-            Premium organization, water-resistant materials, laptop protection.
+            Official Nayo Smart silhouettes with laptop protection, smart organization and weather-ready materials.
           </p>
           <div className="flex justify-center mt-8">
             <span className="gold-rule" />
@@ -65,7 +65,7 @@ export default function NewArrivals() {
           >
             <Image
               src={images.left}
-              alt="Premium backpack front view"
+              alt="Nayo Smart featured backpack"
               width={800}
               height={1000}
               className="w-full aspect-[4/5] object-cover"
@@ -82,7 +82,7 @@ export default function NewArrivals() {
           >
             <Image
               src={images.right}
-              alt="Premium backpack organization details"
+              alt="Nayo Smart backpack organization details"
               width={800}
               height={1000}
               className="w-full aspect-[4/5] object-cover"

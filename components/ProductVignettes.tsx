@@ -7,25 +7,25 @@ import Image from "next/image";
 
 const PACKS = [
   {
-    title: "Commuter Backpacks",
-    subtitle: "Slim, organized, ready for daily movement.",
-    href: "/products?use=commute",
-    image: "/images/brand/backpack-main-premium.png",
-    specs: ["16 inch laptop", "18L", "Water-resistant"],
+    title: "Urban U7",
+    subtitle: "Lightweight commuter backpack with wide-opening access and clean daily organization.",
+    href: "/products/urban_u7_olive",
+    image: "https://cdn.shopify.com/s/files/1/0095/3519/3135/files/nayo-smart-urban-u7-backpack-olive-green-front-view.jpg?v=1776826645",
+    specs: ["18L", "16 inch laptop", "Water-resistant"],
   },
   {
-    title: "Travel Backpacks",
-    subtitle: "More capacity for airport days and weekend escapes.",
-    href: "/products?use=travel",
-    image: "/images/brand/hero-backpack-campaign.png",
-    specs: ["17 inch laptop", "25L", "Luggage strap"],
+    title: "Herman H6",
+    subtitle: "Structured half-roll top design for commute, city travel and smarter daily movement.",
+    href: "/products/herman_h6_black",
+    image: "https://cdn.shopify.com/s/files/1/0095/3519/3135/files/1_b055ce8a-77e2-4643-91d2-4cac6c472417.jpg?v=1761274758",
+    specs: ["16L", "16 inch laptop", "NA-TEX fabric"],
   },
   {
-    title: "Business Backpacks",
-    subtitle: "Structured carry for meetings, documents and devices.",
-    href: "/products?use=business",
-    image: "/images/brand/backpack-detail-organizer.png",
-    specs: ["16 inch laptop", "20L", "Hidden pocket"],
+    title: "Herman H8",
+    subtitle: "3-in-1 business and travel backpack with deep organization and premium hardware.",
+    href: "/products/herman_h8_black",
+    image: "https://cdn.shopify.com/s/files/1/0095/3519/3135/files/13_50e7afff-6ac3-48b7-b59b-660318fbc9af.jpg?v=1763091547",
+    specs: ["18L", "3-in-1 carry", "RFID pocket"],
   },
 ];
 
@@ -42,9 +42,9 @@ export default function ProductVignettes() {
           transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
           className="text-center mb-14"
         >
-          <span className="label text-[#8A8A8A] block mb-3">Pack Finder</span>
+          <span className="label text-[#8A8A8A] block mb-3">Core lineup</span>
           <h2 className="font-display text-[clamp(2rem,3.5vw,2.8rem)] font-light text-[#1A1A1A]">
-            Choose by how you move
+            Meet the official Nayo Smart range
           </h2>
         </motion.div>
 

@@ -5,19 +5,19 @@ const redis = getRedis();
 
 const DEFAULT_CONFIG = {
   site: {
-    brand: "NOREVA",
-    tagline: "Smart Backpacks",
-    description: "Smart backpacks for work, travel, commuting, and organized daily carry.",
+    brand: "Nayo Smart",
+    tagline: "Official smart backpacks for work, travel and daily carry",
+    description: "Official Nayo Smart backpacks for work, travel, commuting, and organized daily carry.",
   },
   whatsapp: { number: "8617338700032" },
   hero: {
-    headline: "Smarter Carry, Built for Movement",
+    headline: "Official Nayo Smart Carry",
     subtitle: "Backpacks organized by capacity, laptop fit, materials, and real travel needs.",
     cta: "Shop Backpacks",
   },
   manifesto: {
     headline: "A clearer way to choose the right backpack.",
-    text: "NOREVA focuses on laptop compatibility, capacity, comfort, materials, and travel organization.",
+    text: "Nayo Smart focuses on laptop compatibility, capacity, comfort, materials, and travel organization.",
   },
   personalShopper: {
     headline: "Your Pack Finder",

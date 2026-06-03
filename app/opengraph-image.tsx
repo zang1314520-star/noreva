@@ -18,51 +18,51 @@ export default function OpenGraphImage() {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          background: "linear-gradient(135deg, #ffffff 0%, #f7f5f1 56%, #e8e1d2 100%)",
-          fontFamily: "Georgia, serif",
+          background: "linear-gradient(135deg, #ffffff 0%, #f3f0ea 55%, #d9d3c8 100%)",
+          fontFamily: "Inter, sans-serif",
           padding: 72,
         }}
       >
         <div
           style={{
-            fontSize: 116,
-            fontWeight: 300,
+            fontSize: 94,
+            fontWeight: 700,
             color: "#1A1A1A",
-            letterSpacing: "0.3em",
-            marginBottom: 34,
+            marginBottom: 28,
+            letterSpacing: "-0.04em",
           }}
         >
-          NOREVA
+          Nayo Smart
         </div>
         <div
           style={{
             fontSize: 34,
             color: "#1A1A1A",
-            letterSpacing: "0.08em",
+            letterSpacing: "0.06em",
             textTransform: "uppercase",
             textAlign: "center",
           }}
         >
-          Smart Backpacks for Work and Travel
+          Official Smart Backpacks for Work and Travel
         </div>
         <div
           style={{
-            width: 76,
+            width: 82,
             height: 2,
-            backgroundColor: "#C9A96E",
-            marginTop: 38,
+            backgroundColor: "#232933",
+            marginTop: 34,
           }}
         />
         <div
           style={{
             fontSize: 20,
-            color: "#6F6A64",
-            marginTop: 34,
+            color: "#5C5A57",
+            marginTop: 32,
             letterSpacing: "0.12em",
             textTransform: "uppercase",
           }}
         >
-          Free Global Shipping · 30-Day Returns · 24-Month Warranty
+          Urban U7 · Herman H6 · Herman H8 · Herman Pro
         </div>
       </div>
     ),

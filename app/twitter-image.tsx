@@ -19,36 +19,35 @@ export default function TwitterImage() {
           alignItems: "center",
           justifyContent: "center",
           backgroundColor: "#ffffff",
-          fontFamily: "Georgia, serif",
+          fontFamily: "Inter, sans-serif",
         }}
       >
         <div
           style={{
-            fontSize: 120,
-            fontWeight: 300,
+            fontSize: 92,
+            fontWeight: 700,
             color: "#1A1A1A",
-            letterSpacing: "0.3em",
-            marginBottom: 40,
+            marginBottom: 26,
           }}
         >
-          NOREVA
+          Nayo Smart
         </div>
         <div
           style={{
-            fontSize: 24,
-            color: "#8A8A8A",
-            letterSpacing: "0.2em",
+            fontSize: 28,
+            color: "#5C5A57",
+            letterSpacing: "0.14em",
             textTransform: "uppercase",
           }}
         >
-          Quiet Luxury
+          Official smart backpacks
         </div>
         <div
           style={{
-            width: 60,
-            height: 1,
-            backgroundColor: "#C9A96E",
-            marginTop: 40,
+            width: 64,
+            height: 2,
+            backgroundColor: "#232933",
+            marginTop: 28,
           }}
         />
       </div>

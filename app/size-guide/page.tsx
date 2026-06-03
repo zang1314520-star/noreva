@@ -4,15 +4,15 @@ import Footer from "@/components/Footer";
 import { CONTACT_EMAIL, CONTACT_EMAIL_HREF } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Backpack Size Guide - NOREVA",
-  description: "Compare NOREVA backpack capacity, laptop fit, dimensions, weight, and best use cases.",
+  title: "Backpack Size Guide - Nayo Smart",
+  description: "Compare Nayo Smart backpack capacity, laptop fit, dimensions, weight, and best use cases.",
 };
 
 const rows = [
-  ["Urban 18L", "18L", "Up to 16 inch", "Daily commute", "Light layer, charger, notebook, bottle"],
-  ["Executive 20L", "20L", "Up to 16 inch", "Office and meetings", "Documents, tech pouch, lunch box, headphones"],
-  ["Rolltop 22L", "22L flexible", "Up to 16 inch", "Weather-ready commute", "Expandable top, rain shell, side pocket"],
-  ["Transit 25L", "25L", "Up to 17 inch", "Short trips", "1-2 day clothing, travel kit, documents"],
+  ["Urban U7", "18L", "Up to 16 inch", "Daily commute", "Lightweight everyday backpack with wide opening"],
+  ["Herman H6", "16L", "Up to 16 inch", "Structured city carry", "Half-roll top profile with travel-ready details"],
+  ["Herman H8", "18L", "Up to 16 inch", "Work and travel", "3-in-1 carry and deep organization"],
+  ["Herman Pro", "20L-30L", "16.3 to 18 inch", "Expandable travel carry", "Waterproof shell with larger load range"],
 ];
 
 export default function SizeGuidePage() {
@@ -24,10 +24,10 @@ export default function SizeGuidePage() {
         <div className="max-w-5xl mx-auto">
           <p className="label text-[#8A8A8A] mb-4">Pack fit</p>
           <h1 className="font-display text-4xl md:text-5xl font-light text-[#1A1A1A] mb-4">
-            Backpack Size Guide
+            Nayo Smart Size Guide
           </h1>
           <p className="font-body text-[#8A8A8A] mb-12 max-w-2xl leading-[1.9]">
-            Pick your backpack by capacity, laptop size, and how much you carry on a normal day. If you are between two sizes, choose the smaller pack for a cleaner work profile and the larger pack for travel flexibility.
+            Compare official Nayo Smart backpack capacities, laptop fit, and best use cases so customers can choose the right bag faster.
           </p>
 
           <div className="overflow-x-auto border-y border-[#E8E6E2]">
@@ -57,9 +57,9 @@ export default function SizeGuidePage() {
 
           <div className="mt-14 grid gap-6 md:grid-cols-3">
             {[
-              ["Choose 18L", "For a slim daily backpack that stays close to the body on trains, bikes, and busy sidewalks."],
-              ["Choose 20-22L", "For the best balance between office carry, laptop protection, and flexible daily storage."],
-              ["Choose 25L", "For business trips, weekend packing, and days when your backpack replaces a small suitcase."],
+              ["Choose Urban U7", "For lightweight commute, fast access, and a balanced daily laptop carry."],
+              ["Choose Herman H6 or H8", "For more structured silhouettes, stronger organization, and office-to-travel versatility."],
+              ["Choose Herman Pro", "For expandable storage, larger devices, and heavier travel or outdoor-oriented carry."],
             ].map(([title, text]) => (
               <div key={title} className="rounded-[22px] bg-[#F7F5F1] p-6">
                 <h2 className="font-display text-xl font-light text-[#1A1A1A] mb-3">{title}</h2>

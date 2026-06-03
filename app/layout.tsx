@@ -40,21 +40,22 @@ const pinyonScript = Pinyon_Script({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "NOREVA | Smart Backpacks for Work, Travel and Daily Carry",
-    template: "%s | NOREVA",
+    default: "Nayo Smart | Official Smart Backpacks for Work, Travel and Daily Carry",
+    template: "%s | Nayo Smart",
   },
   description:
-    "Smart backpacks for work, travel, commuting and organized daily carry. Water-resistant materials, laptop protection, worldwide delivery and direct WhatsApp assistance.",
+    "Official Nayo Smart backpacks for work, travel, commuting and organized daily carry. Water-resistant materials, laptop protection, worldwide delivery and direct WhatsApp assistance.",
   keywords: [
+    "nayo smart backpack",
     "smart backpacks",
     "travel backpacks",
     "laptop backpacks",
     "commuter backpacks",
     "water-resistant backpacks",
     "business backpacks",
-    "Shanghai",
-    "Milan",
-    "organized carry",
+    "urban u7 backpack",
+    "herman h6 backpack",
+    "herman h8 backpack",
   ],
   authors: [{ name: SITE_NAME }],
   creator: SITE_NAME,
@@ -76,25 +77,25 @@ export const metadata: Metadata = {
     alternateLocale: ["fr_FR", "it_IT", "de_DE", "es_ES"],
     url: SITE_URL,
     siteName: SITE_NAME,
-    title: "NOREVA | Smart Backpacks for Work, Travel and Daily Carry",
+    title: "Nayo Smart | Official Smart Backpacks for Work, Travel and Daily Carry",
     description:
-      "Smart backpacks for work, travel, commuting and organized daily carry.",
+      "Official Nayo Smart backpacks for work, travel, commuting and organized daily carry.",
     images: [
       {
         url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "NOREVA",
+        alt: "Nayo Smart",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "NOREVA | Smart Backpacks for Work, Travel and Daily Carry",
+    title: "Nayo Smart | Official Smart Backpacks for Work, Travel and Daily Carry",
     description:
-      "Water-resistant laptop backpacks with direct WhatsApp assistance.",
+      "Official Nayo Smart laptop backpacks with direct WhatsApp assistance.",
     images: ["/twitter-image"],
-    creator: "@noreva",
+    creator: "@nayosmart",
   },
   alternates: {
     canonical: SITE_URL,
@@ -120,7 +121,7 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#ffffff" />
         <meta name="geo.region" content="CN-31" />
-        <meta name="geo.placename" content="Shanghai" />
+        <meta name="geo.placename" content="Singapore" />
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <script
           type="application/ld+json"

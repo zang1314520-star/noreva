@@ -46,9 +46,9 @@ function normalizeProduct(product: Partial<Product>): Product {
   return {
     ...product,
     id: product.id || `bp_${Date.now()}`,
-    name: product.name || "NOREVA Backpack",
+    name: product.name || "Nayo Smart Backpack",
     nameCn: product.nameCn,
-    brand: product.brand || "NOREVA",
+    brand: product.brand || "Nayo Smart",
     category: "backpacks",
     categoryName: product.categoryName || "Backpacks",
     categoryNameCn: product.categoryNameCn || "双肩背包",

@@ -65,7 +65,7 @@ export default function Navigation() {
             href="/"
             className="absolute left-1/2 -translate-x-1/2 font-body text-[13px] tracking-[0.3em] uppercase text-[#1A1A1A] hover:text-[#C9A96E] transition-colors duration-300"
           >
-            NOREVA
+            Nayo Smart
           </Link>
 
           <div className="hidden md:flex items-center gap-8 ml-auto">

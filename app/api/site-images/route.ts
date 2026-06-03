@@ -5,12 +5,12 @@ const redis = getRedis();
 
 const DEFAULT_IMAGES = {
   hero: {
-    image: "/images/brand/hero-backpack-campaign.png",
-    title: "Smart Backpacks for Work and Travel",
+    image: "https://cdn.shopify.com/s/files/1/0095/3519/3135/files/H8-7.jpg?v=1763092998",
+    title: "Official Nayo Smart Backpacks",
   },
   newArrivals: {
-    left: "/images/brand/backpack-main-premium.png",
-    right: "/images/brand/backpack-detail-organizer.png",
+    left: "https://cdn.shopify.com/s/files/1/0095/3519/3135/files/nayo-smart-urban-u7-backpack-olive-green-front-view.jpg?v=1776826645",
+    right: "https://cdn.shopify.com/s/files/1/0095/3519/3135/files/7_9af4575c-33b8-44be-94df-fa620f621a64.jpg?v=1762505351",
   },
   womenswear: {
     main: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=800&q=80",
@@ -21,9 +21,9 @@ const DEFAULT_IMAGES = {
     secondary: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=800&q=80",
   },
   journal: {
-    post1: "/images/brand/backpack-main-premium.png",
-    post2: "/images/brand/backpack-detail-organizer.png",
-    post3: "/images/brand/hero-backpack-campaign.png",
+    post1: "https://cdn.shopify.com/s/files/1/0095/3519/3135/files/nayo-smart-urban-u7-backpack-olive-green-large-capacity-storage-1.jpg?v=1776827046",
+    post2: "https://cdn.shopify.com/s/files/1/0095/3519/3135/files/4_c7f395e6-dd3c-4224-9049-d3f33d22f95f.jpg?v=1763106254",
+    post3: "https://cdn.shopify.com/s/files/1/0095/3519/3135/files/5_7b2a6b79-f388-4501-9e41-39501dcaea0c.jpg?v=1762928689",
   },
 };
 

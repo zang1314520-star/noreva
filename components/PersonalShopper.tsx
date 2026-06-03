@@ -11,7 +11,7 @@ export default function PersonalShopper() {
   const { t } = useTranslation();
 
   const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
-    "Hello, I would like to speak with a personal shopper at NOREVA."
+    "Hello, I would like help choosing the right Nayo Smart backpack."
   )}`;
 
   return (

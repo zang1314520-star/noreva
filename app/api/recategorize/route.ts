@@ -7,18 +7,18 @@ function autoCategorize(tag: string, desc: string) {
   const text = `${tag} ${desc}`.toLowerCase();
 
   if (/travel|transit|airport|weekend|25l|luggage|suitcase|trip/.test(text)) {
-    return { category: "backpacks", categoryName: "Travel Backpacks", categoryNameCn: "旅行背包", brand: "NOREVA" };
+    return { category: "backpacks", categoryName: "Travel Backpacks", categoryNameCn: "旅行背包", brand: "Nayo Smart" };
   }
 
   if (/business|executive|office|meeting|document|work/.test(text)) {
-    return { category: "backpacks", categoryName: "Business Backpacks", categoryNameCn: "商务背包", brand: "NOREVA" };
+    return { category: "backpacks", categoryName: "Business Backpacks", categoryNameCn: "商务背包", brand: "Nayo Smart" };
   }
 
   if (/weather|rain|water|rolltop|roll-top|water-resistant/.test(text)) {
-    return { category: "backpacks", categoryName: "Weather-Ready Backpacks", categoryNameCn: "防泼水背包", brand: "NOREVA" };
+    return { category: "backpacks", categoryName: "Weather-Ready Backpacks", categoryNameCn: "防泼水背包", brand: "Nayo Smart" };
   }
 
-  return { category: "backpacks", categoryName: "Commuter Backpacks", categoryNameCn: "通勤背包", brand: "NOREVA" };
+  return { category: "backpacks", categoryName: "Commuter Backpacks", categoryNameCn: "通勤背包", brand: "Nayo Smart" };
 }
 
 export async function POST() {
