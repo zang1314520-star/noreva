@@ -45,6 +45,9 @@ export default function Navigation() {
             <Link href="/#testimonials" className="nav-link">
               {t(lang, "navWorld")}
             </Link>
+            <Link href="/#journal" className="nav-link">
+              {t(lang, "navJournal")}
+            </Link>
           </div>
 
           <Link

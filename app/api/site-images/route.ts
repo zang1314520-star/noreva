@@ -21,11 +21,25 @@ const DEFAULT_IMAGES = {
     secondary: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=800&q=80",
   },
   journal: {
-    post1: "https://images.unsplash.com/photo-1558171813-4c088753af8f?w=600&q=80",
-    post2: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80",
-    post3: "https://images.unsplash.com/photo-1445205170230-053b83016050?w=600&q=80",
+    post1: "/images/brand/backpack-main-premium.png",
+    post2: "/images/brand/backpack-detail-organizer.png",
+    post3: "/images/brand/hero-backpack-campaign.png",
   },
 };
+
+function normalizeImages(images: typeof DEFAULT_IMAGES) {
+  const journal = images.journal || DEFAULT_IMAGES.journal;
+  const hasLegacyJournal =
+    [journal.post1, journal.post2, journal.post3].some((src) =>
+      typeof src === "string" && src.includes("images.unsplash.com")
+    );
+
+  return {
+    ...DEFAULT_IMAGES,
+    ...images,
+    journal: hasLegacyJournal ? DEFAULT_IMAGES.journal : { ...DEFAULT_IMAGES.journal, ...journal },
+  };
+}
 
 export async function GET() {
   if (!redis) return NextResponse.json(DEFAULT_IMAGES);
@@ -36,7 +50,8 @@ export async function GET() {
       await redis.set("site_images", DEFAULT_IMAGES);
       return NextResponse.json(DEFAULT_IMAGES);
     }
-    return NextResponse.json(typeof data === "string" ? JSON.parse(data) : data);
+    const parsed = typeof data === "string" ? JSON.parse(data) : data;
+    return NextResponse.json(normalizeImages(parsed));
   } catch {
     return NextResponse.json(DEFAULT_IMAGES);
   }

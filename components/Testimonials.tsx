@@ -6,27 +6,30 @@ import { motion, useInView } from "framer-motion";
 const testimonials = [
   {
     id: 1,
-    message: "The linen jacket arrived today. It is even better than the photos.",
-    response: "So happy to hear that! The linen we use is from Belgium.",
-    customer: "Sofia M.",
-    location: "Milan",
+    message: "Will the 20L business backpack fit a 16-inch MacBook and charger without looking bulky?",
+    response: "Yes. Choose the Business 20L if you want a cleaner office profile with a padded 16-inch laptop sleeve and separate tech pockets.",
+    customer: "Daniel R.",
+    location: "Singapore",
     date: "March 2026",
+    tag: "Business 20L",
   },
   {
     id: 2,
-    message: "Is this watch still available?",
-    response: "Yes, we have one left in stock.",
-    customer: "Thomas L.",
-    location: "Berlin",
+    message: "I commute by train and get caught in rain a lot. Which pack should I choose?",
+    response: "The Roll-Top 22L is the safest pick for wet commutes. It has a weather-resistant shell, expandable top, and quick side access.",
+    customer: "Maya K.",
+    location: "London",
     date: "February 2026",
+    tag: "Rain commute",
   },
   {
     id: 3,
-    message: "Shipping to Switzerland - how long?",
-    response: "Typically 3-5 business days via DHL Express.",
-    customer: "Emma K.",
-    location: "Zurich",
+    message: "Can I use one backpack for a two-day work trip and daily office carry?",
+    response: "Go with the Travel 25L. It opens wider for packing, has a luggage pass-through, and still keeps the front profile sharp.",
+    customer: "Alex C.",
+    location: "Toronto",
     date: "January 2026",
+    tag: "Travel 25L",
   },
 ];
 
@@ -43,10 +46,13 @@ export default function Testimonials() {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <span className="label block mb-4">Testimonials</span>
+          <span className="label block mb-4">Customer Questions</span>
           <h2 className="font-display text-[clamp(1.8rem,3vw,2.5rem)] font-light text-[#1A1A1A]">
-            Words from our clients
+            Real carry needs, answered clearly.
           </h2>
+          <p className="mt-5 mx-auto max-w-xl font-body text-[13px] leading-[1.8] text-[#8A8A8A]">
+            Reviews should not just say "nice bag." They should remove doubt around fit, capacity, laptop protection, weather, and travel.
+          </p>
           <div className="flex justify-center mt-6">
             <span className="gold-rule" />
           </div>
@@ -60,7 +66,7 @@ export default function Testimonials() {
               animate={inView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.8, delay: 0.2 + index * 0.15 }}
             >
-              <div className="bg-[#F7F5F1] rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-500">
+              <div className="bg-[#F7F5F1] rounded-[20px] overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-500">
                 <div className="bg-[#1A1A1A] px-4 py-3 flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-[#C9A96E] flex items-center justify-center">
                     <span className="text-[10px] text-white font-medium">
@@ -69,22 +75,19 @@ export default function Testimonials() {
                   </div>
                   <div>
                     <p className="text-white text-xs font-medium">{item.customer}</p>
-                    <p className="text-[#8A8A8A] text-[9px]">{item.location}</p>
+                    <p className="text-[#A8A8A8] text-[9px]">{item.location}</p>
                   </div>
-                  <div className="ml-auto">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="#C9A96E">
-                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" />
-                      <path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.211l4.287-1.399A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-2.487 0-4.807-.803-6.715-2.151l-.481-.318-2.982.974.961-2.918-.331-.482A9.935 9.935 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z" />
-                    </svg>
-                  </div>
+                  <span className="ml-auto rounded-full border border-white/20 px-2.5 py-1 text-[8px] uppercase tracking-[0.18em] text-[#F7F5F1]">
+                    {item.tag}
+                  </span>
                 </div>
 
                 <div className="p-4 space-y-3">
-                  <div className="bg-white rounded-2xl rounded-tl-sm px-4 py-2.5 shadow-sm max-w-[85%]">
+                  <div className="bg-white rounded-2xl rounded-tl-sm px-4 py-2.5 shadow-sm max-w-[90%]">
                     <p className="text-[12px] text-[#1A1A1A] leading-[1.6]">{item.message}</p>
                     <p className="text-[9px] text-[#A8A8A8] mt-1 text-right">{item.date}</p>
                   </div>
-                  <div className="bg-[#DCF8C6] rounded-2xl rounded-tr-sm px-4 py-2.5 shadow-sm ml-auto max-w-[85%]">
+                  <div className="bg-[#E7F0DD] rounded-2xl rounded-tr-sm px-4 py-2.5 shadow-sm ml-auto max-w-[90%]">
                     <p className="text-[12px] text-[#1A1A1A] leading-[1.6]">{item.response}</p>
                   </div>
                 </div>
@@ -97,7 +100,7 @@ export default function Testimonials() {
                       </svg>
                     ))}
                   </div>
-                  <span className="text-[9px] text-[#8A8A8A]">5.0</span>
+                  <span className="text-[9px] text-[#8A8A8A]">5.0 verified fit guidance</span>
                 </div>
               </div>
             </motion.div>
@@ -106,4 +109,4 @@ export default function Testimonials() {
       </div>
     </section>
   );
-} 
+}

@@ -43,7 +43,7 @@ export default function NewArrivals() {
           transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
           className="text-center mb-16"
         >
-          <span className="label block mb-4">SS 2026</span>
+          <span className="label block mb-4">New Backpack Drop</span>
           <h2 className="font-display text-[clamp(2rem,4vw,3.5rem)] font-light text-[#1A1A1A] mb-4">
             Engineered for Work, Travel and Daily Carry
           </h2>
@@ -65,7 +65,7 @@ export default function NewArrivals() {
           >
             <Image
               src={images.left}
-              alt="SS 2026 Upcoming New Arrivals"
+              alt="Premium backpack front view"
               width={800}
               height={1000}
               className="w-full aspect-[4/5] object-cover"
@@ -82,7 +82,7 @@ export default function NewArrivals() {
           >
             <Image
               src={images.right}
-              alt="SS 2026 Upcoming New Arrivals"
+              alt="Premium backpack organization details"
               width={800}
               height={1000}
               className="w-full aspect-[4/5] object-cover"

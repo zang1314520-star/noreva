@@ -14,54 +14,65 @@ const articles: Record<string, {
   date: string;
   image: string;
   content: string[];
+  takeaways: string[];
 }> = {
   "01": {
     id: "01",
-    category: "Materials",
-    title: "On linen in summer.",
+    category: "Pack Guide",
+    title: "18L, 20L or 25L: which backpack capacity fits your day?",
     date: "March 2026",
-    image: "https://images.unsplash.com/photo-1558171813-4c088753af8f?w=1200&q=80",
+    image: "/images/brand/backpack-main-premium.png",
     content: [
-      "There is a reason we return to linen every summer. It is not habit. It is conviction.",
-      "Linen breathes. In heat, in humidity, in the particular languor of July afternoons, it does what no synthetic can — it works with the body, not against it. The same cannot be said for most things we wear.",
-      "We source our linen from a single mill in Belgium. The same mill. Every season. The relationship began in 2019, when we were still finding ourselves. Now it is one of the anchors of our identity.",
-      "The fabric arrives pre-washed, which softens it without weakening it. It wrinkles beautifully — intentionally, deliberately. We do not fight the wrinkles. We consider them evidence of a life being lived.",
-      "This season, we introduced linen in three new colors: unbleached ecru, stone grey, and a pale indigo we call 'morning sky.' Each feels different against the skin. Each tells a different story.",
-      "The decision to commit fully to linen was not made lightly. It meant reducing our range. It meant saying no to cotton blends that would be easier to produce. It meant accepting that some customers would prefer the smooth drape of other fabrics.",
-      "But linen is honest. And we have decided to be honest too."
-    ]
+      "Capacity is one of the easiest backpack numbers to misunderstand. A larger liter count does not automatically mean a better daily backpack. The right size depends on how often you carry a laptop, whether you pack clothing, and how compact you want the bag to look in work settings.",
+      "An 18L backpack is the cleanest everyday option. It works best for a laptop, charger, water bottle, notebook, wallet, keys, and a light layer. Choose this size if you commute daily and want a bag that stays close to the body on trains, bikes, and busy sidewalks.",
+      "A 20L backpack is the safest all-rounder for office and business use. It usually gives enough room for a 16-inch laptop, cable pouch, documents, headphones, and a slim lunch box without becoming bulky. If you only want one backpack for workdays, start here.",
+      "A 25L backpack makes sense when travel enters the picture. The extra space helps with a change of clothes, dopp kit, compact shoes, or camera gear. The key is structure: travel capacity should expand when needed but still compress visually for meetings.",
+      "Our recommendation is simple. Pick 18L for minimal daily carry, 20L for the best work balance, and 25L for frequent overnight travel."
+    ],
+    takeaways: [
+      "18L is best for clean daily commuting.",
+      "20L is the most versatile work backpack size.",
+      "25L is ideal for short trips and heavier carry days.",
+    ],
   },
   "02": {
     id: "02",
-    category: "Making",
-    title: "The atelier at 6am.",
+    category: "Organization",
+    title: "What a 16-inch laptop backpack should get right.",
     date: "February 2026",
-    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&q=80",
+    image: "/images/brand/backpack-detail-organizer.png",
     content: [
-      "The atelier opens before dawn. This is not for effect — it is simply how the work demands to be done.",
-      "In the early hours, the light is different. Softer. More honest. Patterns are cut with greater precision. Seams are placed with more care. The noise of the city has not yet built to its peak, and concentration deepens accordingly.",
-      "SS 2026 was conceived here, in this quiet. The twelve pieces of The Atelier Line — each one a response to the question: what is the minimum required for maximum effect?",
-      "The answer, we found, is not simplicity. It is intention. A collar that sits exactly 3.8cm at the back, no more. A shoulder seam placed 1.2cm forward to create the illusion of narrower upper arms without the discomfort of a constrictive sleeve. These are the details that cannot be photographed.",
-      "We do not believe in invisible labor. Everything visible in our work is there because it should be. Everything invisible — the hours before the light changed — is there too, in the weight of the garment, in the way it settles.",
-      "The atelier will remain open to visitors by appointment from June. There is no shop. There is only the making."
-    ]
+      "A laptop sleeve is only useful if it protects the laptop during real movement. Look for padding on the back, padding on the bottom, and enough structure that the laptop does not press directly against hard objects inside the main compartment.",
+      "The sleeve should also be easy to access. If you fly often or move between meetings, a separate laptop section saves time. If you commute by train or bike, a protected internal sleeve keeps the outside of the bag cleaner and more secure.",
+      "Good organization is not about adding endless pockets. It is about placing the right pockets where your hands naturally go. Chargers, cables, mouse, AirPods, keys, passport, and cards should each have a predictable home.",
+      "For 16-inch laptops, shape matters. A slim rectangular profile keeps the backpack professional, while a deeper base helps the bag stand upright. That combination makes the bag feel calmer at desks, cafes, airports, and meeting rooms.",
+      "If you carry expensive tech every day, prioritize laptop protection, pocket hierarchy, water resistance, and comfortable straps before choosing based on style alone."
+    ],
+    takeaways: [
+      "A false-bottom laptop sleeve protects against drops.",
+      "Tech pockets should be easy to reach without unpacking.",
+      "A structured base helps a work backpack stand upright.",
+    ],
   },
   "03": {
     id: "03",
-    category: "World",
-    title: "Paris, January.",
+    category: "Travel",
+    title: "The business-trip backpack checklist.",
     date: "January 2026",
-    image: "https://images.unsplash.com/photo-1445205170230-053b83016050?w=1200&q=80",
+    image: "/images/brand/hero-backpack-campaign.png",
     content: [
-      "Seven years since our last presentation. Seven years of asking ourselves whether Paris was necessary.",
-      "The answer was always yes. But 'yes' required a reason. Not a celebration, not a milestone — these are hollow without substance. A reason that had to do with the work itself.",
-      "We found it in the question of silence. Paris, in January, is the quietest city in Europe. The tourists are gone. The restaurants close early. The Seine reflects grey skies with an accuracy that seems almost accusatory. In this silence, clothing speaks.",
-      "We showed in a space in the 10th arrondissement. No music. No models walking to beats. The garments were presented on wooden forms, lit by north-facing windows. Visitors arrived without invitation — we had sent nothing but an address.",
-      "The response was not applause. It was quiet — the kind of quiet that is worth more. People touched the fabrics. They asked about construction. They stood in front of single pieces for minutes at a time.",
-      "We did not give a speech. We did not print a manifesto. We simply made the work, and let it speak.",
-      "What we chose not to say: that this was our best collection. That we are proud, quietly, in the way that allows for the next thing."
-    ]
-  }
+      "A good business-trip backpack has to do two jobs at once. It needs to hold enough for one or two nights, but it also needs to look sharp when you walk straight from the airport into a meeting.",
+      "Start with luggage compatibility. A pass-through sleeve lets the backpack sit securely on a suitcase handle, which is a small detail that makes long airport walks much easier. It also keeps the shoulder straps from carrying weight all day.",
+      "Next, check access. A wide-opening main compartment is better for packing clothing, while quick-access pockets are better for passport, boarding pass, phone, charger, and sunglasses. The best travel backpack separates these zones clearly.",
+      "Water resistance matters more than people expect. Travel days often include taxi doors, wet sidewalks, coffee shops, and overhead bins. A weather-resistant outer shell gives you enough protection for ordinary rain and spills.",
+      "Finally, think about how the backpack looks when it is not full. Premium travel backpacks should hold their shape, keep straps tidy, and avoid the camping-bag look when used for business."
+    ],
+    takeaways: [
+      "Choose a luggage pass-through for frequent flights.",
+      "Use quick-access pockets for airport essentials.",
+      "Pick a structured, water-resistant shell for business travel.",
+    ],
+  },
 };
 
 export default function JournalArticlePage() {
@@ -74,9 +85,9 @@ export default function JournalArticlePage() {
       <main className="bg-white min-h-screen">
         <Navigation />
         <div className="pt-32 pb-24 px-8 md:px-16 text-center">
-          <h1 className="font-display text-3xl mb-6">Article not found</h1>
+          <h1 className="font-display text-3xl mb-6">Guide not found</h1>
           <Link href="/#journal" className="cta-link">
-            Return to Journal
+            Return to Carry Notes
           </Link>
         </div>
         <Footer />
@@ -88,7 +99,7 @@ export default function JournalArticlePage() {
     <main className="bg-white min-h-screen">
       <Navigation />
 
-      <div className="relative h-[60vh] md:h-[70vh] mt-16 overflow-hidden">
+      <div className="relative h-[60vh] md:h-[70vh] mt-16 overflow-hidden bg-[#F7F5F1]">
         <Image
           src={article.image}
           alt={article.title}
@@ -96,41 +107,57 @@ export default function JournalArticlePage() {
           className="object-cover"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-white via-white/10 to-transparent" />
       </div>
 
-      <article className="max-w-2xl mx-auto px-8 md:px-16 -mt-20 relative z-10 pb-24">
+      <article className="max-w-3xl mx-auto px-8 md:px-16 -mt-20 relative z-10 pb-24">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
+          className="bg-white/95 backdrop-blur-sm rounded-[24px] p-6 md:p-10 shadow-sm"
         >
           <span className="label text-[#C9A96E] block mb-4">
-            {article.category} — {article.date}
+            {article.category} - {article.date}
           </span>
 
           <h1 className="font-display text-[clamp(2rem,4vw,3rem)] font-light text-[#1A1A1A] leading-tight mb-8">
             {article.title}
           </h1>
 
-          <div className="flex items-center gap-6 mb-12">
-            <span className="gold-rule" />
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_220px] gap-10">
+            <div className="space-y-6">
+              {article.content.map((paragraph, index) => (
+                <p key={index} className="font-body text-[15px] text-[#1A1A1A] leading-[2]">
+                  {paragraph}
+                </p>
+              ))}
+            </div>
+
+            <aside className="md:sticky md:top-24 h-fit rounded-[18px] bg-[#F7F5F1] p-5">
+              <p className="label text-[#8A8A8A] mb-4">Quick takeaways</p>
+              <ul className="space-y-3">
+                {article.takeaways.map((takeaway) => (
+                  <li key={takeaway} className="font-body text-[12px] leading-[1.7] text-[#1A1A1A]">
+                    {takeaway}
+                  </li>
+                ))}
+              </ul>
+            </aside>
           </div>
 
-          <div className="space-y-6">
-            {article.content.map((paragraph, index) => (
-              <p key={index} className="font-body text-[15px] text-[#1A1A1A] leading-[2]">
-                {paragraph}
-              </p>
-            ))}
-          </div>
-
-          <div className="mt-16 pt-8 border-t border-[#E8E6E2]">
+          <div className="mt-16 pt-8 border-t border-[#E8E6E2] flex flex-col sm:flex-row gap-5 sm:items-center sm:justify-between">
             <Link href="/#journal" className="cta-link">
               <svg width="16" height="1" viewBox="0 0 16 1" fill="none">
                 <line x1="16" y1="0.5" x2="0" y2="0.5" stroke="#C9A96E" />
               </svg>
-              Back to Journal
+              Back to Carry Notes
+            </Link>
+            <Link href="/products" className="cta-link">
+              Shop backpacks
+              <svg width="16" height="1" viewBox="0 0 16 1" fill="none">
+                <line x1="0" y1="0.5" x2="16" y2="0.5" stroke="#C9A96E" />
+              </svg>
             </Link>
           </div>
         </motion.div>
