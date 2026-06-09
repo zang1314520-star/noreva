@@ -23,7 +23,8 @@ const itemVariants = {
 
 export default function Hero() {
   const ref = useRef<HTMLElement>(null);
-  const { t } = useTranslation();
+  const { t, lang } = useTranslation();
+  const isCn = lang === "zh";
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"],
@@ -34,6 +35,9 @@ export default function Hero() {
 
   const [heroImage, setHeroImage] = useState<string>(DEFAULT_HERO_IMAGE);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const proofPoints = isCn
+    ? ["16 寸电脑", "防泼水", "30 天退货"]
+    : ["Fits 16\" laptop", "Water-resistant", "30-day returns"];
 
   useEffect(() => {
     let cancelled = false;
@@ -120,11 +124,16 @@ export default function Hero() {
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: 0.75 }}
-            className="absolute bottom-8 right-8 hidden lg:grid grid-cols-3 gap-3 rounded-[2px] border border-white/25 bg-white/70 p-4 backdrop-blur-md shadow-2xl shadow-black/10"
+            className="absolute bottom-8 right-8 hidden lg:grid w-[min(100%-2rem,24rem)] grid-cols-3 overflow-hidden rounded-[2px] border border-white/25 bg-white/72 backdrop-blur-md shadow-2xl shadow-black/10"
           >
-            {["16 inch laptop", "Water-resistant", "30-day returns"].map((item) => (
-              <div key={item} className="min-w-28">
-                <p className="font-body text-[10px] uppercase tracking-[0.18em] text-[#8A8A8A]">{item}</p>
+            {proofPoints.map((item, index) => (
+              <div
+                key={item}
+                className={`px-4 py-3 text-center ${index < proofPoints.length - 1 ? "border-r border-black/8" : ""}`}
+              >
+                <p className="font-body text-[11px] leading-none tracking-[0.08em] text-[#7E7A74] whitespace-nowrap">
+                  {item}
+                </p>
               </div>
             ))}
           </motion.div>
@@ -167,8 +176,17 @@ export default function Hero() {
             className="font-display font-light leading-[1.15] text-[#1A1A1A]"
             style={{ fontSize: "clamp(2.2rem, 4.5vw, 4rem)" }}
           >
-            {t("heroManifesto1")}<br />
-            <em>{t("heroManifesto2")}</em>
+            {isCn ? (
+              <>
+                每天都有条理，<br />
+                <em>为每次旅程精心打磨。</em>
+              </>
+            ) : (
+              <>
+                {t("heroManifesto1")}<br />
+                <em>{t("heroManifesto2")}</em>
+              </>
+            )}
           </motion.h1>
 
           <motion.div
