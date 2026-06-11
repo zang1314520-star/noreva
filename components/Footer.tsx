@@ -67,6 +67,9 @@ export default function Footer() {
               <Link href="/returns" className="block font-body text-[13px] text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors duration-200">
                 Shipping & Returns
               </Link>
+              <Link href="/track" className="block font-body text-[13px] text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors duration-200">
+                Track Order
+              </Link>
               <Link href="/size-guide" className="block font-body text-[13px] text-[#8A8A8A] hover:text-[#1A1A1A] transition-colors duration-200">
                 Size Guide
               </Link>
@@ -137,6 +140,12 @@ export default function Footer() {
               className="font-body text-[11px] text-[#C0BCBA] tracking-wider hover:text-[#8A8A8A] transition-colors"
             >
               Shipping & Returns
+            </Link>
+            <Link
+              href="/track"
+              className="font-body text-[11px] text-[#C0BCBA] tracking-wider hover:text-[#8A8A8A] transition-colors"
+            >
+              Track Order
             </Link>
           </div>
         </div>

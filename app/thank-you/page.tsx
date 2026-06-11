@@ -24,7 +24,7 @@ export default function ThankYouPage() {
             Thank you for choosing Nayo Smart.
           </h1>
           <p className="mx-auto mt-6 max-w-xl font-body text-[15px] leading-[1.9] text-[#8A8A8A]">
-            We are preparing your backpack order. You will receive payment and shipping updates by email. If you need to adjust delivery details, contact us as soon as possible.
+            We are preparing your backpack order. Use your order number and checkout email to follow fulfillment and tracking updates as soon as they are available.
           </p>
 
           <div className="mt-10 grid gap-3 sm:grid-cols-3">
@@ -36,6 +36,12 @@ export default function ThankYouPage() {
           </div>
 
           <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row">
+            <Link
+              href="/track"
+              className="inline-flex justify-center bg-[#C9A96E] px-7 py-4 font-body text-[11px] uppercase tracking-[0.2em] text-[#1A1A1A] transition-colors hover:bg-[#1A1A1A] hover:text-white"
+            >
+              Track Order
+            </Link>
             <a
               href={`https://wa.me/${WHATSAPP_NUMBER}`}
               target="_blank"
